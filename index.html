@@ -707,7 +707,7 @@
   <!-- GitHub API Script with Safe Fallbacks for 404 / Private Repos -->
   <script>
     (async function() {
-      const REPO = 'FranciscoOssian/...';
+      const REPO = 'FranciscoOssian/cveck';
       const api = (path) => fetch(`https://api.github.com/repos/${REPO}${path}`)
         .then(r => r.ok ? r.json() : null)
         .catch(() => null);

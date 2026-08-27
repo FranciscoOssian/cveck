@@ -1,0 +1,599 @@
+# Mandarin Chinese (Simplified) translations for cveck.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the cveck project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cveck 0.1.0\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/cli.py:69
+msgid "Active Provider:"
+msgstr "当前可用服务商:"
+
+#: src/cli.py:69 src/nodes/committer.py:44 src/nodes/committer.py:49
+msgid "None"
+msgstr "无"
+
+#: src/cli.py:70
+msgid "Commands:"
+msgstr "可用命令:"
+
+#: src/cli.py:70
+msgid "manage"
+msgstr "管理"
+
+#: src/cli.py:70
+msgid "clean"
+msgstr "清理"
+
+#: src/cli.py:76 src/cli.py:253
+msgid "Select model"
+msgstr "选择模型"
+
+#: src/cli.py:77
+msgid "Type to filter with TAB or arrows"
+msgstr "输入以通过 TAB 或方向键进行筛选"
+
+#: src/cli.py:87
+msgid "Local"
+msgstr "本地"
+
+#: src/cli.py:96
+msgid "Select Provider"
+msgstr "选择服务商"
+
+#: src/cli.py:103
+msgid "Choose number or enter key"
+msgstr "选择编号或输入服务商标识"
+
+#: src/cli.py:118
+msgid "Provider & Model Manager"
+msgstr "模型与服务商管理器"
+
+#: src/cli.py:120
+msgid "Key"
+msgstr "标识 (Key)"
+
+#: src/cli.py:121
+msgid "Name"
+msgstr "名称"
+
+#: src/cli.py:122
+msgid "Active Model"
+msgstr "当前模型"
+
+#: src/cli.py:123
+msgid "Total Models"
+msgstr "模型总数"
+
+#: src/cli.py:124
+msgid "Status"
+msgstr "状态"
+
+#: src/cli.py:129
+msgid "● ACTIVE"
+msgstr "● 已激活"
+
+#: src/cli.py:140
+msgid "Available actions:"
+msgstr "可用操作:"
+
+#: src/cli.py:141
+msgid "Switch Active Provider / Model"
+msgstr "切换当前服务商 / 模型"
+
+#: src/cli.py:142
+msgid "Add New Provider (from Presets or Custom)"
+msgstr "添加新服务商 (从预设或自定义)"
+
+#: src/cli.py:143
+msgid "Add Model to a Provider"
+msgstr "向服务商添加模型"
+
+#: src/cli.py:144
+msgid "Remove Model from a Provider"
+msgstr "从服务商移除模型"
+
+#: src/cli.py:145
+msgid "Remove a Provider"
+msgstr "移除服务商"
+
+#: src/cli.py:146
+msgid "Return to Main Chat"
+msgstr "返回主界面"
+
+#: src/cli.py:148 src/cli.py:206
+msgid "Choose an option"
+msgstr "请选择操作选项"
+
+#: src/cli.py:167 src/cli.py:523
+msgid "Press ENTER to continue..."
+msgstr "按回车键继续..."
+
+#: src/cli.py:174
+msgid "Fetch online models from provider via API (/models)?"
+msgstr "是否通过 API (/models) 获取在线模型列表？"
+
+#: src/cli.py:177
+msgid "Fetching models via API..."
+msgstr "正在通过 API 获取模型列表..."
+
+#: src/cli.py:180
+#, python-brace-format
+msgid "Warning: Fetch failed ({error})"
+msgstr "警告: 模型列表获取失败 ({error})"
+
+#: src/cli.py:185
+msgid "Select provider to activate"
+msgstr "选择要激活的服务商"
+
+#: src/cli.py:189
+#, python-brace-format
+msgid "Choose model for '{name}'"
+msgstr "为 '{name}' 选择模型"
+
+#: src/cli.py:190
+msgid "Enter model name"
+msgstr "输入模型名称"
+
+#: src/cli.py:192
+#, python-brace-format
+msgid "✔ Active provider set: {name} -> {model}"
+msgstr "✔ 已激活服务商: {name} -> {model}"
+
+#: src/cli.py:200
+msgid "Available presets:"
+msgstr "可用预设列表:"
+
+#: src/cli.py:204
+msgid "Custom Provider (Custom OpenAI/Anthropic)"
+msgstr "自定义服务商 (OpenAI/Anthropic 兼容)"
+
+#: src/cli.py:226
+#, python-brace-format
+msgid "✔ Provider \"{name}\" added successfully!"
+msgstr "✔ 服务商 \"{name}\" 添加成功！"
+
+#: src/cli.py:230
+msgid "Unique key/slug (e.g. openrouter, groq, zai)"
+msgstr "唯一标识 (例如 openrouter, groq, zai)"
+
+#: src/cli.py:231
+msgid "Display name"
+msgstr "显示名称"
+
+#: src/cli.py:232
+msgid "Type"
+msgstr "接口类型"
+
+#: src/cli.py:233
+msgid "Base URL"
+msgstr "基础 URL (Base URL)"
+
+#: src/cli.py:234
+msgid "Environment variable (.env)"
+msgstr "环境变量名 (.env)"
+
+#: src/cli.py:235
+msgid "Default initial model"
+msgstr "初始默认模型"
+
+#: src/cli.py:245
+#, python-brace-format
+msgid "✔ Custom provider \"{name}\" registered!"
+msgstr "✔ 自定义服务商 \"{name}\" 注册成功！"
+
+#: src/cli.py:249
+msgid "Add model to which provider?"
+msgstr "向哪个服务商添加模型？"
+
+#: src/cli.py:253
+msgid "Model name"
+msgstr "模型名称"
+
+#: src/cli.py:254
+#, python-brace-format
+msgid "Set '{model}' as active model for '{name}'?"
+msgstr "是否将 '{model}' 设为 '{name}' 的默认模型？"
+
+#: src/cli.py:257
+#, python-brace-format
+msgid "✔ Model \"{model}\" added!"
+msgstr "✔ 模型 \"{model}\" 添加成功！"
+
+#: src/cli.py:262
+msgid "Remove model from which provider?"
+msgstr "从哪个服务商移除模型？"
+
+#: src/cli.py:267
+msgid "The provider must have at least 1 model."
+msgstr "服务商必须保留至少一个模型。"
+
+#: src/cli.py:271
+msgid "Model number to remove"
+msgstr "输入要移除的模型编号"
+
+#: src/cli.py:275
+#, python-brace-format
+msgid "✔ Model \"{model}\" removed!"
+msgstr "✔ 模型 \"{model}\" 已移除！"
+
+#: src/cli.py:280
+msgid "Which provider to remove?"
+msgstr "要移除哪个服务商？"
+
+#: src/cli.py:281
+#, python-brace-format
+msgid "Remove '{name}'?"
+msgstr "确认移除 '{name}' 吗？"
+
+#: src/cli.py:283
+#, python-brace-format
+msgid "✔ Provider \"{key}\" removed!"
+msgstr "✔ 服务商 \"{key}\" 已成功移除！"
+
+#: src/cli.py:293
+msgid "Job Detected:"
+msgstr "已检测到职位:"
+
+#: src/cli.py:301
+msgid "Identified Gaps:"
+msgstr "已识别技能差距:"
+
+#: src/cli.py:303
+msgid "Gaps:"
+msgstr "技能差距:"
+
+#: src/cli.py:303
+msgid "No critical gaps found in profile."
+msgstr "简历中未发现关键技能缺失。"
+
+#: src/cli.py:308
+msgid "Typst Generated:"
+msgstr "Typst 代码已生成:"
+
+#: src/cli.py:308
+msgid "STAR structure with bold front-loading ready."
+msgstr "加粗关键词前置的 STAR 结构已就绪。"
+
+#: src/cli.py:313 src/cli.py:315
+msgid "Typst Compilation:"
+msgstr "Typst 编译:"
+
+#: src/cli.py:313
+msgid "Syntax error (triggering auto-repair)."
+msgstr "语法错误 (正在触发自动修复)。"
+
+#: src/cli.py:315
+msgid "PDF generated and text extracted successfully."
+msgstr "PDF 生成并成功提取文本。"
+
+#: src/cli.py:320
+msgid "[Auto-Repair] Fixing Typst syntax..."
+msgstr "[自动修复] 正在修复 Typst 语法..."
+
+#: src/cli.py:327
+msgid "APPROVED"
+msgstr "已通过"
+
+#: src/cli.py:327
+msgid "REJECTED"
+msgstr "未通过"
+
+#: src/cli.py:329
+msgid "ATS Score:"
+msgstr "ATS 评分:"
+
+#: src/cli.py:334
+msgid "[Reflection] Adjusting CV to cover mandatory terms..."
+msgstr "[反思优化] 正在调整简历以覆盖必填关键词..."
+
+#: src/cli.py:339
+msgid "Final Agent Report"
+msgstr "智能体最终报告"
+
+#: src/cli.py:364
+msgid "Text Pasted in Terminal"
+msgstr "终端粘贴文本"
+
+#: src/cli.py:368
+msgid "Clipboard"
+msgstr "剪贴板"
+
+#: src/cli.py:370
+msgid ""
+"Clipboard empty. Paste the job description below and type \"END\" on a "
+"new line:"
+msgstr ""
+"剪贴板为空。请在下方粘贴职位描述，并在新行输入 \"END\" 结束:"
+
+#: src/cli.py:380
+msgid "Manual Input"
+msgstr "手动输入"
+
+#: src/cli.py:389
+msgid "Job Description Loaded"
+msgstr "职位描述加载完毕"
+
+#: src/cli.py:390
+msgid "Lines:"
+msgstr "行数:"
+
+#: src/cli.py:391
+msgid "Characters:"
+msgstr "字符数:"
+
+#: src/cli.py:392
+msgid "Running AI-powered adaptation pipeline..."
+msgstr "正在运行 AI 定制适配流程..."
+
+#: src/cli.py:425
+#, python-brace-format
+msgid "⚡ Running Pipeline with [{name} -> {model}]..."
+msgstr "⚡ 正在通过 [{name} -> {model}] 运行流程..."
+
+#: src/cli.py:428
+#, python-brace-format
+msgid "Processing with {model}..."
+msgstr "正在使用 {model} 进行处理..."
+
+#: src/cli.py:440
+msgid "❌ Authentication Error (401)"
+msgstr "❌ 鉴权失败错误 (401)"
+
+#: src/cli.py:442
+#, python-brace-format
+msgid ""
+"The API Key for provider [bold]{name}[/bold] is invalid or not "
+"configured.\n"
+"Check the [bold yellow]{env}[/bold yellow] variable in your "
+"[bold].env[/bold] file."
+msgstr ""
+"服务商 [bold]{name}[/bold] 的 API Key 无效或未配置。\n"
+"请检查 [bold].env[/bold] 文件中的 [bold yellow]{env}[/bold yellow] 变量。"
+
+#: src/cli.py:447
+msgid "Error during execution:"
+msgstr "执行期间发生错误:"
+
+#: src/cli.py:451
+msgid "Press [bold]ENTER[/bold] to return to the main menu..."
+msgstr "按 [bold]ENTER[/bold] 键返回主菜单..."
+
+#: src/cli.py:463
+msgid "✔ output/ folder cleaned!"
+msgstr "✔ output/ 目录已清空！"
+
+#: src/cli.py:464
+msgid "Press [bold]ENTER[/bold] to continue..."
+msgstr "按 [bold]ENTER[/bold] 键继续..."
+
+#: src/cli.py:482
+msgid "Options:"
+msgstr "操作选项:"
+
+#: src/cli.py:489
+#, python-brace-format
+msgid "Press {key} to load job description from clipboard"
+msgstr "按 {key} 从剪贴板加载职位描述"
+
+#: src/cli.py:490
+#, python-brace-format
+msgid "Type {cmd} to change model/provider"
+msgstr "输入 {cmd} 更改模型或服务商"
+
+#: src/cli.py:491
+#, python-brace-format
+msgid "Type {cmd} to change interface language"
+msgstr "输入 {cmd} 更改界面语言"
+
+#: src/cli.py:492
+#, python-brace-format
+msgid "Type {cmd1} to clean outputs | {cmd2} to exit"
+msgstr "输入 {cmd1} 清理输出目录 | 输入 {cmd2} 退出程序"
+
+#: src/cli.py:497
+msgid "Goodbye!"
+msgstr "再见！"
+
+#: src/cli.py:503
+msgid "Available Languages:"
+msgstr "支持的语言列表:"
+
+#: src/cli.py:509
+msgid "Select language number or locale code"
+msgstr "请选择语言编号或输入语言代码"
+
+#: src/cli.py:521
+msgid "Language changed to:"
+msgstr "界面语言已切换为:"
+
+#: src/cli.py:534
+msgid "Job description is too short or empty."
+msgstr "职位描述内容过短或为空。"
+
+#: src/cli.py:535
+msgid "Press ENTER to try again..."
+msgstr "按回车键重试..."
+
+#: src/providers.py:87
+#, python-brace-format
+msgid "Provider '{key}' not found."
+msgstr "未找到服务商 '{key}'。"
+
+#: src/providers.py:103
+msgid "Cannot remove the only registered provider."
+msgstr "无法删除唯一已注册的服务商。"
+
+#: src/providers.py:119
+msgid "The provider must have at least one registered model."
+msgstr "服务商必须保留至少一个已注册的模型。"
+
+#: src/providers.py:155
+#, python-brace-format
+msgid "Could not fetch models from {url}: {error}"
+msgstr "无法从 {url} 获取模型列表: {error}"
+
+#: src/nodes/committer.py:17
+msgid "PROCESS HALTED: TYPST SYNTAX FAILURE"
+msgstr "流程中断: TYPST 语法错误"
+
+#: src/nodes/committer.py:19
+msgid "Job:"
+msgstr "目标职位:"
+
+#: src/nodes/committer.py:20
+msgid "Compilation attempts:"
+msgstr "编译尝试次数:"
+
+#: src/nodes/committer.py:20
+msgid "syntax errors"
+msgstr "处语法错误"
+
+#: src/nodes/committer.py:22
+msgid "REASON:"
+msgstr "失败原因:"
+
+#: src/nodes/committer.py:23
+msgid "The current model repeatedly failed to produce valid Typst code."
+msgstr "当前模型未能生成有效的 Typst 代码。"
+
+#: src/nodes/committer.py:24
+msgid ""
+"This indicates that this specific model may not have strong mastery of "
+"Typst syntax."
+msgstr "这表明当前所选模型对 Typst 语法的支持较弱。"
+
+#: src/nodes/committer.py:26
+msgid "LAST COMPILER ERROR:"
+msgstr "最后一次编译器错误:"
+
+#: src/nodes/committer.py:29
+msgid "SUGGESTION:"
+msgstr "优化建议:"
+
+#: src/nodes/committer.py:30
+msgid "Switch to a more robust coding model in the /provider menu"
+msgstr "请在 /provider 菜单中切换到编程能力更强的模型"
+
+#: src/nodes/committer.py:31
+msgid "(e.g., meta/llama-3.3-70b-instruct, claude-3-5-sonnet, or deepseek-chat)."
+msgstr "(例如: meta/llama-3.3-70b-instruct、claude-3-5-sonnet 或 deepseek-chat)。"
+
+#: src/nodes/committer.py:39
+msgid "Approved"
+msgstr "通过"
+
+#: src/nodes/committer.py:39
+msgid "Rejected"
+msgstr "未通过"
+
+#: src/nodes/committer.py:54
+msgid "ATS TECHNICAL REPORT:"
+msgstr "ATS 技术匹配报告:"
+
+#: src/nodes/committer.py:56
+msgid "Status:"
+msgstr "审核状态:"
+
+#: src/nodes/committer.py:57
+msgid "Overall Score:"
+msgstr "综合得分:"
+
+#: src/nodes/committer.py:58
+msgid "Attempts Made:"
+msgstr "优化尝试次数:"
+
+#: src/nodes/committer.py:59
+msgid "Mandatory Requirements Coverage:"
+msgstr "必填要求覆盖率:"
+
+#: src/nodes/committer.py:60
+msgid "Overall Keywords Coverage:"
+msgstr "整体关键词覆盖率:"
+
+#: src/nodes/committer.py:62
+msgid "Missing Mandatory:"
+msgstr "缺失的必填项:"
+
+#: src/nodes/committer.py:63
+msgid "Missing Differentiators:"
+msgstr "缺失的加分项:"
+
+#: src/nodes/committer.py:67
+msgid "Keyword Stuffing Alert:"
+msgstr "关键词堆砌预警:"
+
+#: src/nodes/committer.py:72
+msgid "Gaps Added to Backlog (doc/GAPS.md):"
+msgstr "已记录至待学习技能清单 (doc/GAPS.md):"
+
+#: src/nodes/committer.py:74
+msgid "PDF generated at:"
+msgstr "PDF 输出路径:"
+
+#: src/nodes/committer.py:83
+msgid "Total Token Consumption:"
+msgstr "Token 总消耗:"
+
+#: src/nodes/committer.py:83
+msgid "Prompt:"
+msgstr "输入 (Prompt):"
+
+#: src/nodes/committer.py:83
+msgid "Completion:"
+msgstr "生成 (Completion):"
+
+#: src/nodes/term_extractor.py:52
+msgid ""
+"The model returned an empty response. Verify that the selected model in "
+"providers.json supports Tool Calling or text generation."
+msgstr "模型返回了空响应。请确认 providers.json 中选择的模型支持 Tool Calling 或文本生成。"
+
+#: src/tools/file_manager.py:63
+#, python-brace-format
+msgid "No template found for language '{lang}' in '{dir}'."
+msgstr "在 '{dir}' 中未找到语言 '{lang}' 的模板文件。"
+
+#: src/tools/json_parser.py:141
+#, python-brace-format
+msgid "The LLM returned a completely empty response for {model}."
+msgstr "大模型针对 {model} 返回了完全空的响应。"
+
+#: src/tools/json_parser.py:146
+msgid "The LLM returned only empty thinking tags."
+msgstr "大模型仅返回了空的思考标签。"
+
+#: src/tools/json_parser.py:150
+msgid "No JSON block was found in the LLM response."
+msgstr "大模型响应中未检测到有效的 JSON 代码块。"
+
+#: src/tools/json_parser.py:171
+msgid "Could not decode or repair JSON generated by LLM:"
+msgstr "无法解析或修复大模型生成的 JSON 数据:"
+
+#: src/tools/json_parser.py:172
+msgid "Original raw text:"
+msgstr "原始输出文本:"
+
+#: src/tools/typst_runner.py:20
+msgid "Error compiling Typst:"
+msgstr "Typst 编译失败:"
+
+#: src/tools/typst_runner.py:22
+msgid "The 'typst' binary is not installed in the system PATH."
+msgstr "系统 PATH 环境变量中未找到 'typst' 可执行文件。"
+
+#: src/tools/typst_runner.py:32
+msgid "Error extracting text with pdftotext:"
+msgstr "使用 pdftotext 提取文本时发生错误:"
+
+#: src/tools/typst_runner.py:34
+msgid "The 'pdftotext' binary is not installed in the system PATH."
+msgstr "系统 PATH 环境变量中未找到 'pdftotext' 可执行文件。"

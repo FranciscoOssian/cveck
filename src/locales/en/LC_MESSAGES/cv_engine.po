@@ -1,0 +1,606 @@
+# English translations for cveck.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the cveck project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cveck 0.1.0\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/cli.py:69
+msgid "Active Provider:"
+msgstr "Active Provider:"
+
+#: src/cli.py:69 src/nodes/committer.py:44 src/nodes/committer.py:49
+msgid "None"
+msgstr "None"
+
+#: src/cli.py:70
+msgid "Commands:"
+msgstr "Commands:"
+
+#: src/cli.py:70
+msgid "manage"
+msgstr "manage"
+
+#: src/cli.py:70
+msgid "clean"
+msgstr "clean"
+
+#: src/cli.py:76 src/cli.py:253
+msgid "Select model"
+msgstr "Select model"
+
+#: src/cli.py:77
+msgid "Type to filter with TAB or arrows"
+msgstr "Type to filter with TAB or arrows"
+
+#: src/cli.py:87
+msgid "Local"
+msgstr "Local"
+
+#: src/cli.py:96
+msgid "Select Provider"
+msgstr "Select Provider"
+
+#: src/cli.py:103
+msgid "Choose number or enter key"
+msgstr "Choose number or enter key"
+
+#: src/cli.py:118
+msgid "Provider & Model Manager"
+msgstr "Provider & Model Manager"
+
+#: src/cli.py:120
+msgid "Key"
+msgstr "Key"
+
+#: src/cli.py:121
+msgid "Name"
+msgstr "Name"
+
+#: src/cli.py:122
+msgid "Active Model"
+msgstr "Active Model"
+
+#: src/cli.py:123
+msgid "Total Models"
+msgstr "Total Models"
+
+#: src/cli.py:124
+msgid "Status"
+msgstr "Status"
+
+#: src/cli.py:129
+msgid "● ACTIVE"
+msgstr "● ACTIVE"
+
+#: src/cli.py:140
+msgid "Available actions:"
+msgstr "Available actions:"
+
+#: src/cli.py:141
+msgid "Switch Active Provider / Model"
+msgstr "Switch Active Provider / Model"
+
+#: src/cli.py:142
+msgid "Add New Provider (from Presets or Custom)"
+msgstr "Add New Provider (from Presets or Custom)"
+
+#: src/cli.py:143
+msgid "Add Model to a Provider"
+msgstr "Add Model to a Provider"
+
+#: src/cli.py:144
+msgid "Remove Model from a Provider"
+msgstr "Remove Model from a Provider"
+
+#: src/cli.py:145
+msgid "Remove a Provider"
+msgstr "Remove a Provider"
+
+#: src/cli.py:146
+msgid "Return to Main Chat"
+msgstr "Return to Main Chat"
+
+#: src/cli.py:148 src/cli.py:206
+msgid "Choose an option"
+msgstr "Choose an option"
+
+#: src/cli.py:167 src/cli.py:523
+msgid "Press ENTER to continue..."
+msgstr "Press ENTER to continue..."
+
+#: src/cli.py:174
+msgid "Fetch online models from provider via API (/models)?"
+msgstr "Fetch online models from provider via API (/models)?"
+
+#: src/cli.py:177
+msgid "Fetching models via API..."
+msgstr "Fetching models via API..."
+
+#: src/cli.py:180
+#, python-brace-format
+msgid "Warning: Fetch failed ({error})"
+msgstr "Warning: Fetch failed ({error})"
+
+#: src/cli.py:185
+msgid "Select provider to activate"
+msgstr "Select provider to activate"
+
+#: src/cli.py:189
+#, python-brace-format
+msgid "Choose model for '{name}'"
+msgstr "Choose model for '{name}'"
+
+#: src/cli.py:190
+msgid "Enter model name"
+msgstr "Enter model name"
+
+#: src/cli.py:192
+#, python-brace-format
+msgid "✔ Active provider set: {name} -> {model}"
+msgstr "✔ Active provider set: {name} -> {model}"
+
+#: src/cli.py:200
+msgid "Available presets:"
+msgstr "Available presets:"
+
+#: src/cli.py:204
+msgid "Custom Provider (Custom OpenAI/Anthropic)"
+msgstr "Custom Provider (Custom OpenAI/Anthropic)"
+
+#: src/cli.py:226
+#, python-brace-format
+msgid "✔ Provider \"{name}\" added successfully!"
+msgstr "✔ Provider \"{name}\" added successfully!"
+
+#: src/cli.py:230
+msgid "Unique key/slug (e.g. openrouter, groq, zai)"
+msgstr "Unique key/slug (e.g. openrouter, groq, zai)"
+
+#: src/cli.py:231
+msgid "Display name"
+msgstr "Display name"
+
+#: src/cli.py:232
+msgid "Type"
+msgstr "Type"
+
+#: src/cli.py:233
+msgid "Base URL"
+msgstr "Base URL"
+
+#: src/cli.py:234
+msgid "Environment variable (.env)"
+msgstr "Environment variable (.env)"
+
+#: src/cli.py:235
+msgid "Default initial model"
+msgstr "Default initial model"
+
+#: src/cli.py:245
+#, python-brace-format
+msgid "✔ Custom provider \"{name}\" registered!"
+msgstr "✔ Custom provider \"{name}\" registered!"
+
+#: src/cli.py:249
+msgid "Add model to which provider?"
+msgstr "Add model to which provider?"
+
+#: src/cli.py:253
+msgid "Model name"
+msgstr "Model name"
+
+#: src/cli.py:254
+#, python-brace-format
+msgid "Set '{model}' as active model for '{name}'?"
+msgstr "Set '{model}' as active model for '{name}'?"
+
+#: src/cli.py:257
+#, python-brace-format
+msgid "✔ Model \"{model}\" added!"
+msgstr "✔ Model \"{model}\" added!"
+
+#: src/cli.py:262
+msgid "Remove model from which provider?"
+msgstr "Remove model from which provider?"
+
+#: src/cli.py:267
+msgid "The provider must have at least 1 model."
+msgstr "The provider must have at least 1 model."
+
+#: src/cli.py:271
+msgid "Model number to remove"
+msgstr "Model number to remove"
+
+#: src/cli.py:275
+#, python-brace-format
+msgid "✔ Model \"{model}\" removed!"
+msgstr "✔ Model \"{model}\" removed!"
+
+#: src/cli.py:280
+msgid "Which provider to remove?"
+msgstr "Which provider to remove?"
+
+#: src/cli.py:281
+#, python-brace-format
+msgid "Remove '{name}'?"
+msgstr "Remove '{name}'?"
+
+#: src/cli.py:283
+#, python-brace-format
+msgid "✔ Provider \"{key}\" removed!"
+msgstr "✔ Provider \"{key}\" removed!"
+
+#: src/cli.py:293
+msgid "Job Detected:"
+msgstr "Job Detected:"
+
+#: src/cli.py:301
+msgid "Identified Gaps:"
+msgstr "Identified Gaps:"
+
+#: src/cli.py:303
+msgid "Gaps:"
+msgstr "Gaps:"
+
+#: src/cli.py:303
+msgid "No critical gaps found in profile."
+msgstr "No critical gaps found in profile."
+
+#: src/cli.py:308
+msgid "Typst Generated:"
+msgstr "Typst Generated:"
+
+#: src/cli.py:308
+msgid "STAR structure with bold front-loading ready."
+msgstr "STAR structure with bold front-loading ready."
+
+#: src/cli.py:313 src/cli.py:315
+msgid "Typst Compilation:"
+msgstr "Typst Compilation:"
+
+#: src/cli.py:313
+msgid "Syntax error (triggering auto-repair)."
+msgstr "Syntax error (triggering auto-repair)."
+
+#: src/cli.py:315
+msgid "PDF generated and text extracted successfully."
+msgstr "PDF generated and text extracted successfully."
+
+#: src/cli.py:320
+msgid "[Auto-Repair] Fixing Typst syntax..."
+msgstr "[Auto-Repair] Fixing Typst syntax..."
+
+#: src/cli.py:327
+msgid "APPROVED"
+msgstr "APPROVED"
+
+#: src/cli.py:327
+msgid "REJECTED"
+msgstr "REJECTED"
+
+#: src/cli.py:329
+msgid "ATS Score:"
+msgstr "ATS Score:"
+
+#: src/cli.py:334
+msgid "[Reflection] Adjusting CV to cover mandatory terms..."
+msgstr "[Reflection] Adjusting CV to cover mandatory terms..."
+
+#: src/cli.py:339
+msgid "Final Agent Report"
+msgstr "Final Agent Report"
+
+#: src/cli.py:364
+msgid "Text Pasted in Terminal"
+msgstr "Text Pasted in Terminal"
+
+#: src/cli.py:368
+msgid "Clipboard"
+msgstr "Clipboard"
+
+#: src/cli.py:370
+msgid ""
+"Clipboard empty. Paste the job description below and type \"END\" on a "
+"new line:"
+msgstr ""
+"Clipboard empty. Paste the job description below and type \"END\" on a "
+"new line:"
+
+#: src/cli.py:380
+msgid "Manual Input"
+msgstr "Manual Input"
+
+#: src/cli.py:389
+msgid "Job Description Loaded"
+msgstr "Job Description Loaded"
+
+#: src/cli.py:390
+msgid "Lines:"
+msgstr "Lines:"
+
+#: src/cli.py:391
+msgid "Characters:"
+msgstr "Characters:"
+
+#: src/cli.py:392
+msgid "Running AI-powered adaptation pipeline..."
+msgstr "Running AI-powered adaptation pipeline..."
+
+#: src/cli.py:425
+#, python-brace-format
+msgid "⚡ Running Pipeline with [{name} -> {model}]..."
+msgstr "⚡ Running Pipeline with [{name} -> {model}]..."
+
+#: src/cli.py:428
+#, python-brace-format
+msgid "Processing with {model}..."
+msgstr "Processing with {model}..."
+
+#: src/cli.py:440
+msgid "❌ Authentication Error (401)"
+msgstr "❌ Authentication Error (401)"
+
+#: src/cli.py:442
+#, python-brace-format
+msgid ""
+"The API Key for provider [bold]{name}[/bold] is invalid or not "
+"configured.\n"
+"Check the [bold yellow]{env}[/bold yellow] variable in your "
+"[bold].env[/bold] file."
+msgstr ""
+"The API Key for provider [bold]{name}[/bold] is invalid or not "
+"configured.\n"
+"Check the [bold yellow]{env}[/bold yellow] variable in your "
+"[bold].env[/bold] file."
+
+#: src/cli.py:447
+msgid "Error during execution:"
+msgstr "Error during execution:"
+
+#: src/cli.py:451
+msgid "Press [bold]ENTER[/bold] to return to the main menu..."
+msgstr "Press [bold]ENTER[/bold] to return to the main menu..."
+
+#: src/cli.py:463
+msgid "✔ output/ folder cleaned!"
+msgstr "✔ output/ folder cleaned!"
+
+#: src/cli.py:464
+msgid "Press [bold]ENTER[/bold] to continue..."
+msgstr "Press [bold]ENTER[/bold] to continue..."
+
+#: src/cli.py:482
+msgid "Options:"
+msgstr "Options:"
+
+#: src/cli.py:489
+#, python-brace-format
+msgid "Press {key} to load job description from clipboard"
+msgstr "Press {key} to load job description from clipboard"
+
+#: src/cli.py:490
+#, python-brace-format
+msgid "Type {cmd} to change model/provider"
+msgstr "Type {cmd} to change model/provider"
+
+#: src/cli.py:491
+#, python-brace-format
+msgid "Type {cmd} to change interface language"
+msgstr "Type {cmd} to change interface language"
+
+#: src/cli.py:492
+#, python-brace-format
+msgid "Type {cmd1} to clean outputs | {cmd2} to exit"
+msgstr "Type {cmd1} to clean outputs | {cmd2} to exit"
+
+#: src/cli.py:497
+msgid "Goodbye!"
+msgstr "Goodbye!"
+
+#: src/cli.py:503
+msgid "Available Languages:"
+msgstr "Available Languages:"
+
+#: src/cli.py:509
+msgid "Select language number or locale code"
+msgstr "Select language number or locale code"
+
+#: src/cli.py:521
+msgid "Language changed to:"
+msgstr "Language changed to:"
+
+#: src/cli.py:534
+msgid "Job description is too short or empty."
+msgstr "Job description is too short or empty."
+
+#: src/cli.py:535
+msgid "Press ENTER to try again..."
+msgstr "Press ENTER to try again..."
+
+#: src/providers.py:87
+#, python-brace-format
+msgid "Provider '{key}' not found."
+msgstr "Provider '{key}' not found."
+
+#: src/providers.py:103
+msgid "Cannot remove the only registered provider."
+msgstr "Cannot remove the only registered provider."
+
+#: src/providers.py:119
+msgid "The provider must have at least one registered model."
+msgstr "The provider must have at least one registered model."
+
+#: src/providers.py:155
+#, python-brace-format
+msgid "Could not fetch models from {url}: {error}"
+msgstr "Could not fetch models from {url}: {error}"
+
+#: src/nodes/committer.py:17
+msgid "PROCESS HALTED: TYPST SYNTAX FAILURE"
+msgstr "PROCESS HALTED: TYPST SYNTAX FAILURE"
+
+#: src/nodes/committer.py:19
+msgid "Job:"
+msgstr "Job:"
+
+#: src/nodes/committer.py:20
+msgid "Compilation attempts:"
+msgstr "Compilation attempts:"
+
+#: src/nodes/committer.py:20
+msgid "syntax errors"
+msgstr "syntax errors"
+
+#: src/nodes/committer.py:22
+msgid "REASON:"
+msgstr "REASON:"
+
+#: src/nodes/committer.py:23
+msgid "The current model repeatedly failed to produce valid Typst code."
+msgstr "The current model repeatedly failed to produce valid Typst code."
+
+#: src/nodes/committer.py:24
+msgid ""
+"This indicates that this specific model may not have strong mastery of "
+"Typst syntax."
+msgstr ""
+"This indicates that this specific model may not have strong mastery of "
+"Typst syntax."
+
+#: src/nodes/committer.py:26
+msgid "LAST COMPILER ERROR:"
+msgstr "LAST COMPILER ERROR:"
+
+#: src/nodes/committer.py:29
+msgid "SUGGESTION:"
+msgstr "SUGGESTION:"
+
+#: src/nodes/committer.py:30
+msgid "Switch to a more robust coding model in the /provider menu"
+msgstr "Switch to a more robust coding model in the /provider menu"
+
+#: src/nodes/committer.py:31
+msgid "(e.g., meta/llama-3.3-70b-instruct, claude-3-5-sonnet, or deepseek-chat)."
+msgstr "(e.g., meta/llama-3.3-70b-instruct, claude-3-5-sonnet, or deepseek-chat)."
+
+#: src/nodes/committer.py:39
+msgid "Approved"
+msgstr "Approved"
+
+#: src/nodes/committer.py:39
+msgid "Rejected"
+msgstr "Rejected"
+
+#: src/nodes/committer.py:54
+msgid "ATS TECHNICAL REPORT:"
+msgstr "ATS TECHNICAL REPORT:"
+
+#: src/nodes/committer.py:56
+msgid "Status:"
+msgstr "Status:"
+
+#: src/nodes/committer.py:57
+msgid "Overall Score:"
+msgstr "Overall Score:"
+
+#: src/nodes/committer.py:58
+msgid "Attempts Made:"
+msgstr "Attempts Made:"
+
+#: src/nodes/committer.py:59
+msgid "Mandatory Requirements Coverage:"
+msgstr "Mandatory Requirements Coverage:"
+
+#: src/nodes/committer.py:60
+msgid "Overall Keywords Coverage:"
+msgstr "Overall Keywords Coverage:"
+
+#: src/nodes/committer.py:62
+msgid "Missing Mandatory:"
+msgstr "Missing Mandatory:"
+
+#: src/nodes/committer.py:63
+msgid "Missing Differentiators:"
+msgstr "Missing Differentiators:"
+
+#: src/nodes/committer.py:67
+msgid "Keyword Stuffing Alert:"
+msgstr "Keyword Stuffing Alert:"
+
+#: src/nodes/committer.py:72
+msgid "Gaps Added to Backlog (doc/GAPS.md):"
+msgstr "Gaps Added to Backlog (doc/GAPS.md):"
+
+#: src/nodes/committer.py:74
+msgid "PDF generated at:"
+msgstr "PDF generated at:"
+
+#: src/nodes/committer.py:83
+msgid "Total Token Consumption:"
+msgstr "Total Token Consumption:"
+
+#: src/nodes/committer.py:83
+msgid "Prompt:"
+msgstr "Prompt:"
+
+#: src/nodes/committer.py:83
+msgid "Completion:"
+msgstr "Completion:"
+
+#: src/nodes/term_extractor.py:52
+msgid ""
+"The model returned an empty response. Verify that the selected model in "
+"providers.json supports Tool Calling or text generation."
+msgstr ""
+"The model returned an empty response. Verify that the selected model in "
+"providers.json supports Tool Calling or text generation."
+
+#: src/tools/file_manager.py:63
+#, python-brace-format
+msgid "No template found for language '{lang}' in '{dir}'."
+msgstr "No template found for language '{lang}' in '{dir}'."
+
+#: src/tools/json_parser.py:141
+#, python-brace-format
+msgid "The LLM returned a completely empty response for {model}."
+msgstr "The LLM returned a completely empty response for {model}."
+
+#: src/tools/json_parser.py:146
+msgid "The LLM returned only empty thinking tags."
+msgstr "The LLM returned only empty thinking tags."
+
+#: src/tools/json_parser.py:150
+msgid "No JSON block was found in the LLM response."
+msgstr "No JSON block was found in the LLM response."
+
+#: src/tools/json_parser.py:171
+msgid "Could not decode or repair JSON generated by LLM:"
+msgstr "Could not decode or repair JSON generated by LLM:"
+
+#: src/tools/json_parser.py:172
+msgid "Original raw text:"
+msgstr "Original raw text:"
+
+#: src/tools/typst_runner.py:20
+msgid "Error compiling Typst:"
+msgstr "Error compiling Typst:"
+
+#: src/tools/typst_runner.py:22
+msgid "The 'typst' binary is not installed in the system PATH."
+msgstr "The 'typst' binary is not installed in the system PATH."
+
+#: src/tools/typst_runner.py:32
+msgid "Error extracting text with pdftotext:"
+msgstr "Error extracting text with pdftotext:"
+
+#: src/tools/typst_runner.py:34
+msgid "The 'pdftotext' binary is not installed in the system PATH."
+msgstr "The 'pdftotext' binary is not installed in the system PATH."

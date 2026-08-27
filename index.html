@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cveck — Autonomous Agentic Resume Fit &amp; ATS Engine</title>
+  <meta name="description" content="Open-source agentic pipeline built on LangGraph and Typst. Fits your profile to any job description with deterministic ATS scoring and minimal hallucinations.">
+  <meta name="author" content="Francisco Ossian">
+  <link rel="canonical" href="https://cveck.foln.dev/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cveck.foln.dev">
+  <meta property="og:title" content="FranciscoOssian/Cveck — Autonomous Agentic Resume Fit">
+  <meta property="og:description" content="Autonomous LangGraph state-machine that fits your master profile to any job description with factual grounding and ATS validation.">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary">
+
+  <style>
+    :root {
+      --gh-bg: #0d1117;
+      --gh-subtle: #161b22;
+      --gh-card: #21262d;
+      --gh-border: #30363d;
+      --gh-border-light: #484f58;
+      --gh-text: #e6edf3;
+      --gh-muted: #848d97;
+      --gh-link: #58a6ff;
+      --gh-green: #238636;
+      --gh-green-hover: #2ea043;
+      --gh-star: #e3b341;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--gh-bg);
+      color: var(--gh-text);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--gh-link);
+      color: #000;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      z-index: 100;
+      border-radius: 6px;
+    }
+    .skip-link:focus { top: 1rem; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 1.25rem; }
+    a { color: var(--gh-link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Topbar: Mobile-first & Robust */
+    header {
+      background: var(--gh-subtle);
+      border-bottom: 1px solid var(--gh-border);
+      padding: 0.65rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+    }
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .repo-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .repo-breadcrumb a { color: var(--gh-text); }
+    .repo-breadcrumb a:hover { color: var(--gh-link); text-decoration: none; }
+    .badge-public {
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--gh-muted);
+      border: 1px solid var(--gh-border);
+      border-radius: 2em;
+      padding: 0.05rem 0.45rem;
+      margin-left: 0.2rem;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.775rem;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none !important;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: 0.15s ease-in-out;
+    }
+    .btn-star {
+      background: var(--gh-card);
+      color: var(--gh-text);
+      border-color: var(--gh-border);
+    }
+    .btn-star:hover { background: var(--gh-border); border-color: var(--gh-border-light); }
+    .btn-star svg { fill: var(--gh-star); }
+
+    .btn-primary {
+      background: var(--gh-green);
+      color: #fff;
+      border-color: rgba(255,255,255,0.15);
+      padding: 0.45rem 1rem;
+      font-size: 0.85rem;
+    }
+    .btn-primary:hover { background: var(--gh-green-hover); }
+
+    /* Repo Tabs Nav: Native Horizontal Scrolling on Mobile (No removal!) */
+    .repo-nav {
+      background: var(--gh-subtle);
+      border-bottom: 1px solid var(--gh-border);
+      padding: 0;
+      font-size: 0.85rem;
+    }
+    .repo-nav ul {
+      display: flex;
+      list-style: none;
+      gap: 1.25rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 0 1.25rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; /* Firefox */
+    }
+    .repo-nav ul::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    
+    .repo-nav li a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.65rem 0;
+      color: var(--gh-muted);
+      border-bottom: 2px solid transparent;
+      font-weight: 500;
+    }
+    .repo-nav li a:hover { color: var(--gh-text); text-decoration: none; }
+    .repo-nav li.active a { color: var(--gh-text); border-bottom-color: #f78166; font-weight: 600; }
+    .counter {
+      background: rgba(110, 118, 129, 0.4);
+      color: var(--gh-text);
+      border-radius: 2em;
+      padding: 0.05rem 0.4rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    /* Hero */
+    .hero { padding: 2.5rem 0 2rem; }
+    .hero-meta {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .meta-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      background: var(--gh-subtle);
+      border: 1px solid var(--gh-border);
+      color: var(--gh-muted);
+    }
+    .meta-tag-blue { border-color: rgba(88, 166, 255, 0.4); color: var(--gh-link); background: rgba(88, 166, 255, 0.08); }
+    .meta-tag-green { border-color: rgba(63, 185, 80, 0.4); color: #3fb950; background: rgba(63, 185, 80, 0.08); }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 4.5vw, 2.9rem);
+      line-height: 1.18;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: var(--gh-muted);
+      max-width: 780px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    /* Clone Input: Never breaks mid-URL, scrolls cleanly on small screens */
+    .clone-input {
+      background: #04070c;
+      border: 1px solid var(--gh-border);
+      border-radius: 6px;
+      padding: 0.45rem 0.8rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #7ee787;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      max-width: 100%;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .clone-input span { color: var(--gh-muted); user-select: none; }
+
+    /* Trace & Document Dual Showcase */
+    .showcase {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      border: 1px solid var(--gh-border);
+      background: var(--gh-subtle);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 3rem;
+    }
+    .pane {
+      padding: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      overflow-x: auto;
+    }
+    .pane:first-child { border-right: 1px solid var(--gh-border); }
+    .pane-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--gh-muted);
+      margin-bottom: 0.65rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--gh-border);
+      display: flex;
+      justify-content: space-between;
+    }
+    .log { margin-bottom: 0.3rem; display: flex; gap: 0.45rem; white-space: nowrap; }
+    .log-ok { color: #3fb950; }
+    .log-warn { color: #d29922; }
+    .log-act { color: var(--gh-link); }
+    .typst-preview {
+      background: #06090f;
+      border: 1px solid var(--gh-border);
+      padding: 0.75rem;
+      border-radius: 6px;
+      line-height: 1.5;
+      color: #c9d1d9;
+    }
+    .typst-preview strong { color: var(--gh-link); }
+
+    /* Sections */
+    section { padding: 3rem 0; border-top: 1px solid var(--gh-border); }
+    .sec-eyebrow { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gh-link); margin-bottom: 0.35rem; }
+    .sec-title { font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+    .sec-desc { color: var(--gh-muted); max-width: 680px; margin-bottom: 1.75rem; font-size: 0.9rem; }
+
+    /* Cards Grid */
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+    .card {
+      background: var(--gh-subtle);
+      border: 1px solid var(--gh-border);
+      padding: 1.25rem;
+      border-radius: 8px;
+    }
+    .card h3 { font-size: 0.95rem; color: #fff; margin-bottom: 0.35rem; font-weight: 600; }
+    .card p { color: var(--gh-muted); font-size: 0.825rem; line-height: 1.5; }
+
+    /* Pipeline Sequence */
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.6rem;
+      counter-reset: flow;
+    }
+    .node {
+      background: #06090f;
+      border: 1px solid var(--gh-border);
+      padding: 0.85rem;
+      border-radius: 6px;
+    }
+    .node::before {
+      counter-increment: flow;
+      content: "Node 0" counter(flow);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--gh-link);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    .node h4 { font-size: 0.825rem; color: #fff; font-family: var(--font-mono); margin-bottom: 0.2rem; }
+    .node p { font-size: 0.75rem; color: var(--gh-muted); line-height: 1.4; }
+
+    /* Contribution & Community Hub */
+    .contribute-box {
+      background: linear-gradient(180deg, rgba(33, 38, 45, 0.8) 0%, rgba(22, 27, 34, 0.8) 100%);
+      border: 1px solid var(--gh-border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1.25rem;
+    }
+    .contribute-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .contribute-item {
+      background: #0d1117;
+      border: 1px solid var(--gh-border);
+      padding: 1rem;
+      border-radius: 6px;
+    }
+    .contribute-item h4 { font-size: 0.875rem; color: #fff; margin-bottom: 0.3rem; }
+    .contribute-item p { font-size: 0.78rem; color: var(--gh-muted); line-height: 1.45; margin-bottom: 0.65rem; }
+
+    /* Contributors Avatar Row */
+    .contributors-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      align-items: center;
+      margin-top: 0.75rem;
+    }
+    .gh-avatar {
+      border-radius: 50%;
+      border: 2px solid var(--gh-border);
+      transition: transform 0.15s, border-color 0.15s;
+      display: block;
+      background: var(--gh-card);
+    }
+    .gh-avatar:hover {
+      transform: scale(1.15);
+      border-color: var(--gh-link);
+    }
+
+    /* Code Snippets */
+    .snippet {
+      background: #04070c;
+      border: 1px solid var(--gh-border);
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #c9d1d9;
+      overflow-x: auto;
+      margin-top: 0.65rem;
+    }
+    .snippet code { display: block; line-height: 1.6; }
+    .code-comment { color: var(--gh-muted); }
+
+    /* Details/FAQ */
+    details {
+      background: var(--gh-subtle);
+      border: 1px solid var(--gh-border);
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+    }
+    summary {
+      padding: 0.85rem 1rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #f0f6fc;
+      cursor: pointer;
+      list-style-position: inside;
+    }
+    summary:hover { color: var(--gh-link); }
+    details p { padding: 0 1rem 1rem; color: var(--gh-muted); font-size: 0.825rem; line-height: 1.55; }
+
+    /* Footer: Responsive & Clean */
+    footer {
+      border-top: 1px solid var(--gh-border);
+      padding: 2.5rem 0;
+      font-size: 0.8rem;
+      color: var(--gh-muted);
+      background: var(--gh-subtle);
+    }
+    footer .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      list-style: none;
+      font-family: var(--font-mono);
+      font-size: 0.775rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .showcase { grid-template-columns: 1fr; }
+      .pane:first-child { border-right: none; border-bottom: 1px solid var(--gh-border); }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .hero-actions .btn, .hero-actions .clone-input { width: 100%; justify-content: center; }
+      footer .container { flex-direction: column; text-align: center; }
+      footer ul { justify-content: center; }
+    }
+  </style>
+</head>
+
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Topbar (GitHub-style Breadcrumb + Action CTAs) -->
+  <header>
+    <div class="container">
+      <div class="repo-breadcrumb">
+        <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor" style="color:var(--gh-muted); flex-shrink:0;"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h6.5a.25.25 0 0 1 .25.25v1.5a.25.25 0 0 1-.25.25h-6.5a.25.25 0 0 1-.25-.25Z"></path></svg>
+        <a href="https://github.com/FranciscoOssian" target="_blank" rel="noopener">FranciscoOssian</a>
+        <span style="color:var(--gh-muted)">/</span>
+        <a href="https://github.com/FranciscoOssian/cveck" target="_blank" rel="noopener"><strong>cveck</strong></a>
+        <span class="badge-public">Public</span>
+      </div>
+
+      <div class="header-actions">
+        <a href="https://github.com/FranciscoOssian/cveck" class="btn btn-star" target="_blank" rel="noopener" aria-label="Star on GitHub">
+          <svg height="14" viewBox="0 0 16 16" width="14"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.751.751 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path></svg>
+          <span>Star</span>
+          <span class="counter" id="gh-star-count">★</span>
+        </a>
+        <a href="https://github.com/FranciscoOssian/cveck/fork" class="btn btn-star" target="_blank" rel="noopener">
+          <span>Fork</span>
+          <span class="counter" id="gh-fork-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Repository Tabs: Intact on mobile with smooth touch-scroll -->
+  <nav class="repo-nav" aria-label="Repository Sections">
+    <div class="container">
+      <ul>
+        <li class="active"><a href="#main">Code</a></li>
+        <li><a href="https://github.com/FranciscoOssian/cveck/issues" target="_blank" rel="noopener">Issues <span class="counter" id="gh-issues-count">0</span></a></li>
+        <li><a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Pull requests <span class="counter" id="gh-pulls-count">0</span></a></li>
+        <li><a href="#guarantees">Guarantees</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#contribute">Contribute</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="main">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-meta">
+          <span class="meta-tag meta-tag-blue">LangGraph StateGraph</span>
+          <span class="meta-tag">Typst Vector Typesetter</span>
+          <span class="meta-tag">Python 3.11+</span>
+          <span class="meta-tag">MIT License</span>
+          <span class="meta-tag meta-tag-green" id="gh-activity">Active Repository</span>
+        </div>
+
+        <h1>Autonomous Agentic Resume Fit &amp; ATS State-Machine.</h1>
+        <p>A deterministic open-source developer tool that fits your verified master profile to any target job description. Truthful keyword alignment, automated gap logging, and minimal hallucinations.</p>
+
+        <!-- Conversion Action Row -->
+        <div class="hero-actions">
+          <a href="https://github.com/FranciscoOssian/cveck" class="btn btn-primary" target="_blank" rel="noopener">
+            <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.751.751 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.751.751 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"></path></svg>
+            <span>Star on GitHub</span>
+          </a>
+          <a href="#quickstart" class="btn btn-star">Quickstart Guide</a>
+          <div class="clone-input">
+            <span>$</span> git clone https://github.com/FranciscoOssian/cveck.git
+          </div>
+        </div>
+
+        <!-- Terminal + Typesetting Trace Showcase -->
+        <div class="showcase" aria-label="Engine Execution Trace">
+          <div class="pane">
+            <div class="pane-title">
+              <span>LangGraph CLI Stream (cveck)</span>
+              <span class="log-ok">● RUNNING</span>
+            </div>
+            <div class="log"><span class="log-ok">✔ [1/6]</span><span>term_extractor: 14 keywords parsed (ISO: en)</span></div>
+            <div class="log"><span class="log-warn">⚠ [2/6]</span><span>gap_finder: 1 hard gap [Kafka] -&gt; doc/GAPS.md</span></div>
+            <div class="log"><span class="log-ok">✔ [3/6]</span><span>cv_generator: STAR narrative &amp; bold front-loading</span></div>
+            <div class="log"><span class="log-ok">✔ [4/6]</span><span>typst_compiler: Vector PDF compiled (0 errors)</span></div>
+            <div class="log"><span class="log-ok">✔ [5/6]</span><span>ats_validator: Score 92.4/100 (Stuffing: 0.8% &lt; 2%)</span></div>
+            <div class="log"><span class="log-act">⚡ committer:</span><span>Committed output/cv-senior-en.pdf</span></div>
+          </div>
+          <div class="pane">
+            <div class="pane-title">
+                <span>Factual Grounding &amp; Output</span>
+                <span style="color:var(--gh-muted)">output/cv-senior-en.typ</span>
+            </div>
+            <p class="code-comment" style="font-size:0.75rem; margin-bottom:0.4rem;">// Single Source of Truth: doc/USER_PROFILE.md</p>
+            <div class="typst-preview">
+                <strong>*Distributed Architecture:*</strong> Led migration of auth services to Go, reducing p99 latency by 32% across 4.2M daily requests.
+            </div>
+            <div class="typst-preview" style="margin-top:0.5rem; border-color: rgba(210, 153, 34, 0.4);">
+                <span style="color:#d29922;">*DETECTED_GAP:*</span> Apache Kafka omitted from resume. Saved to study backlog in <code>doc/GAPS.md</code>.
+            </div>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Engineering Guarantees -->
+    <section id="guarantees" aria-labelledby="guar-title">
+      <div class="container">
+        <p class="sec-eyebrow">Core Invariants</p>
+        <h2 id="guar-title" class="sec-title">Why Cveck Exists</h2>
+        <p class="sec-desc">Designed for objective profile-to-job fit rather than chatbot guesswork. It treats resume alignment as a strict constraint-satisfaction problem bounded by your verified career history.</p>
+
+        <div class="grid-3">
+          <article class="card">
+            <h3>Zero-Hallucination Physical Barrier</h3>
+            <p>Your master career profile in <code>doc/USER_PROFILE.md</code> is the absolute truth. The state-machine is physically prevented from inventing unverified metrics or tools.</p>
+          </article>
+          <article class="card">
+            <h3>Self-Healing Typst Compiler</h3>
+            <p>If Typst code fails compilation, a dedicated syntax fixer analyzes compiler <code>stderr</code> and repairs braces, imports, and escaping in a closed loop without user intervention.</p>
+          </article>
+          <article class="card">
+            <h3>Deterministic ATS Scoring</h3>
+            <p>Mathematical regex boundary matching validates mandatory vs. optional requirements and enforces an anti-stuffing density threshold (&lt; 2%) to prevent keyword penalties.</p>
+          </article>
+          <article class="card">
+            <h3>Automated Skill-Gap Backlog</h3>
+            <p>When a target job requires skills missing from your profile, Cveck writes them into <code>doc/GAPS.md</code> and <code>doc/gaps.json</code> to build your study roadmap.</p>
+          </article>
+          <article class="card">
+            <h3>Pluggable Multi-Provider Hub</h3>
+            <p>Route requests to <strong>DeepSeek</strong>, <strong>NVIDIA NIM</strong>, <strong>Claude</strong>, <strong>OpenAI</strong>, or any custom <strong>OpenAI/Anthropic-compatible endpoint</strong> (including local backends like Ollama, vLLM, or LM Studio) with real-time token tracking.</p>
+          </article>
+          <article class="card">
+            <h3>Native GNU gettext (i18n)</h3>
+            <p>First-class localization across English (<code>en</code>), Brazilian Portuguese (<code>pt_BR</code>), and Mandarin Chinese (<code>zh</code>) via compiled Babel catalogs.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Architecture & Pipeline -->
+    <section id="architecture" aria-labelledby="arch-title">
+      <div class="container">
+        <p class="sec-eyebrow">StateGraph Workflow</p>
+        <h2 id="arch-title" class="sec-title">Cyclic LangGraph Architecture</h2>
+        <p class="sec-desc">A cyclic state graph executing deterministic nodes with automated retry loops.</p>
+
+        <div class="pipeline">
+          <div class="node">
+            <h4>term_extractor</h4>
+            <p>Parses job posting into canonical skills and mandatory criteria.</p>
+          </div>
+          <div class="node">
+            <h4>gap_finder</h4>
+            <p>Isolates unmatched skills against <code>USER_PROFILE.md</code>.</p>
+          </div>
+          <div class="node">
+            <h4>gaps_updater</h4>
+            <p>Atomically writes gaps into study backlog (JSON/MD).</p>
+          </div>
+          <div class="node">
+            <h4>cv_generator</h4>
+            <p>Generates STAR Typst source respecting strict budget (14-17 bullets).</p>
+          </div>
+          <div class="node">
+            <h4>typst_compiler</h4>
+            <p>Compiles vector PDF and extracts plain text via <code>pdftotext</code>.</p>
+          </div>
+          <div class="node">
+            <h4>ats_validator</h4>
+            <p>Evaluates keyword coverage, passing score to <code>committer</code> or <code>cv_refiner</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contribution & Roadmap (Conversion Hub) -->
+    <section id="contribute" aria-labelledby="contrib-title">
+      <div class="container">
+        <p class="sec-eyebrow">Community &amp; Contribution</p>
+          <h2 id="contrib-title" class="sec-title">Contributing to Cveck</h2>
+          <p class="sec-desc">Cveck is 100% open source under the MIT License. Contributions across templates, translations, scoring rules, and providers are welcome.</p>
+
+          <div class="contribute-box">
+            <h3 style="color:#fff; font-size:1.05rem; margin-bottom:0.4rem;">✦ Ways You Can Help the Project</h3>
+            <p style="color:var(--gh-muted); font-size:0.85rem;">Pick an area that fits your skills and submit a pull request:</p>
+
+          <div class="contribute-grid">
+            <div class="contribute-item">
+              <h4>1. Typst Templates</h4>
+              <p>Design and submit new localized Typst resume layouts in <code>templates/</code> (e.g., Spanish, German, French, Japanese, or alternative design themes).</p>
+              <a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Add Template PR →</a>
+            </div>
+            <div class="contribute-item">
+              <h4>2. i18n &amp; Translations</h4>
+              <p>Add new language catalogs or refine existing GNU gettext translations in <code>src/locales/</code> using Babel.</p>
+              <a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Submit Translation PR →</a>
+            </div>
+            <div class="contribute-item">
+              <h4>3. Provider Presets</h4>
+              <p>Add new LLM providers, local inference backends, or tested open models into <code>src/presets.json</code>.</p>
+              <a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Add Provider PR →</a>
+            </div>
+            <div class="contribute-item">
+              <h4>4. ATS Scorer &amp; Parser</h4>
+              <p>Improve keyword boundary matching, regex edge cases, and token optimization in <code>src/tools/</code> and LangGraph nodes.</p>
+              <a href="https://github.com/FranciscoOssian/cveck/issues" target="_blank" rel="noopener">Open Engine Issue / PR →</a>
+            </div>
+          </div>
+
+          <!-- Live GitHub Contributors Section -->
+          <div style="margin-top: 1.75rem; border-top: 1px solid var(--gh-border); padding-top: 1.25rem;">
+            <h4 style="color:#fff; font-size:0.875rem; margin-bottom:0.5rem;">Repository Contributors</h4>
+            <div class="contributors-row" id="gh-contributors">
+              <span style="color:var(--gh-muted); font-size:0.775rem;">Loading contributors...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quickstart -->
+    <section id="quickstart" aria-labelledby="qs-title">
+      <div class="container">
+        <p class="sec-eyebrow">Local Setup</p>
+        <h2 id="qs-title" class="sec-title">Getting Started in 3 Steps</h2>
+        <p class="sec-desc">Prerequisites: Python 3.11+, Typst CLI in system PATH, and Poppler (pdftotext).</p>
+
+        <div class="snippet">
+          <code class="code-comment"># 1. Clone repository &amp; install in editable mode</code>
+          <code>git clone https://github.com/FranciscoOssian/cveck.git</code>
+          <code>cd cveck</code>
+          <code>pip install -e .</code>
+          <br>
+          <code class="code-comment"># 2. Add API keys to .env (or select Ollama for 100% offline local inference)</code>
+          <code>cp .env.example .env</code>
+          <br>
+          <code class="code-comment"># 3. Fill doc/USER_PROFILE.md and launch interactive CLI</code>
+          <code>cveck</code>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <p class="sec-eyebrow">Reference</p>
+        <h2 id="faq-title" class="sec-title">Frequently Asked Questions</h2>
+
+        <details>
+          <summary>Is this a SaaS or a hosted platform?</summary>
+          <p>No. cveck is 100% free and open-source software (FOSS) licensed under MIT. It runs locally on your machine with zero telemetry, zero accounts, and zero cloud lock-in.</p>
+        </details>
+
+        <details>
+          <summary>Can I run it completely offline without paying for API keys?</summary>
+          <p>Yes. cveck supports any local OpenAI-compatible server (such as Ollama, vLLM, or LM Studio). You can run open-weight models locally (e.g. <code>llama3.1:8b</code>, <code>qwen2.5:7b</code>) via the interactive <code>/provider</code> menu with zero API costs.</p>
+        </details>
+
+        <details>
+          <summary>Why Typst instead of LaTeX or Markdown-to-PDF?</summary>
+          <p>Typst compiles in milliseconds, produces clean vector typography, supports programmatic layouts with reliable column breaking, and eliminates fragile LaTeX macro errors.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer: Cleanly wrapped on mobile without broken words -->
+  <footer>
+    <div class="container">
+      <p>✦ <strong>Cveck</strong> — Open source by <a href="https://github.com/FranciscoOssian" target="_blank" rel="noopener">Francisco Ossian</a> under <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT</a>.</p>
+      <ul>
+        <li><a href="https://github.com/FranciscoOssian/cveck" target="_blank" rel="noopener">GitHub Repo</a></li>
+        <li><a href="https://github.com/FranciscoOssian/cveck/stargazers" target="_blank" rel="noopener">⭐ Star</a></li>
+        <li><a href="https://github.com/FranciscoOssian/cveck/issues" target="_blank" rel="noopener">Issues</a></li>
+        <li><a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Pull Requests</a></li>
+        <li><a href="#main">Top ↑</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- GitHub API Script with Safe Fallbacks for 404 / Private Repos -->
+  <script>
+    (async function() {
+      const REPO = 'FranciscoOssian/...';
+      const api = (path) => fetch(`https://api.github.com/repos/${REPO}${path}`)
+        .then(r => r.ok ? r.json() : null)
+        .catch(() => null);
+
+      try {
+        const [repoData, contribs, pulls] = await Promise.all([
+          api(''),
+          api('/contributors?per_page=12'),
+          api('/pulls?state=open&per_page=1')
+        ]);
+
+        if (repoData) {
+          const starEl = document.getElementById('gh-star-count');
+          const forkEl = document.getElementById('gh-fork-count');
+          const issueEl = document.getElementById('gh-issues-count');
+          const activityEl = document.getElementById('gh-activity');
+
+          if (starEl && repoData.stargazers_count !== undefined) starEl.textContent = repoData.stargazers_count.toLocaleString();
+          if (forkEl && repoData.forks_count !== undefined) forkEl.textContent = repoData.forks_count.toLocaleString();
+          if (issueEl && repoData.open_issues_count !== undefined) issueEl.textContent = repoData.open_issues_count.toLocaleString();
+
+          if (activityEl && repoData.pushed_at) {
+            const date = new Date(repoData.pushed_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            activityEl.textContent = `Updated on ${date}`;
+          }
+        } else {
+          // Graceful fallback if repo is not yet public or network offline
+          const actEl = document.getElementById('gh-activity');
+          if (actEl) actEl.textContent = 'Active Development';
+        }
+
+        if (pulls && document.getElementById('gh-pulls-count')) {
+          document.getElementById('gh-pulls-count').textContent = Array.isArray(pulls) ? pulls.length : '0';
+        }
+
+        const contribEl = document.getElementById('gh-contributors');
+        if (contribs && Array.isArray(contribs) && contribs.length > 0 && contribEl) {
+          contribEl.innerHTML = contribs.map(c => `
+            <a href="${c.html_url}" target="_blank" rel="noopener" title="${c.login} (${c.contributions} commits)">
+              <img src="${c.avatar_url}" alt="${c.login}" class="gh-avatar" width="32" height="32" loading="lazy">
+            </a>
+          `).join('');
+        } else if (contribEl) {
+          contribEl.innerHTML = `<a href="https://github.com/${REPO}/graphs/contributors" target="_blank" rel="noopener" style="font-size:0.775rem;">View contributors on GitHub →</a>`;
+        }
+      } catch (err) {
+        const actEl = document.getElementById('gh-activity');
+        if (actEl) actEl.textContent = 'Active Development';
+      }
+    })();
+  </script>
+</body>
+</html>

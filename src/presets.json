@@ -1,0 +1,101 @@
+{
+  "nvidia": {
+    "name": "NVIDIA Build (NIM)",
+    "provider_type": "openai",
+    "base_url": "https://integrate.api.nvidia.com/v1",
+    "api_key_env": "NVIDIA_API_KEY",
+    "default_models": [
+      "meta/llama-3.3-70b-instruct",
+      "deepseek-ai/deepseek-v3",
+      "qwen/qwen2.5-72b-instruct",
+      "mistralai/mistral-large-2-instruct"
+    ]
+  },
+  "deepseek": {
+    "name": "DeepSeek API",
+    "provider_type": "openai",
+    "base_url": "https://api.deepseek.com/v1",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "default_models": [
+      "deepseek-chat",
+      "deepseek-reasoner"
+    ]
+  },
+  "openrouter": {
+    "name": "OpenRouter",
+    "provider_type": "openai",
+    "base_url": "https://openrouter.ai/api/v1",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "default_models": [
+      "anthropic/claude-3.5-sonnet",
+      "openai/gpt-4o",
+      "meta-llama/llama-3.3-70b-instruct",
+      "deepseek/deepseek-chat"
+    ]
+  },
+  "groq": {
+    "name": "Groq Cloud",
+    "provider_type": "openai",
+    "base_url": "https://api.groq.com/openai/v1",
+    "api_key_env": "GROQ_API_KEY",
+    "default_models": [
+      "llama-3.3-70b-versatile",
+      "mixtral-8x7b-32768"
+    ]
+  },
+  "together": {
+    "name": "Together AI",
+    "provider_type": "openai",
+    "base_url": "https://api.together.xyz/v1",
+    "api_key_env": "TOGETHER_API_KEY",
+    "default_models": [
+      "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+      "Qwen/Qwen2.5-72B-Instruct-Turbo"
+    ]
+  },
+  "zai": {
+    "name": "Z.AI (GLM)",
+    "provider_type": "openai",
+    "base_url": "https://api.z.ai/api/paas/v4",
+    "api_key_env": "ZAI_API_KEY",
+    "default_models": [
+      "glm-5.3",
+      "glm-5.2",
+      "glm-4.7-flash",
+      "glm-4.5-flash"
+    ]
+  },
+  "openai": {
+    "name": "OpenAI Oficial",
+    "provider_type": "openai",
+    "base_url": "https://api.openai.com/v1",
+    "api_key_env": "OPENAI_API_KEY",
+    "default_models": [
+      "gpt-4o",
+      "gpt-4o-mini",
+      "o1",
+      "o3-mini"
+    ]
+  },
+  "anthropic": {
+    "name": "Anthropic Claude",
+    "provider_type": "anthropic",
+    "base_url": null,
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "default_models": [
+      "claude-3-5-sonnet-20241022",
+      "claude-3-5-haiku-20241022"
+    ]
+  },
+  "ollama": {
+    "name": "Ollama Local",
+    "provider_type": "openai",
+    "base_url": "http://localhost:11434/v1",
+    "api_key_env": null,
+    "default_models": [
+      "llama3.1:8b",
+      "qwen2.5:7b",
+      "mistral"
+    ]
+  }
+}

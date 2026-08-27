@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "cveck": "./src/graph.py:app"
+  },
+  "env": ".env"
+}

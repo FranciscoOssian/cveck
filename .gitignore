@@ -1,0 +1,52 @@
+# Dados Pessoais e Configurações Locais
+doc/USER_PROFILE.md
+doc/perguntas.md
+doc/GAPS.md
+doc/gaps.json
+providers.json
+.env
+
+# Saídas geradas
+output/
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+env/
+venv/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+
+# templates
+templates/*.typ
+!templates/template.typ
+!templates/*.example.typ
+
+# translations
+*.mo
+
+# PDF's
+*.pdf

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cv-pipeline"
+version = "0.1.0"
+description = "Pipeline automatizado de customização de CVs e validação ATS com LangGraph e Typst"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Francisco Ossian", email = "francisco@foln.dev" }
+]
+dependencies = [
+    "langgraph>=1.0.0",
+    "langchain-core>=0.3.0",
+    "langchain-openai>=0.2.0",
+    "langchain-anthropic>=0.2.0",
+    "pydantic>=2.7.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
+    "typer>=0.12.0",
+    "prompt_toolkit>=3.0.0",
+    "babel>=2.14.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+cveck = "src.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

@@ -2,10 +2,16 @@ import os
 import sys
 import shutil
 import subprocess
-import termios
 import traceback
 from datetime import datetime
 from typing import Optional
+
+try:
+    import termios
+    system = "linux"
+except ImportError:
+    import msvcrt
+    system = "windows"
 
 import typer
 from rich.console import Console
@@ -37,7 +43,11 @@ console = Console()
 def flush_terminal_stdin():
     """Clear any residual text in terminal buffer to prevent bash leaks."""
     try:
-        termios.tcflush(sys.stdin, termios.TCIFLUSH)
+        if system == "linux":
+            termios.tcflush(sys.stdin, termios.TCIFLUSH)
+        else:
+            while msvcrt.kbhit():
+                msvcrt.getch()
     except Exception:
         pass
 

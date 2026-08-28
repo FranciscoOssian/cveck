@@ -10,6 +10,11 @@ PRESETS_FILE = Path(__file__).resolve().parent / "presets.json"
 USER_CONFIG_FILE = BASE_DIR / "providers.json"
 
 
+class NoProviderConfiguredError(Exception):
+    """Raised when the user has no provider registered in providers.json yet."""
+    pass
+
+
 def load_presets() -> Dict[str, Dict[str, Any]]:
     """Load default project presets."""
     if not PRESETS_FILE.exists():
@@ -22,25 +27,9 @@ def load_providers_config() -> Dict[str, Any]:
     presets = load_presets()
 
     if not USER_CONFIG_FILE.exists():
-        initial_providers = {}
-        for key, p in presets.items():
-            first_model = p["default_models"][0] if p.get("default_models") else "default"
-            initial_providers[key] = {
-                "name": p["name"],
-                "provider_type": p["provider_type"],
-                "base_url": p["base_url"],
-                "api_key_env": p["api_key_env"],
-                "active_model": first_model,
-                "models": p.get("default_models", [])
-            }
-
-        default_active = next(
-            (key for key in ("zai", "nvidia") if key in initial_providers),
-            next(iter(initial_providers)),
-        )
         initial_config = {
-            "active_provider": default_active,
-            "providers": initial_providers
+            "active_provider": None,
+            "providers": {}
         }
         save_providers_config(initial_config)
         return initial_config
@@ -58,16 +47,19 @@ def save_providers_config(config: Dict[str, Any]) -> None:
 
 
 def get_active_provider_info() -> Dict[str, Any]:
-    """Return current active provider and model data."""
+    """Return current active provider and model data.
+
+    Raises NoProviderConfiguredError if the user hasn't registered any
+    provider yet — callers must handle this and guide the user to /provider.
+    """
     config = load_providers_config()
-    active_key = config.get("active_provider", "nvidia")
-    provider = config.get("providers", {}).get(active_key)
-    
+    active_key = config.get("active_provider")
+    provider = config.get("providers", {}).get(active_key) if active_key else None
+
     if not provider:
-        active_key = next(iter(config["providers"]))
-        config["active_provider"] = active_key
-        save_providers_config(config)
-        provider = config["providers"][active_key]
+        raise NoProviderConfiguredError(
+            _("No provider configured. Use /provider to add one.")
+        )
 
     return {
         "key": active_key,

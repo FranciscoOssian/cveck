@@ -27,6 +27,7 @@ from src.providers import (
     load_providers_config,
     save_providers_config,
     get_active_provider_info,
+    NoProviderConfiguredError,
     set_active_provider_and_model,
     remove_provider,
     remove_model_from_provider,
@@ -72,11 +73,19 @@ def get_clipboard_text() -> str:
 
 
 def render_header():
-    p = get_active_provider_info()
     console.clear()
+    try:
+        p = get_active_provider_info()
+        provider_line = (
+            f"[dim]{_('Active Provider:')}[/dim] [bold green]{p['name']}[/bold green] "
+            f"([yellow]{p['model']}[/yellow]) | [dim]Env:[/dim] {p.get('api_key_env') or _('None')}"
+        )
+    except NoProviderConfiguredError:
+        provider_line = f"[bold red]{_('No provider configured — use /provider to add one')}[/bold red]"
+
     header_text = (
         f"[bold cyan]✦ CVECK (Agentic Pipeline)[/bold cyan]\n"
-        f"[dim]{_('Active Provider:')}[/dim] [bold green]{p['name']}[/bold green] ([yellow]{p['model']}[/yellow]) | [dim]Env:[/dim] {p.get('api_key_env') or _('None')}\n"
+        f"{provider_line}\n"
         f"[dim]{_('Commands:')}[/dim] [magenta]/provider[/magenta] ({_('manage')}) | [magenta]/clean[/magenta] ({_('clean')}) | [magenta]/exit[/magenta]"
     )
     console.print(Panel(header_text, border_style="blue", expand=False))
@@ -221,10 +230,32 @@ def _add_provider(config):
     Prompt.ask(_ProviderMenu.press_enter())
 
 
+def _prompt_activate_new_provider(provider_key: str, prov: dict) -> None:
+    """After registering a provider, ask if it should become active and with which model."""
+    activate = Confirm.ask(
+        _("Activate provider '{name}' now?").format(name=prov["name"]),
+        default=True
+    )
+    if not activate:
+        return
+
+    chosen_model = None
+    if Confirm.ask(_("Choose a specific model now?"), default=False):
+        fetched = _ProviderMenu._fetch_models(prov)
+        models = fetched or prov.get("models", [])
+        chosen_model = interactive_model_selector(
+            models, _("Choose model for '{name}'").format(name=prov["name"])
+        ) if models else Prompt.ask(_("Model name"))
+
+    set_active_provider_and_model(provider_key, chosen_model)
+    msg = _("✔ Active provider set: {name}").format(name=prov["name"])
+    console.print(f"[bold green]{msg}[/bold green]")
+
+
 def _add_provider_from_preset(config, available_presets, preset_keys, choice):
     selected_key = preset_keys[choice - 1]
     p_data = available_presets[selected_key]
-    config["providers"][selected_key] = {
+    new_provider = {
         "name": p_data["name"],
         "provider_type": p_data["provider_type"],
         "base_url": p_data["base_url"],
@@ -232,8 +263,10 @@ def _add_provider_from_preset(config, available_presets, preset_keys, choice):
         "active_model": p_data["default_models"][0] if p_data.get("default_models") else "default",
         "models": p_data.get("default_models", [])
     }
+    config["providers"][selected_key] = new_provider
     save_providers_config(config)
     console.print(f"\n[bold green]{_('✔ Provider \"{name}\" added successfully!').format(name=p_data['name'])}[/bold green]")
+    _prompt_activate_new_provider(selected_key, new_provider)
 
 
 def _add_custom_provider(config):
@@ -243,7 +276,7 @@ def _add_custom_provider(config):
     custom_url = Prompt.ask(_("Base URL"))
     custom_env = Prompt.ask(_("Environment variable (.env)"))
     custom_model = Prompt.ask(_("Default initial model"))
-    config["providers"][custom_key] = {
+    new_provider = {
         "name": custom_name,
         "provider_type": custom_type,
         "base_url": custom_url,
@@ -251,8 +284,10 @@ def _add_custom_provider(config):
         "active_model": custom_model,
         "models": [custom_model]
     }
+    config["providers"][custom_key] = new_provider
     save_providers_config(config)
     console.print(f"\n[bold green]{_('✔ Custom provider \"{name}\" registered!').format(name=custom_name)}[/bold green]")
+    _prompt_activate_new_provider(custom_key, new_provider)
 
 
 def _add_model(config):
@@ -431,7 +466,16 @@ def _run_pipeline(full_jd: str, source_label: str):
         "last_step_tokens": {}
     }
 
-    active_info = get_active_provider_info()
+    try:
+        active_info = get_active_provider_info()
+    except NoProviderConfiguredError:
+        console.print(Panel(
+            f"[bold red]{_('No provider configured.')}[/bold red]\n"
+            f"{_('Use /provider to add one (from presets or a custom OpenAI/Anthropic-compatible endpoint).')}",
+            border_style="red"
+        ))
+        Prompt.ask(f"\n{_('Press [bold]ENTER[/bold] to return to the main menu...')}")
+        return
     running_msg = _("⚡ Running Pipeline with [{name} -> {model}]...").format(name=active_info['name'], model=active_info['model'])
     console.print(f"\n[bold cyan]{running_msg}[/bold cyan]")
 

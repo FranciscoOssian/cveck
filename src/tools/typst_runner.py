@@ -9,7 +9,7 @@ from src.config import BASE_DIR
 def compile_typst_to_pdf(typ_path: Path, pdf_path: Path) -> Tuple[bool, str]:
     """Compile Typst file to PDF passing --root to repository root."""
     try:
-        result = typst.compile(
+        typst.compile(
             str(typ_path),
             output=str(pdf_path),
             root=str(BASE_DIR),

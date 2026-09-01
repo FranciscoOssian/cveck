@@ -23,6 +23,7 @@
 ## 💡 Why Cveck?
 
 Traditional AI resume tools suffer from three fatal flaws:
+
 1. **Hallucinations & Resume Inflation:** They invent technologies and fake metrics you never worked with.
 2. **Fragile Typesetting:** They produce broken Markdown or bloated LaTeX templates that fail to compile.
 3. **Black-box Keyword Stuffing:** They spam keywords blindly without understanding ATS parser weighting or density penalties.
@@ -79,17 +80,17 @@ Traditional AI resume tools suffer from three fatal flaws:
 
 The pipeline operates as a cyclic deterministic graph compiled with **LangGraph**:
 
-| Step | Node | Functionality |
-| :--- | :--- | :--- |
+| Step   | Node             | Functionality                                                                            |
+| :----- | :--------------- | :--------------------------------------------------------------------------------------- |
 | **01** | `term_extractor` | Parses the job description into canonical hard skills, tools, and mandatory constraints. |
-| **02** | `gap_finder` | Compares extracted terms with `USER_PROFILE.md` to flag unacquired skills as hard gaps. |
-| **03** | `gaps_updater` | Persists detected gaps into structured `GAPS.md` and `gaps.json` backlog. |
-| **04** | `cv_generator` | Generates pure Typst source code applying STAR narrative and bold front-loading. |
-| **05** | `typst_compiler` | Compiles `.typ` to vector `.pdf` and extracts layout text via `pdftotext`. |
-| **06** | `typst_fixer` | *(Conditional)* Auto-repairs Typst compilation errors with compiler traceback. |
-| **07** | `ats_validator` | Runs deterministic ATS scoring algorithm against extracted keywords. |
-| **08** | `cv_refiner` | *(Cyclic)* Reflects on missing keywords and refines Typst code (max 3 retries). |
-| **09** | `committer` | Produces technical summary report, saves `.txt` parse, terms dump, and final `.pdf`. |
+| **02** | `gap_finder`     | Compares extracted terms with `USER_PROFILE.md` to flag unacquired skills as hard gaps.  |
+| **03** | `gaps_updater`   | Persists detected gaps into structured `GAPS.md` and `gaps.json` backlog.                |
+| **04** | `cv_generator`   | Generates pure Typst source code applying STAR narrative and bold front-loading.         |
+| **05** | `typst_compiler` | Compiles `.typ` to vector `.pdf` and extracts layout text via `pymupdf`.                 |
+| **06** | `typst_fixer`    | _(Conditional)_ Auto-repairs Typst compilation errors with compiler traceback.           |
+| **07** | `ats_validator`  | Runs deterministic ATS scoring algorithm against extracted keywords.                     |
+| **08** | `cv_refiner`     | _(Cyclic)_ Reflects on missing keywords and refines Typst code (max 3 retries).          |
+| **09** | `committer`      | Produces technical summary report, saves `.txt` parse, terms dump, and final `.pdf`.     |
 
 ---
 
@@ -98,8 +99,6 @@ The pipeline operates as a cyclic deterministic graph compiled with **LangGraph*
 ### Prerequisites
 
 - **Python 3.11+**
-- **[Typst](https://github.com/typst/typst)** CLI installed in PATH (`typst --version`)
-- **pdftotext** (Poppler utilities: `sudo dnf install poppler-utils` or `sudo apt install poppler-utils`)
 
 ### 1. Clone & Install
 
@@ -156,13 +155,13 @@ cveck --lang zh
 
 ### In-Session Slash Commands
 
-| Command | Action |
-| :--- | :--- |
-| **`[ENTER]`** | Load and adapt job description directly from your clipboard. |
+| Command         | Action                                                                                        |
+| :-------------- | :-------------------------------------------------------------------------------------------- |
+| **`[ENTER]`**   | Load and adapt job description directly from your clipboard.                                  |
 | **`/provider`** | Open dynamic Model & Provider Manager (switch model, fetch API models, add custom endpoints). |
-| **`/lang`** | Change interface language interactively during runtime. |
-| **`/clean`** | Clean generated artifacts in `output/` directory. |
-| **`/exit`** | Exit the CLI. |
+| **`/lang`**     | Change interface language interactively during runtime.                                       |
+| **`/clean`**    | Clean generated artifacts in `output/` directory.                                             |
+| **`/exit`**     | Exit the CLI.                                                                                 |
 
 ---
 
@@ -182,6 +181,7 @@ pybabel compile -d src/locales -D cveck
 ```
 
 **Officially Supported Locales:**
+
 - 🇺🇸 **English (`en`)** — Source / Default
 - 🇧🇷 **Português (`pt_BR`)** — Brazilian Portuguese
 - 🇨🇳 **中文 (`zh`)** — Simplified Mandarin Chinese
@@ -212,6 +212,15 @@ cveck/
 ├── babel.cfg                 # Babel extraction rules
 └── pyproject.toml            # Project metadata and dependencies
 ```
+
+---
+
+## 🤖 Tested Models
+
+Models that have been tested and work with no (or almost no) problems during runtime.
+
+- minimax-m3
+- nemotron-3-ultra-550b-a55b
 
 ---
 

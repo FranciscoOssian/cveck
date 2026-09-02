@@ -98,45 +98,52 @@ The pipeline operates as a cyclic deterministic graph compiled with **LangGraph*
 
 ### Prerequisites
 
-- **Python 3.11+**
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/FranciscoOssian/cveck.git
-cd cveck
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install package with dependencies
-pip install -e .
-```
-
-### 2. Configure Environment
-
-Create a `.env` file in the root directory with your model API keys:
-
-```env
-DEEPSEEK_API_KEY=your_deepseek_api_key
-NVIDIA_API_KEY=your_nvidia_nim_key
-OPENROUTER_API_KEY=your_openrouter_key
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_anthropic_key
-```
-
-### 3. Setup Your Master Profile
-
-Edit `doc/USER_PROFILE.md` with your factual career history, achievements, and core stack. This file acts as the **single source of truth** for all generations.
-
-### 4. Run the CLI
-
-```bash
-cveck
-```
+- **Python 3.11+** installed and available in your PATH.
 
 ---
+
+### ⚡ 1-Step Automated Setup
+
+Clone the repository and run the setup script for your operating system:
+
+#### 🐧 Linux / 🍎 macOS
+```bash
+git clone https://github.com/FranciscoOssian/cveck.git && cd cveck
+bash setup.sh
+```
+#### 🪟 Windows (PowerShell)
+
+```
+git clone https://github.com/FranciscoOssian/cveck.git; cd cveck
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
+```
+
+> **What the setup script does automatically:**
+> 1. Verifies Python 3.11+ installation.
+> 2. Creates a clean `.venv` and installs all dependencies in editable mode (`pip install -e .`).
+> 3. Compiles all i18n translation catalogs (`gettext`/Babel).
+> 4. Generates your default `.env` and `doc` folder.
+
+---
+
+### 2. Configure & Run
+
+1. Add your LLM API keys to `.env` (or leave empty if using local Ollama):
+```env
+DEEPSEEK_API_KEY=your_key_here
+# Optional: NVIDIA_API_KEY, OPENROUTER_API_KEY, OPENAI_API_KEY, ANTHROPIC_API_KEY
+```
+
+2. Activate the virtual environment and start Cveck:
+```bash
+# Linux / macOS:
+source .venv/bin/activate
+cveck
+
+# Windows:
+.venv\Scripts\Activate.ps1
+cveck
+```
 
 ## 💻 CLI Commands & Options
 

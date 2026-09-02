@@ -30,7 +30,11 @@
       "anthropic/claude-3.5-sonnet",
       "openai/gpt-4o",
       "meta-llama/llama-3.3-70b-instruct",
-      "deepseek/deepseek-chat"
+      "deepseek/deepseek-chat",
+      "minimax/minimax-m3:free",
+      "nvidia/nemotron-3.5-lightning:free",
+      "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "nvidia/nemotron-3-nvidia/nemotron-3-ultra-550b-a55b:free"
     ]
   },
   "groq": {

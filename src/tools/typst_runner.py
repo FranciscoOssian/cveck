@@ -1,5 +1,5 @@
 import typst
-import fitz
+import pymupdf as fitz
 from pathlib import Path
 from src.i18n import _
 from typing import Tuple, cast

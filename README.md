@@ -228,6 +228,7 @@ Models that have been tested and work with no (or almost no) problems during run
 
 - minimax-m3
 - nemotron-3-ultra-550b-a55b
+- deepseek-v4-flash
 
 ---
 

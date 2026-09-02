@@ -648,20 +648,19 @@
     <section id="quickstart" aria-labelledby="qs-title">
       <div class="container">
         <p class="sec-eyebrow">Local Setup</p>
-        <h2 id="qs-title" class="sec-title">Getting Started in 3 Steps</h2>
-        <p class="sec-desc">Prerequisites: Python 3.11+, Typst CLI in system PATH, and Poppler (pdftotext).</p>
+        <h2 id="qs-title" class="sec-title">Getting Started in Seconds</h2>
+        <p class="sec-desc">Prerequisites: Python 3.11+. The automated setup handles virtualenv, dependencies, translations, and configuration scaffolding.</p>
 
         <div class="snippet">
-          <code class="code-comment"># 1. Clone repository &amp; install in editable mode</code>
-          <code>git clone https://github.com/FranciscoOssian/cveck.git</code>
-          <code>cd cveck</code>
-          <code>pip install -e .</code>
+          <code class="code-comment"># --- Linux / macOS (1-step automated setup) ---</code>
+          <code>git clone https://github.com/FranciscoOssian/cveck.git &amp;&amp; cd cveck</code>
+          <code>bash setup.sh</code>
+          <code>source .venv/bin/activate &amp;&amp; cveck</code>
           <br>
-          <code class="code-comment"># 2. Add API keys to .env (or select Ollama for 100% offline local inference)</code>
-          <code>cp .env.example .env</code>
-          <br>
-          <code class="code-comment"># 3. Fill doc/USER_PROFILE.md and launch interactive CLI</code>
-          <code>cveck</code>
+          <code class="code-comment"># --- Windows PowerShell (1-step automated setup) ---</code>
+          <code>git clone https://github.com/FranciscoOssian/cveck.git; cd cveck</code>
+          <code>powershell -ExecutionPolicy Bypass -File .\setup.ps1</code>
+          <code>.venv\Scripts\Activate.ps1; cveck</code>
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.11%2B-blue.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![LangGraph](https://img.shields.io/badge/orchestration-LangGraph-orange.svg?style=for-the-badge&logo=langchain&logoColor=white)](https://github.com/langchain-ai/langgraph)
 [![Typst](https://img.shields.io/badge/typesetting-Typst-239DAD.svg?style=for-the-badge&logo=typst&logoColor=white)](https://typst.app/)
+[![Wiki Documentation](https://img.shields.io/badge/docs-GitHub%20Wiki-blueviolet.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/FranciscoOssian/cveck/wiki)
 [![i18n](https://img.shields.io/badge/i18n-EN%20%7C%20PT--BR%20%7C%20ZH-success.svg?style=for-the-badge)](https://github.com/FranciscoOssian/cveck)
 [![License](https://img.shields.io/badge/license-MIT-purple.svg?style=for-the-badge)](LICENSE)
 
@@ -14,11 +15,22 @@
   <b>Cveck</b> is an open-source, AI-powered agentic system that adapts software engineering resumes to match target job descriptions with mathematical ATS keyword alignment, strict factual grounding, compiler auto-repair, and continuous gap tracking.
 </p>
 
-[Key Features](#-key-features) • [Architecture](#-architecture) • [Quickstart](#-quickstart) • [CLI Commands](#-cli-commands) • [Internationalization](#-internationalization) • [Configuration](#-configuration)
+[📖 Documentation Wiki](https://github.com/FranciscoOssian/cveck/wiki) • [Key Features](#-key-features) • [Architecture](#-architecture) • [Quickstart](#-quickstart) • [CLI Commands](#-cli-commands) • [Internationalization](#-internationalization) • [Configuration](#-configuration)
 
 ---
 
 </div>
+
+> 📚 **Looking for in-depth technical documentation?**
+>
+> If you want to understand all the architectural decisions, LangGraph node specifications, mathematical ATS formulas, and deep system invariants **without needing to dig through the raw source code**, visit our **[Official GitHub Wiki](https://github.com/FranciscoOssian/cveck/wiki)**!
+>
+> - **[System Architecture & Invariants](https://github.com/FranciscoOssian/cveck/wiki/Architecture)**
+> - **[Pipeline Node Specifications](https://github.com/FranciscoOssian/cveck/wiki/Pipeline)**
+> - **[LangGraph Cyclic Routing & State](https://github.com/FranciscoOssian/cveck/wiki/LangGraph)**
+> - **[ATS Scoring Engine & Anti-Stuffing Formula](https://github.com/FranciscoOssian/cveck/wiki/ATS)**
+
+---
 
 ## 💡 Why Cveck?
 
@@ -92,6 +104,8 @@ The pipeline operates as a cyclic deterministic graph compiled with **LangGraph*
 | **08** | `cv_refiner`     | _(Cyclic)_ Reflects on missing keywords and refines Typst code (max 3 retries).          |
 | **09** | `committer`      | Produces technical summary report, saves `.txt` parse, terms dump, and final `.pdf`.     |
 
+> 🔍 *For complete state typing schemas, cyclic transitions, and edge routing algorithms, read the [Wiki Architecture Guide](https://github.com/FranciscoOssian/cveck/wiki/Architecture).*
+
 ---
 
 ## 🚀 Quickstart
@@ -113,7 +127,7 @@ bash setup.sh
 ```
 #### 🪟 Windows (PowerShell)
 
-```
+```powershell
 git clone https://github.com/FranciscoOssian/cveck.git; cd cveck
 powershell -ExecutionPolicy Bypass -File .\setup.ps1
 ```
@@ -144,6 +158,8 @@ cveck
 .venv\Scripts\Activate.ps1
 cveck
 ```
+
+---
 
 ## 💻 CLI Commands & Options
 
@@ -203,6 +219,7 @@ cveck/
 │   ├── USER_PROFILE.md       # Master career profile (Single Source of Truth)
 │   ├── GAPS.md               # Structured market gap backlog (Markdown)
 │   └── gaps.json             # Programmatic gap database
+├── wiki/                     # Documentation-as-Code source for GitHub Wiki
 ├── output/                   # Generated .pdf, .typ, .txt, and terms JSON
 ├── prompts/                  # System prompts & CV Style Guide
 ├── src/
@@ -239,3 +256,4 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 <div align="center">
   <sub>Built with passion for engineers aiming for technical excellence.</sub>
 </div>
+```

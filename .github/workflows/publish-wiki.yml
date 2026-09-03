@@ -1,0 +1,49 @@
+name: Publish Documentation to GitHub Wiki
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "wiki/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wiki-publish
+  cancel-in-progress: true
+
+jobs:
+  publish-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Sync wiki/ to GitHub Wiki
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Clone the Wiki repository using the native authentication token
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.wiki.git" wiki_repo
+
+          # Clean old Wiki content and copy files from the wiki/ folder
+          rm -rf wiki_repo/*
+          cp -r wiki/* wiki_repo/
+
+          cd wiki_repo
+
+          # Commit and publish only if there are real changes
+          git add .
+          if git diff-index --quiet HEAD; then
+            echo "No changes detected. Wiki is already up to date."
+          else
+            git commit -m "docs(wiki): update wiki documentation from wiki/ [skip ci]"
+            git push origin HEAD:master
+            echo "Wiki synchronized successfully!"
+          fi

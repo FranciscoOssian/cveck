@@ -1,6 +1,6 @@
 import unicodedata
 import re
-from typing import List
+from typing import List, Literal, Optional
 from langchain_core.messages import SystemMessage, HumanMessage
 from pydantic import BaseModel, Field
 from src.state import CVState, JobTerm
@@ -21,26 +21,69 @@ def sanitize_slug(text: str) -> str:
     return text.strip("-") or "cv-tailored"
 
 
+class RequirementAlternative(BaseModel):
+    term: str = Field(
+        description="Technical skill or technology accepted as an alternative."
+    )
+    canonical: Optional[str] = Field(
+        default=None,
+        description="Canonical technology name, e.g. Vue for Vue 2 or Vue 3."
+    )
+    version: Optional[str] = Field(
+        default=None,
+        description="Specific version if explicitly stated."
+    )
+    preferred: bool = Field(
+        default=False,
+        description="Whether this alternative is preferred over others."
+    )
+
+
+class RequirementGroup(BaseModel):
+    operator: Literal["AND", "OR"] = Field(
+        description="Logical relationship between the requirements."
+    )
+    required: bool = Field(
+        default=True,
+        description="Whether satisfying this group is required by the job."
+    )
+    min_matches: int = Field(
+        default=1,
+        description="Minimum number of alternatives that must be satisfied."
+    )
+    alternatives: List[RequirementAlternative] = Field(
+        description="Requirements participating in the logical group."
+    )
+
 class TermExtractorResponse(BaseModel):
     job_title: str = Field(
         default="Software Developer",
-        description="Job title extracted from job description (e.g. Front-End Software Engineer)"
+        description="Job title extracted from job description."
     )
+
     company_name: str = Field(
         default="Company",
-        description="Hiring company name (or 'Confidential' if none)"
+        description="Hiring company name or 'Confidential'."
     )
+    
     job_slug: str = Field(
         default="job-company",
-        description="Short kebab-case slug for files (e.g. digisystem-frontend-senior)"
+        description="Short kebab-case slug for files."
     )
+
     job_lang: str = Field(
         default="en",
-        description="Lowercase ISO language code of the job (e.g. 'en', 'pt', 'es')"
+        description="Lowercase ISO language code."
     )
+
     terms: List[JobTerm] = Field(
         default_factory=list,
-        description="List of hard skills, tools, libraries, and technical practices from the job"
+        description="Flat list of extracted technical terms for backward compatibility."
+    )
+
+    requirement_groups: List[RequirementGroup] = Field(
+        default_factory=list,
+        description="Logical groups preserving AND/OR relationships, alternatives, versions and preferences."
     )
 
 
@@ -83,6 +126,7 @@ def term_extractor_node(state: CVState) -> dict:
 
     return {
         "job_terms": parsed.terms,
+        "requirement_groups": parsed.requirement_groups,
         "job_title": title,
         "company_name": company,
         "job_slug": safe_slug,

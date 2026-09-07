@@ -32,6 +32,23 @@ Preserve a lógica da vaga em `requirement_groups`.
 - Se houver preferência, marque `preferred: true` na alternativa preferida.
 - Uma preferência não transforma as outras alternativas em obrigatórias.
 
+Para cada requirement_group:
+
+    se OR:
+        verificar se alguma alternativa já é satisfeita
+
+        se SIM:
+            não adicionar as outras alternativas
+
+        se NÃO:
+            procurar uma alternativa factual no perfil
+
+    se AND:
+        verificar cada requisito individualmente
+
+    se preferred:
+        priorizar a alternativa preferida somente se factual
+
 **Exemplo:**
 
 "Vue 2 ou Vue 3, preferencialmente Vue 3"

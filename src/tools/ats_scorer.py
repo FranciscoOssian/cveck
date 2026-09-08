@@ -18,9 +18,10 @@ def term_pattern(term: str) -> re.Pattern:
     return re.compile(rf"(?<!\w){escaped}(?!\w)")
 
 
-def find_term(term: str, aliases: List[str], normalized_resume: str):
+def find_term(term: str, aliases: List[str], alternatives: List[str], normalized_resume: str):
     safe_aliases = aliases or []
-    candidates = [term] + [a for a in safe_aliases if a and a != term]
+    safe_alts = alternatives or []
+    candidates = [term] + [a for a in safe_aliases if a and a != term] + [alt for alt in safe_alts if alt]
     total = 0
     matched_alias = None
     for candidate in candidates:
@@ -48,10 +49,11 @@ def _register_match(report, item, occurrences, matched_alias, total_words, stuff
 
 
 def _register_miss(report, item):
+    label = f"{item.term} OU {' OU '.join(item.alternatives)}" if item.alternatives else item.term
     if item.required:
-        report.missing_required.append(item.term)
+        report.missing_required.append(label)
     else:
-        report.missing_optional.append(item.term)
+        report.missing_optional.append(label)
 
 
 def _compute_raw_score(coverage_required_pct, required_count, optional_count, hits, required_hits):
@@ -89,7 +91,9 @@ def calculate_ats_metrics(
     required_hits = 0
 
     for item in safe_terms:
-        found, occurrences, matched_alias = find_term(item.term, item.aliases, normalized_resume)
+        found, occurrences, matched_alias = find_term(
+            item.term, item.aliases, item.alternatives, normalized_resume
+        )
         if found:
             hits += 1
             required_hits += item.required

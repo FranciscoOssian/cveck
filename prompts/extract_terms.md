@@ -6,4 +6,5 @@ Sua missão é analisar a descrição da vaga e chamar a ferramenta `TermExtract
 - Identifique o idioma do texto da vaga e preencha `job_lang` em minúsculo (ex: "pt", "pt-br", "en", "es").
 - Extraia a grafia literal exata exigida na vaga.
 - Classifique estritamente como obrigatório (`required: true`) apenas o que for pré-requisito/obrigatório; diferenciais e desejáveis devem ser `required: false`.
+- Quando a vaga apresentar alternativas equivalentes (ex: "PostgreSQL ou MySQL", "React ou Vue"), coloque a principal em `term` e as demais aceitas em `alternatives: ["MySQL"]`.
 - Não inclua soft skills subjetivas (ex: "comunicação", "proatividade"); foque em competências técnicas e objetivas.

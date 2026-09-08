@@ -48,10 +48,14 @@ def route_after_ats(state: CVState) -> str:
             normalize_term(g.term if hasattr(g, "term") else g.get("term", ""))
             for g in raw_gaps
         }
-        fixable_missing = [
-            term for term in ats.missing_required
-            if normalize_term(term) not in gaps_normalized
-        ]
+        
+        fixable_missing = []
+        for term in ats.missing_required:
+            # Se for alternativa ("A OU B"), só é gap não-corrigível se TODAS as opções forem gaps
+            options = [normalize_term(opt) for opt in term.split(" OU ")]
+            if not all(opt in gaps_normalized for opt in options):
+                fixable_missing.append(term)
+
         if not fixable_missing:
             return "committer"
 

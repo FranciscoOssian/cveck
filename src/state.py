@@ -8,6 +8,7 @@ from typing_extensions import TypedDict
 class JobTerm(BaseModel):
     term: str = Field(default="", description="Canonical name of the technology or skill")
     required: bool = Field(default=False, description="Whether it is a mandatory requirement in the JD")
+    alternatives: List[str] = Field(default_factory=list, description="Alternative technologies accepted as OR options")
     aliases: List[str] = Field(default_factory=list, description="Strict synonyms or variations")
     category: str = Field(default="other", description="Technical skill category")
 
@@ -16,8 +17,11 @@ class JobTerm(BaseModel):
     def preprocess_term(cls, data: Any) -> Any:
         if isinstance(data, str):
             return {"term": data}
-        if isinstance(data, dict) and isinstance(data.get("aliases"), str):
-            data["aliases"] = _parse_aliases(data["aliases"])
+        if isinstance(data, dict):
+            if isinstance(data.get("aliases"), str):
+                data["aliases"] = _parse_aliases(data["aliases"])
+            if isinstance(data.get("alternatives"), str):
+                data["alternatives"] = _parse_aliases(data["alternatives"])
         return data
 
 

@@ -32,16 +32,21 @@ def gap_finder_node(state: CVState) -> dict:
         "Compare the terms extracted from the job posting with the candidate's master profile (`USER_PROFILE.md`).\n"
         "Identify only technologies or skills that are REQUIREMENTS or NICE-TO-HAVES in the job posting "
         "and that have NO mention or factual evidence in the profile.\n"
+        "If a requirement presents alternatives (OR) and the candidate has experience in ANY of the options, DO NOT mark it as a gap.\n"
         "If the candidate already knows the technology or has equivalent experience in the profile, DO NOT mark it as a gap.\n"
         "IMPORTANT: You MUST call the `RecordGaps` tool with the list of gaps found. "
         "If there are no real gaps, send `real_gaps: []`."
     )
 
     terms = state.get("job_terms") or []
-    terms_dump = "\n".join([
-        f"- {(t.term if hasattr(t, 'term') else t.get('term', ''))} (Obrigatório: {(t.required if hasattr(t, 'required') else t.get('required', False))})"
-        for t in terms
-    ])
+    lines = []
+    for t in terms:
+        term = t.term if hasattr(t, "term") else t.get("term", "")
+        alts = t.alternatives if hasattr(t, "alternatives") else t.get("alternatives", [])
+        alt_str = f" [OU: {', '.join(alts)} - basta atender um]" if alts else ""
+        req = t.required if hasattr(t, "required") else t.get("required", False)
+        lines.append(f"- {term}{alt_str} (Obrigatório: {req})")
+    terms_dump = "\n".join(lines)
     
     user_content = (
         f"CANDIDATE PROFILE:\n{user_profile}\n\n"

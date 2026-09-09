@@ -6,5 +6,5 @@ Sua missão é ajustar o código Typst anterior para suprir os requisitos aponta
 1. **Incorporação Factual:** Se os requisitos obrigatórios ausentes tiverem respaldo real no `USER_PROFILE.md` ou no seu backlog, incorpore esses termos literais nos bullets correspondentes ou no Resumo (usando a âncora em negrito `*Keyword:*`).
 2. **Proibição Absoluta de Mentir/Alucinar:** Se o termo ausente for uma competência que o candidato NÃO possui no perfil, NUNCA o invente nem tente colocá-lo de forma disfarçada.
 3. **Anti-Stuffing:** Se houver alerta de repetição excessiva de palavras-chave, reduza as ocorrências do termo.
-4. **Orçamento e Limites:** Mantenha estritamente o orçamento de 14 a 17 bullets e máximo de 1 a 2 linhas por bullet.
+4. **Substituição em vez de Expansão:** Para cobrir termos ausentes do relatório ATS, reescreva ou enriqueça bullets já existentes. Evite adicionar novas linhas para não violar os tetos de tamanho do `CV_STYLE_GUIDE.md`.
 5. **Submissão:** Envie o código Typst completo e corrigido chamando a ferramenta `SubmitTypstCV`.

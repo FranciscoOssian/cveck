@@ -16,4 +16,13 @@ Sua missão é produzir o código Typst completo preenchendo o esqueleto base fo
    - **Regra de Redundância:** Se a tecnologia já foi demonstrada na Experiência Profissional, NÃO inclua projetos ou cursos sobre ela.
    - **Regra de Sinal e Senioridade:** Não inclua cursos ou certificações de nível introdutório/básico para vagas Pleno/Sênior.
    - **Omissão:** Se todas as hard skills da vaga estiverem demonstradas na experiência corporativa, OMITA completamente as seções `PROJETOS` e `LICENÇAS/CERTIFICAÇÕES`.
-5. **Submissão:** Submeta o código Typst final chamando a ferramenta `SubmitTypstCV`.
+
+5. **Curadoria Estrita da Seção de Habilidades (Anti-Ruído):**
+   - NUNCA copie o inventário completo de habilidades do `USER_PROFILE.md`.
+   - Inclua EXCLUSIVAMENTE:
+     a) As tecnologias e práticas diretamente exigidas ou pontuadas pela vaga (`JOB KEYWORDS`).
+     b) Ferramentas essenciais de suporte direto ao ecossistema principal da vaga.
+   - É PROIBIDO incluir tecnologias de outros domínios não solicitados pela vaga (ex: linguagens acadêmicas/baixo nível, bancos de dados móveis ou clouds secundárias não requeridas).
+   - Respeite o teto de 3 a 4 linhas consolidado no `CV_STYLE_GUIDE.md`.
+
+6. **Submissão:** Submeta o código Typst final chamando a ferramenta `SubmitTypstCV`.

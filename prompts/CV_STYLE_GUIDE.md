@@ -40,3 +40,8 @@
    - Apenas posicione `EDUCAÇÃO` antes de `EXPERIÊNCIA` se:
      a) A vaga for explicitamente de Pesquisa Científica, Docência, Mestrado/Doutorado ou Pós-Graduação; OU
      b) O candidato não possuir nenhuma experiência corporativa prévia no `USER_PROFILE.md`.
+
+## 5. HABILIDADES E COMPETÊNCIAS (Teto Rígido: 3 a 4 linhas no total)
+- **Formato Compacto:** Agrupe em no máximo 3 ou 4 linhas com rótulo em negrito seguido de itens separados por vírgula (ex: `*Frontend & Mobile:* React, TypeScript...`).
+- **Proibição de Subcategorias Vazias/Prolixas:** Não crie subcategorias para listar apenas 1 ou 2 itens.
+- **Alinhamento:** Mantenha apenas hard skills e ferramentas com relevância direta para a vaga.

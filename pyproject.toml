@@ -24,6 +24,7 @@ dependencies = [
     "babel>=2.14.0",
     "typst==0.15.0",
     "pymupdf>=1.28.2",
+    "mcp>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -33,7 +34,7 @@ dev = [
 ]
 
 [project.scripts]
-cveck = "src.cli:app"
+cveck = "src.cli.main:app"
 
 [tool.setuptools.packages.find]
 where = ["."]

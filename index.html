@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cveck — Autonomous Agentic Resume Fit &amp; ATS Engine</title>
-  <meta name="description" content="Open-source agentic pipeline built on LangGraph and Typst. Fits your profile to any job description with deterministic ATS scoring and minimal hallucinations.">
+  <meta name="description" content="Open-source resume fit engine with declarative workflow, deterministic ATS scoring, Typst typesetting, and native adapters for CLI and Model Context Protocol (MCP).">
   <meta name="author" content="Francisco Ossian">
   <link rel="canonical" href="https://cveck.foln.dev/">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://cveck.foln.dev">
-  <meta property="og:title" content="FranciscoOssian/Cveck — Autonomous Agentic Resume Fit">
-  <meta property="og:description" content="Autonomous LangGraph state-machine that fits your master profile to any job description with factual grounding and ATS validation.">
+  <meta property="og:title" content="FranciscoOssian/Cveck — Autonomous Agentic Resume Fit &amp; ATS Engine">
+  <meta property="og:description" content="Declarative resume tailoring engine with factual grounding, Typst vector typography, deterministic ATS scoring, and native CLI & MCP Server adapters.">
   <meta property="og:locale" content="en_US">
   <meta name="twitter:card" content="summary">
 
@@ -27,6 +27,7 @@
       --gh-link: #58a6ff;
       --gh-green: #238636;
       --gh-green-hover: #2ea043;
+      --gh-purple: #a371f7;
       --gh-star: #e3b341;
       --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
       --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
@@ -60,7 +61,7 @@
     a { color: var(--gh-link); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    /* Topbar: Mobile-first & Robust */
+    /* Topbar */
     header {
       background: var(--gh-subtle);
       border-bottom: 1px solid var(--gh-border);
@@ -130,7 +131,7 @@
     }
     .btn-primary:hover { background: var(--gh-green-hover); }
 
-    /* Repo Tabs Nav: Native Horizontal Scrolling on Mobile (No removal!) */
+    /* Repo Tabs Nav */
     .repo-nav {
       background: var(--gh-subtle);
       border-bottom: 1px solid var(--gh-border);
@@ -145,9 +146,9 @@
       white-space: nowrap;
       padding: 0 1.25rem;
       -webkit-overflow-scrolling: touch;
-      scrollbar-width: none; /* Firefox */
+      scrollbar-width: none;
     }
-    .repo-nav ul::-webkit-scrollbar { display: none; /* Chrome/Safari */ }
+    .repo-nav ul::-webkit-scrollbar { display: none; }
     
     .repo-nav li a {
       display: inline-flex;
@@ -189,6 +190,7 @@
     }
     .meta-tag-blue { border-color: rgba(88, 166, 255, 0.4); color: var(--gh-link); background: rgba(88, 166, 255, 0.08); }
     .meta-tag-green { border-color: rgba(63, 185, 80, 0.4); color: #3fb950; background: rgba(63, 185, 80, 0.08); }
+    .meta-tag-purple { border-color: rgba(163, 113, 247, 0.4); color: var(--gh-purple); background: rgba(163, 113, 247, 0.08); }
 
     .hero h1 {
       font-size: clamp(1.75rem, 4.5vw, 2.9rem);
@@ -213,7 +215,6 @@
       margin-bottom: 2rem;
     }
 
-    /* Clone Input: Never breaks mid-URL, scrolls cleanly on small screens */
     .clone-input {
       background: #04070c;
       border: 1px solid var(--gh-border);
@@ -231,10 +232,10 @@
     }
     .clone-input span { color: var(--gh-muted); user-select: none; }
 
-    /* Trace & Document Dual Showcase */
+    /* Dual Interface Showcase (CLI Stream vs MCP Protocol) */
     .showcase {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.05fr 0.95fr;
       border: 1px solid var(--gh-border);
       background: var(--gh-subtle);
       border-radius: 8px;
@@ -263,6 +264,8 @@
     .log-ok { color: #3fb950; }
     .log-warn { color: #d29922; }
     .log-act { color: var(--gh-link); }
+    .log-purple { color: var(--gh-purple); }
+
     .typst-preview {
       background: #06090f;
       border: 1px solid var(--gh-border);
@@ -270,6 +273,7 @@
       border-radius: 6px;
       line-height: 1.5;
       color: #c9d1d9;
+      margin-top: 0.5rem;
     }
     .typst-preview strong { color: var(--gh-link); }
 
@@ -290,6 +294,45 @@
     .card h3 { font-size: 0.95rem; color: #fff; margin-bottom: 0.35rem; font-weight: 600; }
     .card p { color: var(--gh-muted); font-size: 0.825rem; line-height: 1.5; }
 
+    /* Architecture Breakdown */
+    .arch-pillars {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .arch-pillar {
+      background: var(--gh-subtle);
+      border: 1px solid var(--gh-border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .arch-pillar h3 {
+      font-size: 0.95rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .arch-pillar ul {
+      list-style: none;
+      font-size: 0.8rem;
+      color: var(--gh-muted);
+      line-height: 1.6;
+    }
+    .arch-pillar ul li {
+      margin-bottom: 0.4rem;
+      padding-left: 1rem;
+      position: relative;
+    }
+    .arch-pillar ul li::before {
+      content: "•";
+      color: var(--gh-link);
+      position: absolute;
+      left: 0;
+    }
+
     /* Pipeline Sequence */
     .pipeline {
       display: grid;
@@ -305,7 +348,7 @@
     }
     .node::before {
       counter-increment: flow;
-      content: "Node 0" counter(flow);
+      content: "Step 0" counter(flow);
       font-family: var(--font-mono);
       font-size: 0.68rem;
       color: var(--gh-link);
@@ -391,7 +434,7 @@
     summary:hover { color: var(--gh-link); }
     details p { padding: 0 1rem 1rem; color: var(--gh-muted); font-size: 0.825rem; line-height: 1.55; }
 
-    /* Footer: Responsive & Clean */
+    /* Footer */
     footer {
       border-top: 1px solid var(--gh-border);
       padding: 2.5rem 0;
@@ -415,7 +458,6 @@
       font-size: 0.775rem;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       .showcase { grid-template-columns: 1fr; }
       .pane:first-child { border-right: none; border-bottom: 1px solid var(--gh-border); }
@@ -430,7 +472,7 @@
 <body>
   <a href="#main" class="skip-link">Skip to main content</a>
 
-  <!-- Topbar (GitHub-style Breadcrumb + Action CTAs) -->
+  <!-- Topbar -->
   <header>
     <div class="container">
       <div class="repo-breadcrumb">
@@ -455,7 +497,7 @@
     </div>
   </header>
 
-  <!-- Repository Tabs: Intact on mobile with smooth touch-scroll -->
+  <!-- Repo Navigation -->
   <nav class="repo-nav" aria-label="Repository Sections">
     <div class="container">
       <ul>
@@ -464,6 +506,7 @@
         <li><a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Pull requests <span class="counter" id="gh-pulls-count">0</span></a></li>
         <li><a href="#guarantees">Guarantees</a></li>
         <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#quickstart">Quickstart</a></li>
         <li><a href="#contribute">Contribute</a></li>
       </ul>
     </div>
@@ -474,15 +517,17 @@
     <section class="hero">
       <div class="container">
         <div class="hero-meta">
-          <span class="meta-tag meta-tag-blue">LangGraph StateGraph</span>
+          <span class="meta-tag meta-tag-blue">Declarative Workflow (YAML)</span>
+          <span class="meta-tag meta-tag-purple">Native MCP Server (stdio)</span>
+          <span class="meta-tag">LangGraph Adapter</span>
           <span class="meta-tag">Typst Vector Typesetter</span>
           <span class="meta-tag">Python 3.11+</span>
           <span class="meta-tag">MIT License</span>
           <span class="meta-tag meta-tag-green" id="gh-activity">Active Repository</span>
         </div>
 
-        <h1>Autonomous Agentic Resume Fit &amp; ATS State-Machine.</h1>
-        <p>A deterministic open-source developer tool that fits your verified master profile to any target job description. Truthful keyword alignment, automated gap logging, and minimal hallucinations.</p>
+        <h1>Autonomous Agentic Resume Fit &amp; ATS Engine.</h1>
+        <p>A deterministic open-source engine that fits your profile to any target job description. Mathematical keyword alignment, automated gap logging, and minimal hallucinations. Executable via interactive CLI or Model Context Protocol (MCP) server.</p>
 
         <!-- Conversion Action Row -->
         <div class="hero-actions">
@@ -496,11 +541,12 @@
           </div>
         </div>
 
-        <!-- Terminal + Typesetting Trace Showcase -->
+        <!-- Dual Interface Showcase: CLI Stream vs MCP Tool Protocol -->
         <div class="showcase" aria-label="Engine Execution Trace">
+          <!-- Left: CLI / LangGraph Adapter -->
           <div class="pane">
             <div class="pane-title">
-              <span>LangGraph CLI Stream (cveck)</span>
+              <span>Adapter 1: Interactive CLI (LangGraph)</span>
               <span class="log-ok">● RUNNING</span>
             </div>
             <div class="log"><span class="log-ok">✔ [1/6]</span><span>term_extractor: 14 keywords parsed (ISO: en)</span></div>
@@ -510,19 +556,21 @@
             <div class="log"><span class="log-ok">✔ [5/6]</span><span>ats_validator: Score 92.4/100 (Stuffing: 0.8% &lt; 2%)</span></div>
             <div class="log"><span class="log-act">⚡ committer:</span><span>Committed output/cv-senior-en.pdf</span></div>
           </div>
+
+          <!-- Right: MCP Protocol / Tool Call Stream -->
           <div class="pane">
             <div class="pane-title">
-                <span>Factual Grounding &amp; Output</span>
-                <span style="color:var(--gh-muted)">output/cv-senior-en.typ</span>
+              <span>Adapter 2: MCP Server (Cursor / Claude)</span>
+              <span class="log-purple">● STDIO ACTIVE</span>
             </div>
-            <p class="code-comment" style="font-size:0.75rem; margin-bottom:0.4rem;">// Single Source of Truth: doc/USER_PROFILE.md</p>
+            <div class="log"><span class="log-purple">tool_call</span><span>cveck:start_resume_tailoring()</span></div>
+            <div class="log"><span class="log-purple">tool_call</span><span>cveck:record_gaps([{"term": "Kafka"}])</span></div>
+            <div class="log"><span class="log-purple">tool_call</span><span>cveck:compile_typst(typst_code=...)</span></div>
+            <div class="log"><span class="log-purple">tool_call</span><span>cveck:validate_ats() -&gt; APPROVED (92.4%)</span></div>
             <div class="typst-preview">
-                <strong>*Distributed Architecture:*</strong> Led migration of auth services to Go, reducing p99 latency by 32% across 4.2M daily requests.
+              <strong>*Distributed Architecture:*</strong> Led migration of auth services to Go, reducing p99 latency by 32% across 4.2M daily requests.
             </div>
-            <div class="typst-preview" style="margin-top:0.5rem; border-color: rgba(210, 153, 34, 0.4);">
-                <span style="color:#d29922;">*DETECTED_GAP:*</span> Apache Kafka omitted from resume. Saved to study backlog in <code>doc/GAPS.md</code>.
-            </div>
-            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -531,45 +579,87 @@
     <section id="guarantees" aria-labelledby="guar-title">
       <div class="container">
         <p class="sec-eyebrow">Core Invariants</p>
-        <h2 id="guar-title" class="sec-title">Why Cveck Exists</h2>
-        <p class="sec-desc">Designed for objective profile-to-job fit rather than chatbot guesswork. It treats resume alignment as a strict constraint-satisfaction problem bounded by your verified career history.</p>
+        <h2 id="guar-title" class="sec-title">Engine Guarantees</h2>
+        <p class="sec-desc">Designed as a strict constraint-satisfaction engine bounded by your verified career history rather than an ungrounded conversational chatbot.</p>
 
         <div class="grid-3">
           <article class="card">
-            <h3>Zero-Hallucination Physical Barrier</h3>
-            <p>Your master career profile in <code>doc/USER_PROFILE.md</code> is the absolute truth. The state-machine is physically prevented from inventing unverified metrics or tools.</p>
+            <h3>Minimal-Hallucination Physical Barrier</h3>
+            <p>Your master career profile in <code>doc/USER_PROFILE.md</code> is the invariant source of truth. The engine is structurally prevented from inventing unverified metrics, tools, or responsibilities.</p>
           </article>
           <article class="card">
             <h3>Self-Healing Typst Compiler</h3>
-            <p>If Typst code fails compilation, a dedicated syntax fixer analyzes compiler <code>stderr</code> and repairs braces, imports, and escaping in a closed loop without user intervention.</p>
+            <p>If Typst code encounters syntax issues, a dedicated fixer analyzes compiler <code>stderr</code> and repairs braces, imports, and escaping in a closed loop without user intervention.</p>
           </article>
           <article class="card">
-            <h3>Deterministic ATS Scoring</h3>
-            <p>Mathematical regex boundary matching validates mandatory vs. optional requirements and enforces an anti-stuffing density threshold (&lt; 2%) to prevent keyword penalties.</p>
+            <h3>Deterministic ATS Scoring Engine</h3>
+            <p>Exact regex word-boundary metrics evaluate mandatory (70%) vs. optional (30%) requirements, enforcing a strict density penalty threshold (&lt; 2%) against keyword stuffing.</p>
           </article>
           <article class="card">
             <h3>Automated Skill-Gap Backlog</h3>
-            <p>When a target job requires skills missing from your profile, Cveck writes them into <code>doc/GAPS.md</code> and <code>doc/gaps.json</code> to build your study roadmap.</p>
+            <p>Unmatched market requirements are isolated by the domain and atomically persisted to <code>doc/GAPS.md</code> and <code>doc/gaps.json</code>, generating your structured study roadmap.</p>
           </article>
           <article class="card">
-            <h3>Pluggable Multi-Provider Hub</h3>
-            <p>Route requests to <strong>DeepSeek</strong>, <strong>NVIDIA NIM</strong>, <strong>Claude</strong>, <strong>OpenAI</strong>, or any custom <strong>OpenAI/Anthropic-compatible endpoint</strong> (including local backends like Ollama, vLLM, or LM Studio) with real-time token tracking.</p>
+            <h3>Dual Execution via Adapters</h3>
+            <p>Run locally in your terminal via the interactive Rich CLI and LangGraph cyclic engine, or plug Cveck directly into <strong>Claude Desktop</strong>, <strong>Cursor</strong>, or <strong>Zed</strong> as a native <strong>MCP Server</strong>.</p>
           </article>
           <article class="card">
-            <h3>Native GNU gettext (i18n)</h3>
-            <p>First-class localization across English (<code>en</code>), Brazilian Portuguese (<code>pt_BR</code>), and Mandarin Chinese (<code>zh</code>) via compiled Babel catalogs.</p>
+            <h3>Multi-Provider &amp; Local Inference (CLI mode)</h3>
+            <p>Execute against <strong>DeepSeek</strong>, <strong>NVIDIA NIM</strong>, <strong>Claude</strong>, <strong>OpenAI</strong>, <strong>OpenRouter</strong>, or 100% offline with local models via <strong>Ollama</strong>, vLLM, or LM Studio.</p>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- Architecture & Pipeline -->
+    <!-- Architecture: Declarative Core & Adapter Pattern -->
     <section id="architecture" aria-labelledby="arch-title">
       <div class="container">
-        <p class="sec-eyebrow">StateGraph Workflow</p>
-        <h2 id="arch-title" class="sec-title">Cyclic LangGraph Architecture</h2>
-        <p class="sec-desc">A cyclic state graph executing deterministic nodes with automated retry loops.</p>
+        <p class="sec-eyebrow">Pillars &amp; Adapters</p>
+        <h2 id="arch-title" class="sec-title">Core Domain &amp; Adapter Architecture</h2>
+        <p class="sec-desc">Cveck completely decouples its domain logic and tailoring policies from execution frameworks using the Adapter pattern.</p>
 
+        <div class="arch-pillars">
+          <!-- Pillar 1 -->
+          <div class="arch-pillar">
+            <h3>
+              <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor" style="color:var(--gh-link)"><path d="M0 1.75C0 .784.784 0 1.75 0h12.5C15.216 0 16 .784 16 1.75v12.5A1.75 1.75 0 0 1 14.25 16H1.75A1.75 1.75 0 0 1 0 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V1.75a.25.25 0 0 0-.25-.25Z"></path></svg>
+              1. Declarative Workflow
+            </h3>
+            <ul>
+              <li><strong>Config in YAML (<code>workflow.yaml</code>):</strong> Policies, retry budgets, scoring thresholds, and step transitions defined declaratively.</li>
+              <li><strong>Pydantic Schemas:</strong> Strong typing across domain models (<code>JobTerm</code>, <code>GapItem</code>, <code>ATSReport</code>, <code>DomainState</code>).</li>
+              <li><strong>Independent State Machine:</strong> Transition rules evaluated purely in domain logic without framework dependencies.</li>
+            </ul>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="arch-pillar">
+            <h3>
+              <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor" style="color:var(--gh-green)"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm7-3.25v3.5h3.25a.75.75 0 0 1 0 1.5H7.75a.75.75 0 0 1-.75-.75V4.75a.75.75 0 0 1 1.5 0Z"></path></svg>
+              2. Pure Domain Use Cases
+            </h3>
+            <ul>
+              <li><strong>Granular Operations:</strong> Independent use cases for term extraction, gap logging, Typst generation, syntax auto-repair, and ATS verification.</li>
+              <li><strong>Stateless Services:</strong> Mathematical ATS scoring (<code>ats.py</code>), resilient Typst runner (<code>typst.py</code>), and balanced JSON parser (<code>parser.py</code>).</li>
+              <li><strong>Zero Token Overhead:</strong> Typography compilation and layout text extraction execute locally with zero external API calls.</li>
+            </ul>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="arch-pillar">
+            <h3>
+              <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor" style="color:var(--gh-purple)"><path d="M5.75 1a.75.75 0 0 0-.75.75v3.5a.75.75 0 0 0 1.5 0v-1.44l2.22 2.22a.75.75 0 0 0 1.06 0l2.22-2.22v1.44a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.44l-2.22 2.22-2.22-2.22h1.44a.75.75 0 0 0 0-1.5Z"></path></svg>
+              3. Pluggable Adapters
+            </h3>
+            <ul>
+              <li><strong>LangGraph Adapter:</strong> Dynamically compiles <code>StateGraph</code> from <code>workflow.yaml</code> with cyclic reflection and token tracking for CLI.</li>
+              <li><strong>MCP Server Adapter (<code>mcp>=1.0.0</code>):</strong> Exposes standard tools (<code>compile_typst</code>, <code>validate_ats</code>, etc.) over stdio for AI IDEs and agents.</li>
+              <li><strong>CLI &amp; i18n Adapter:</strong> Terminal interface powered by Rich, Typer, prompt_toolkit, and compiled Babel GNU gettext catalogs.</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="sec-eyebrow" style="margin-top: 2rem;">Execution Sequence</p>
         <div class="pipeline">
           <div class="node">
             <h4>term_extractor</h4>
@@ -589,46 +679,83 @@
           </div>
           <div class="node">
             <h4>typst_compiler</h4>
-            <p>Compiles vector PDF and extracts plain text via <code>pdftotext</code>.</p>
+            <p>Compiles vector PDF locally and extracts plaintext with PyMuPDF.</p>
           </div>
           <div class="node">
             <h4>ats_validator</h4>
-            <p>Evaluates keyword coverage, passing score to <code>committer</code> or <code>cv_refiner</code>.</p>
+            <p>Runs deterministic 70/30 keyword scoring and anti-stuffing validation.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Contribution & Roadmap (Conversion Hub) -->
+    <!-- Quickstart -->
+    <section id="quickstart" aria-labelledby="qs-title">
+      <div class="container">
+        <p class="sec-eyebrow">Installation &amp; Usage</p>
+        <h2 id="qs-title" class="sec-title">Getting Started</h2>
+        <p class="sec-desc">Requires Python 3.11+. The automated setup handles virtualenv, dependencies, translation compilation, and configuration scaffolding.</p>
+
+        <div class="snippet">
+          <code class="code-comment"># --- 1. Clone &amp; 1-Step Automated Setup ---</code>
+          <code>git clone https://github.com/FranciscoOssian/cveck.git &amp;&amp; cd cveck</code>
+          <code>bash setup.sh       <span class="code-comment"># On Windows PowerShell: .\setup.ps1</span></code>
+          <code>source .venv/bin/activate</code>
+          <br>
+          <code class="code-comment"># --- Mode A: Interactive Terminal CLI (LangGraph Adapter) ---</code>
+          <code>cveck                <span class="code-comment"># Launches Rich terminal assistant</span></code>
+          <br>
+          <code class="code-comment"># --- Mode B: Native MCP Server (for Claude Desktop / Cursor) ---</code>
+          <code>cveck mcp            <span class="code-comment"># Starts MCP server over stdio</span></code>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <h3 style="font-size: 0.95rem; color: #fff; margin-bottom: 0.5rem;">Connecting Cveck to Claude Desktop via MCP</h3>
+          <p style="font-size: 0.825rem; color: var(--gh-muted); margin-bottom: 0.5rem;">Add Cveck to your <code>claude_desktop_config.json</code>:</p>
+          <div class="snippet">
+            <pre><code>{
+  "mcpServers": {
+    "cveck": {
+      "command": "/path/to/cveck/.venv/bin/cveck",
+      "args": ["mcp"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contribution & Community Hub -->
     <section id="contribute" aria-labelledby="contrib-title">
       <div class="container">
         <p class="sec-eyebrow">Community &amp; Contribution</p>
-          <h2 id="contrib-title" class="sec-title">Contributing to Cveck</h2>
-          <p class="sec-desc">Cveck is 100% open source under the MIT License. Contributions across templates, translations, scoring rules, and providers are welcome.</p>
+        <h2 id="contrib-title" class="sec-title">Contributing to Cveck</h2>
+        <p class="sec-desc">Cveck is 100% open source under the MIT License. Contributions across templates, translations, scoring rules, and adapters are welcome.</p>
 
-          <div class="contribute-box">
-            <h3 style="color:#fff; font-size:1.05rem; margin-bottom:0.4rem;">✦ Ways You Can Help the Project</h3>
-            <p style="color:var(--gh-muted); font-size:0.85rem;">Pick an area that fits your skills and submit a pull request:</p>
+        <div class="contribute-box">
+          <h3 style="color:#fff; font-size:1.05rem; margin-bottom:0.4rem;">✦ Ways You Can Help the Project</h3>
+          <p style="color:var(--gh-muted); font-size:0.85rem;">Pick an area that fits your skills and submit a pull request:</p>
 
           <div class="contribute-grid">
             <div class="contribute-item">
               <h4>1. Typst Templates</h4>
-              <p>Design and submit new localized Typst resume layouts in <code>templates/</code> (e.g., Spanish, German, French, Japanese, or alternative design themes).</p>
+              <p>Design and submit new localized Typst resume layouts in <code>src/core/assets/templates/</code> (e.g., German, French, Japanese, or executive designs).</p>
               <a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Add Template PR →</a>
             </div>
             <div class="contribute-item">
               <h4>2. i18n &amp; Translations</h4>
-              <p>Add new language catalogs or refine existing GNU gettext translations in <code>src/locales/</code> using Babel.</p>
+              <p>Add new language catalogs or refine existing GNU gettext translations in <code>src/cli/locales/</code> using Babel.</p>
               <a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Submit Translation PR →</a>
             </div>
             <div class="contribute-item">
-              <h4>3. Provider Presets</h4>
-              <p>Add new LLM providers, local inference backends, or tested open models into <code>src/presets.json</code>.</p>
+              <h4>3. Provider Presets &amp; Models</h4>
+              <p>Add new LLM providers, local inference backends, or tested open models into <code>presets.json</code>.</p>
               <a href="https://github.com/FranciscoOssian/cveck/pulls" target="_blank" rel="noopener">Add Provider PR →</a>
             </div>
             <div class="contribute-item">
-              <h4>4. ATS Scorer &amp; Parser</h4>
-              <p>Improve keyword boundary matching, regex edge cases, and token optimization in <code>src/tools/</code> and LangGraph nodes.</p>
+              <h4>4. MCP Tools &amp; Adapters</h4>
+              <p>Enhance MCP tool calling, agentic error recovery, and regex word boundaries in <code>src/core/services/</code> and <code>src/adapters/</code>.</p>
               <a href="https://github.com/FranciscoOssian/cveck/issues" target="_blank" rel="noopener">Open Engine Issue / PR →</a>
             </div>
           </div>
@@ -644,27 +771,6 @@
       </div>
     </section>
 
-    <!-- Quickstart -->
-    <section id="quickstart" aria-labelledby="qs-title">
-      <div class="container">
-        <p class="sec-eyebrow">Local Setup</p>
-        <h2 id="qs-title" class="sec-title">Getting Started in Seconds</h2>
-        <p class="sec-desc">Prerequisites: Python 3.11+. The automated setup handles virtualenv, dependencies, translations, and configuration scaffolding.</p>
-
-        <div class="snippet">
-          <code class="code-comment"># --- Linux / macOS (1-step automated setup) ---</code>
-          <code>git clone https://github.com/FranciscoOssian/cveck.git &amp;&amp; cd cveck</code>
-          <code>bash setup.sh</code>
-          <code>source .venv/bin/activate &amp;&amp; cveck</code>
-          <br>
-          <code class="code-comment"># --- Windows PowerShell (1-step automated setup) ---</code>
-          <code>git clone https://github.com/FranciscoOssian/cveck.git; cd cveck</code>
-          <code>powershell -ExecutionPolicy Bypass -File .\setup.ps1</code>
-          <code>.venv\Scripts\Activate.ps1; cveck</code>
-        </div>
-      </div>
-    </section>
-
     <!-- FAQ -->
     <section id="faq" aria-labelledby="faq-title">
       <div class="container">
@@ -672,24 +778,34 @@
         <h2 id="faq-title" class="sec-title">Frequently Asked Questions</h2>
 
         <details>
+          <summary>How does the Model Context Protocol (MCP) server work?</summary>
+          <p>By running <code>cveck mcp</code>, Cveck exposes its entire domain engine (term extraction, gap logging, Typst compilation, and ATS validation) as standardized MCP tools over stdio. AI assistants like Claude Desktop, Cursor, or Zed can invoke Cveck directly inside your development workflow.</p>
+        </details>
+
+        <details>
           <summary>Is this a SaaS or a hosted platform?</summary>
-          <p>No. cveck is 100% free and open-source software (FOSS) licensed under MIT. It runs locally on your machine with zero telemetry, zero accounts, and zero cloud lock-in.</p>
+          <p>No. Cveck is 100% free and open-source software (FOSS) licensed under MIT. It runs entirely on your local machine with zero telemetry, zero accounts, and zero cloud lock-in.</p>
         </details>
 
         <details>
           <summary>Can I run it completely offline without paying for API keys?</summary>
-          <p>Yes. cveck supports any local OpenAI-compatible server (such as Ollama, vLLM, or LM Studio). You can run open-weight models locally (e.g. <code>llama3.1:8b</code>, <code>qwen2.5:7b</code>) via the interactive <code>/provider</code> menu with zero API costs.</p>
+          <p>Yes. Cveck supports local inference servers (such as Ollama, vLLM, or LM Studio). You can run open-weight models locally (e.g., <code>llama3.1:8b</code>, <code>qwen2.5:7b</code>) via the interactive <code>/provider</code> menu with zero API costs.</p>
         </details>
 
         <details>
           <summary>Why Typst instead of LaTeX or Markdown-to-PDF?</summary>
           <p>Typst compiles in milliseconds, produces clean vector typography, supports programmatic layouts with reliable column breaking, and eliminates fragile LaTeX macro errors.</p>
         </details>
+
+        <details>
+          <summary>How does the declarative workflow work?</summary>
+          <p>The tailoring sequence, ATS score targets, retry policies, and transition rules are declared in <code>src/core/workflow.yaml</code> and validated with Pydantic. Adapters like LangGraph simply compile this specification into an execution graph.</p>
+        </details>
       </div>
     </section>
   </main>
 
-  <!-- Footer: Cleanly wrapped on mobile without broken words -->
+  <!-- Footer -->
   <footer>
     <div class="container">
       <p>✦ <strong>Cveck</strong> — Open source by <a href="https://github.com/FranciscoOssian" target="_blank" rel="noopener">Francisco Ossian</a> under <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener">MIT</a>.</p>
@@ -703,7 +819,7 @@
     </div>
   </footer>
 
-  <!-- GitHub API Script with Safe Fallbacks for 404 / Private Repos -->
+  <!-- GitHub Live Metadata Script -->
   <script>
     (async function() {
       const REPO = 'FranciscoOssian/cveck';
@@ -733,7 +849,6 @@
             activityEl.textContent = `Updated on ${date}`;
           }
         } else {
-          // Graceful fallback if repo is not yet public or network offline
           const actEl = document.getElementById('gh-activity');
           if (actEl) actEl.textContent = 'Active Development';
         }

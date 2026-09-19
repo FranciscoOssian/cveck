@@ -1,7 +1,7 @@
 import re
 import unicodedata
 from typing import List
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, field_validator
 
 
 def sanitize_slug(text: str) -> str:

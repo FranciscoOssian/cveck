@@ -11,8 +11,8 @@ class GapItem(BaseModel):
     job_title: str = Field(default="", alias="vaga", description="Job title")
     company_name: str = Field(default="", alias="empresa", description="Hiring company")
     date: str = Field(default="", alias="data", description="Application date (YYYY-MM-DD)")
-    reason: str = Field(default="", alias="motivo", description="Reason or excerpt describing why this skill was flagged as a gap")
-    suggestion: Optional[str] = Field(default="", alias="sugestao", description="Actionable study or certification suggestion")
+    reason: str = Field(default="", alias="motivo", description="Reason why this skill was flagged as a gap")
+    suggestion: Optional[str] = Field(default="", alias="sugestao", description="Study or certification suggestion")
 
 
 class RecordGaps(BaseModel):

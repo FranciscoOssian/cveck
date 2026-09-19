@@ -30,7 +30,6 @@ def resolve_template_import_path(output_typ_path: Optional[Path] = None) -> str:
         # Fallback for distinct drives on Windows
         return Path(template_file).as_posix()
 
-
 def sanitize_typst_syntax(content: str, lang: str = "pt", output_typ_path: Optional[Path] = None) -> str:
     """Sanitizes Typst source code prior to compilation (Cost: 0 tokens)."""
     if not content:
@@ -43,10 +42,10 @@ def sanitize_typst_syntax(content: str, lang: str = "pt", output_typ_path: Optio
     # 2. Remove hallucinations like '#set lang: "pt-br"'
     content = re.sub(r'#set\s+lang\s*[:\(][^\n\)]*[\)\n]?', '', content)
 
-    # 3. Dynamically detect actual relative path to template.typ
+    # 3. Detect relative path to template.typ
     template_path = resolve_template_import_path(output_typ_path=output_typ_path)
 
-    # 4. Normalize any template.typ import to the actual relative path
+    # 4. Normalize any template import to the actual template path
     content = re.sub(
         r'#import\s+[\'"][^\'"]*template\.typ[\'"](?:\s*:\s*([^;\n]+))?',
         rf'#import "{template_path}": columns-2, CV',
@@ -57,19 +56,27 @@ def sanitize_typst_syntax(content: str, lang: str = "pt", output_typ_path: Optio
     content = re.sub(r'#link\(\s*\'([^\']+)\'\s*\)', r'#link("\1")', content)
     content = re.sub(r'lang:\s*\'([^\']+)\'', r'lang: "\1"', content)
 
-    # 6. Escape '@' in npm packages to prevent collision with Typst reference labels
+    # 6. Escape '@' - e.g. - @Next.js
     content = re.sub(r'(?<![\w\\])@([a-zA-Z0-9_\-\/]+)', r'\\@\1', content)
 
-    # 7. Ensure template import and show rule exist at the top
-    if '#show: CV.with' not in content:
-        if f'#import "{template_path}"' not in content:
-            content = f'#import "{template_path}": columns-2, CV\n\n#show: CV.with(lang: "{lang}")\n\n' + content
-        else:
-            content = re.sub(
-                rf'(#import\s+"{re.escape(template_path)}":\s*columns-2,\s*CV)',
-                rf'\1\n\n#show: CV.with(lang: "{lang}")',
-                content
-            )
+    # 7. Bug fix: Ensure #import and #show operate independently.
+    has_import = f'#import "{template_path}"' in content or '#import "../' in content
+    has_show = '#show: CV.with' in content
+
+    if not has_import and not has_show:
+        # If you don't have either, insert both at the top.
+        content = f'#import "{template_path}": columns-2, CV\n\n#show: CV.with(lang: "{lang}")\n\n' + content
+    elif not has_import:
+        # If the model generated the #show event but forgot the #import event, inject the import event first.
+        content = f'#import "{template_path}": columns-2, CV\n\n' + content
+    elif not has_show:
+        # If you have the #import but are missing the #show, insert it right after the import.
+        content = re.sub(
+            r'(#import\s+["\'][^"\']+["\'](?:\s*:\s*[^;\n]+)?)',
+            rf'\1\n\n#show: CV.with(lang: "{lang}")',
+            content,
+            count=1
+        )
 
     return content.strip()
 

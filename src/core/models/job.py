@@ -35,4 +35,14 @@ class TermExtractorResponse(BaseModel):
     company_name: str = Field(default="Company", description="Hiring company name")
     job_slug: str = Field(default="job-company", description="Kebab-case slug")
     job_lang: str = Field(default="en", description="Lowercase ISO language code of the job posting")
-    terms: List[JobTerm] = Field(default_factory=list, description="Structured list of extracted terms and requirements")
+    terms: List[JobTerm] = Field(default_factory=list, description="Extracted technical requirements")
+
+    @field_validator("job_slug", mode="after")
+    @classmethod
+    def clean_slug(cls, v: str) -> str:
+        return sanitize_slug(v)
+
+    @field_validator("job_lang", mode="after")
+    @classmethod
+    def clean_lang(cls, v: str) -> str:
+        return (v or "en").strip().lower()

@@ -6,25 +6,43 @@ from mcp.server.mcpserver import MCPServer
 
 from src.core.models.job import JobTerm
 from src.core.models.gap import GapItem
-from src.core.services.typst import compile_typst_and_extract
-from src.core.services.ats import calculate_ats_metrics
-from src.core.services.backlog import update_gaps_backlog
+from src.core.models.state import DomainState
+from src.core.use_cases.compile_cv import execute_compile_cv
+from src.core.use_cases.validate_ats import execute_validate_ats
+from src.core.use_cases.update_gaps import execute_update_gaps
+from src.core.use_cases.commit_artifacts import execute_commit_artifacts
 from src.core.workflow.evaluators import check_ats_condition
-from src.core.workflow.schema import Policies
+from src.core.workflow.schema import WorkflowConfig
 from src.adapters.mcp.prompt import get_workflow_instructions
-from src.core.paths import PROJECT_ROOT, DOC_DIR, OUTPUT_DIR
+from src.core.paths import OUTPUT_DIR, CORE_DIR
 
-POLICIES = Policies()
+from src.core.paths import PROMPTS_DIR
 
-# Official MCPServer initialization
+PROMPT_MAP = {
+    "submit_job_terms": "extract_terms.md",
+    "extract_terms": "extract_terms.md",
+    "record_gaps": "find_gaps.md",
+    "find_gaps": "find_gaps.md",
+    "compile_typst": "generate_cv.md",
+    "generate_cv": "generate_cv.md",
+    "fix_typst": "fix_typst.md",
+    "refine_cv": "refine_cv.md",
+}
+
+_WORKFLOW_CFG = WorkflowConfig.model_validate(
+    __import__("yaml").safe_load((CORE_DIR / "workflow.yaml").read_text(encoding="utf-8"))
+)
+POLICIES = _WORKFLOW_CFG.policies
+
 mcp = MCPServer(
     name="cveck",
     instructions=(
-        "Cveck 2.0: Autonomous Resume Tailoring and ATS scoring engine. "
-        "INITIALIZATION DIRECTIVE: When receiving a job posting, call the tool 'start_resume_tailoring' "
-        "to load the factual profile and workflow rules. "
-        "IMPORTANT: If you ALREADY RECEIVED the user profile (USER_PROFILE.md) and workflow instructions "
-        "in the initial prompt, SKIP 'start_resume_tailoring' and proceed directly to 'submit_job_terms'."
+        "Cveck 2.0: Autonomous Resume Tailoring and ATS scoring engine.\n"
+        "WORKFLOW DIRECTIVE: Before executing any major step, ALWAYS call 'get_tool_instructions' "
+        "passing the tool name (e.g., 'submit_job_terms', 'record_gaps', 'compile_typst') to retrieve "
+        "the exact technical rules, constraints, and prompt directives.\n"
+        "Recommended sequence: 1. submit_job_terms -> 2. record_gaps -> 3. compile_typst -> "
+        "4. validate_ats -> (refine if needed) -> 5. commit_cv."
     )
 )
 
@@ -32,16 +50,48 @@ mcp = MCPServer(
 
 @mcp.prompt(name="tailor_resume")
 def tailor_resume(job_description: str) -> str:
-    """Starts the tailoring process by injecting the real profile, style guide, and tool roadmap."""
+    """Starts tailoring process by injecting candidate profile, style guide, and workflow map."""
     return get_workflow_instructions(job_description)
 
 # --- MCP TOOLS ---
 
 @mcp.tool()
 def start_resume_tailoring(job_description: str) -> str:
-    """CALL THIS TOOL FIRST upon receiving a target job description to load the factual profile (USER_PROFILE.md), 
-    style guide, and state machine."""
+    """CALL THIS FIRST upon receiving a job posting to load the factual profile and state machine rules."""
     return get_workflow_instructions(job_description)
+
+@mcp.tool()
+def get_tool_instructions(tool_name: str) -> str:
+    """Returns the strict instructions, prompt guidelines, and constraints 
+    associated with a specific tool or workflow step.
+    
+    Args:
+        tool_name: The name of the tool or task (e.g., 'submit_job_terms', 'record_gaps', 
+                   'compile_typst', 'fix_typst', 'refine_cv').
+    """
+    normalized_name = tool_name.strip().lower()
+    prompt_file = PROMPT_MAP.get(normalized_name)
+
+    if not prompt_file:
+        available = list(set(PROMPT_MAP.keys()))
+        return (
+            f"No specific guidelines found for '{tool_name}'.\n"
+            f"Available tool/step names: {available}"
+        )
+
+    file_path = PROMPTS_DIR / prompt_file
+    if not file_path.exists():
+        return f"Instruction file '{prompt_file}' not found in {PROMPTS_DIR}."
+
+    content = file_path.read_text(encoding="utf-8")
+    
+    # Se for a etapa de gerar CV, anexamos também o aviso do Style Guide
+    if prompt_file == "generate_cv.md":
+        style_guide_path = PROMPTS_DIR / "CV_STYLE_GUIDE.md"
+        if style_guide_path.exists():
+            content += "\n\n---\n" + style_guide_path.read_text(encoding="utf-8")
+
+    return content
 
 @mcp.tool()
 def submit_job_terms(
@@ -51,29 +101,26 @@ def submit_job_terms(
     job_lang: str,
     terms: List[Dict[str, Any]]
 ) -> str:
-    """Registers technical terms, role, company, and language identified in the target job description."""
-    slug = job_slug or "cv-tailored"
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
+    """Registers technical terms, role, company, and language identified in target job description."""
     parsed_terms = [JobTerm.model_validate(t) for t in terms]
-    terms_file = OUTPUT_DIR / f"job_terms-{slug}.json"
-    terms_file.write_text(
-        json.dumps([t.model_dump() for t in parsed_terms], ensure_ascii=False, indent=2),
-        encoding="utf-8"
+    artifacts = execute_commit_artifacts(
+        job_slug=job_slug,
+        job_terms=parsed_terms,
+        txt_content=""
     )
-
     req_count = sum(1 for t in parsed_terms if t.required)
     opt_count = len(parsed_terms) - req_count
 
     return (
         f"✔ Job '{job_title}' @ '{company_name}' registered successfully.\n"
-        f"Total of {len(parsed_terms)} terms ({req_count} mandatory, {opt_count} optional/differential) saved to {terms_file.name}.\n"
-        "Next step: Call 'record_gaps' if there are real gaps, or proceed to generation and call 'compile_typst'."
+        f"Saved {len(parsed_terms)} terms ({req_count} mandatory, {opt_count} differential) to {artifacts['terms_file']}.\n"
+        "Next step: Call 'record_gaps' if there are real gaps, or proceed to Typst generation and call 'compile_typst'."
     )
+
 
 @mcp.tool()
 def record_gaps(gaps: List[Dict[str, Any]], job_title: str = "", company_name: str = "") -> str:
-    """Records confirmed technical gaps into the study backlog (doc/GAPS.md and doc/gaps.json)."""
+    """Records confirmed skill gaps into the study backlog (doc/GAPS.md and doc/gaps.json)."""
     if not gaps:
         return "No gaps provided. Proceed to Typst code generation and call 'compile_typst'."
 
@@ -82,16 +129,16 @@ def record_gaps(gaps: List[Dict[str, Any]], job_title: str = "", company_name: s
             term=g.get("term", ""),
             category=g.get("category", "other"),
             required=g.get("required", False),
-            job_title=job_title or g.get("job_title") or g.get("vaga", ""),
-            company_name=company_name or g.get("company_name") or g.get("empresa", ""),
-            date=g.get("date") or g.get("data", ""),
-            reason=g.get("reason") or g.get("motivo", ""),
-            suggestion=g.get("suggestion") or g.get("sugestao", "")
+            job_title=job_title or g.get("job_title", ""),
+            company_name=company_name or g.get("company_name", ""),
+            date=g.get("date", ""),
+            reason=g.get("reason", ""),
+            suggestion=g.get("suggestion", "")
         )
         for g in gaps
     ]
 
-    update_gaps_backlog(parsed_gaps, DOC_DIR / "gaps.json", DOC_DIR / "GAPS.md")
+    execute_update_gaps(parsed_gaps)
     gap_names = [g.term for g in parsed_gaps]
 
     return (
@@ -100,42 +147,31 @@ def record_gaps(gaps: List[Dict[str, Any]], job_title: str = "", company_name: s
         "Next step: Write Typst code following CV_STYLE_GUIDE.md and call 'compile_typst'."
     )
 
+
 @mcp.tool()
 def compile_typst(typst_code: str, job_slug: str = "cv-tailored", lang: str = "en") -> str:
-    """Compiles Typst code locally, sanitizes syntax, and extracts plaintext from the PDF."""
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    pdf_path = OUTPUT_DIR / f"cv-{job_slug}-{lang}.pdf"
-    typ_path = OUTPUT_DIR / f"cv-{job_slug}-{lang}.typ"
-    txt_path = OUTPUT_DIR / f"resume-{job_slug}.txt"
-
-    res = compile_typst_and_extract(
-        typst_code=typst_code,
-        output_pdf_path=pdf_path,
-        output_typ_path=typ_path,
-        root_dir=PROJECT_ROOT,
-        lang=lang
-    )
+    """Compiles Typst code locally, sanitizes syntax, and extracts plaintext from vector PDF."""
+    res = execute_compile_cv(typst_code=typst_code, job_slug=job_slug, job_lang=lang)
 
     if not res.success:
         return (
             "❌ TYPST COMPILATION ERROR:\n"
             f"{res.error_message}\n\n"
             "Required action: Fix the Typst code ensuring all matching brackets and quotes are closed, "
-            "then call 'compile_typst' again with the corrected code."
+            "then call 'compile_typst' again with the corrected version."
         )
-
-    txt_path.write_text(res.extracted_text, encoding="utf-8")
 
     return (
         f"✔ PDF compiled successfully!\n"
-        f"- File: {pdf_path}\n"
-        f"- Extracted text: {len(res.extracted_text)} characters saved to {txt_path.name}.\n"
+        f"- File: {res.pdf_path}\n"
+        f"- Extracted text: {len(res.extracted_text)} characters saved.\n"
         "Next step: Call 'validate_ats' to evaluate mathematical keyword adherence."
     )
 
+
 @mcp.tool()
 def validate_ats(job_slug: str = "cv-tailored") -> str:
-    """Calculates mathematical ATS score and verifies keyword stuffing alerts (> 2%)."""
+    """Calculates mathematical ATS score, checking stuffing alerts and mandatory criteria."""
     terms_file = OUTPUT_DIR / f"job_terms-{job_slug}.json"
     txt_file = OUTPUT_DIR / f"resume-{job_slug}.txt"
 
@@ -148,13 +184,13 @@ def validate_ats(job_slug: str = "cv-tailored") -> str:
     job_terms = [JobTerm.model_validate(t) for t in raw_terms]
     resume_text = txt_file.read_text(encoding="utf-8")
 
-    report = calculate_ats_metrics(
+    report, _ = execute_validate_ats(
         job_terms=job_terms,
         resume_text=resume_text,
+        target_score=POLICIES.target_ats_score,
         stuffing_threshold=POLICIES.stuffing_density_threshold
     )
 
-    from src.core.models.state import DomainState
     dummy_state = DomainState(ats_report=report)
     condition = check_ats_condition(dummy_state, POLICIES)
 
@@ -177,17 +213,18 @@ def validate_ats(job_slug: str = "cv-tailored") -> str:
         msg.append("Action: Call 'commit_cv' to finalize the report.")
     elif condition == "unfixable_gaps":
         msg.append("\n🛑 RESULT: SHORT-CIRCUIT APPROVAL.")
-        msg.append("All missing mandatory terms are confirmed real gaps in the profile. The resume reached its factual limit.")
+        msg.append("All missing mandatory terms are confirmed real gaps in profile. Resume reached factual limits.")
         msg.append("Action: Call 'commit_cv' to finalize the report.")
     else:
         msg.append("\n↻ RESULT: REFINEMENT NEEDED.")
-        msg.append("Action: Rewrite existing bullet points in Typst to incorporate missing terms (if present in the profile) and call 'compile_typst'.")
+        msg.append("Action: Rewrite existing bullet points in Typst to incorporate missing terms (if present in profile) and call 'compile_typst'.")
 
     return "\n".join(msg)
 
+
 @mcp.tool()
 def commit_cv(job_slug: str = "cv-tailored", lang: str = "en") -> str:
-    """Consolidates final artifacts into the output/ directory and issues the final summary."""
+    """Consolidates final artifacts in output/ directory and prints closing summary."""
     pdf_path = OUTPUT_DIR / f"cv-{job_slug}-{lang}.pdf"
     txt_path = OUTPUT_DIR / f"resume-{job_slug}.txt"
     terms_path = OUTPUT_DIR / f"job_terms-{job_slug}.json"
@@ -203,9 +240,10 @@ def commit_cv(job_slug: str = "cv-tailored", lang: str = "en") -> str:
         "All artifacts were saved locally. The tailored resume is ready!"
     )
 
+
 def run_mcp_server():
-    """Starts the MCP server via stdio."""
     mcp.run(transport="stdio")
+
 
 if __name__ == "__main__":
     run_mcp_server()

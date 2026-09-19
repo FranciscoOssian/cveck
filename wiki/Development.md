@@ -1,51 +1,64 @@
 # Development & Contribution Guide
 
-## Project Architecture
+## Repository Structure
 
 ```text
 cveck/
-├── doc/                      # USER_PROFILE.md, GAPS.md, gaps.json
-├── output/                   # Generated .pdf, .typ, .txt, JSON artifacts
-├── prompts/                  # Markdown system prompts and style guides
+├── doc/                            # USER_PROFILE.md, GAPS.md, gaps.json
+├── output/                         # Generated .pdf, .typ, .txt, JSON artifacts
 ├── src/
-│   ├── locales/              # gettext translation catalogs (.pot, .po, .mo)
-│   ├── nodes/                # LangGraph node functions
-│   ├── tools/                # ATS Scorer, Typst Runner, Token Tracker
-│   ├── cli.py                # Rich-based interactive CLI
-│   ├── config.py             # Global constants and paths
-│   ├── graph.py              # LangGraph StateGraph compilation
-│   ├── i18n.py               # Runtime localization manager
-│   ├── providers.py          # Dynamic LLM provider registry
-│   └── state.py              # Pydantic schemas and typed state definitions
-├── templates/                # Typst resume templates (.typ)
-└── babel.cfg                 # Babel extraction configuration
+│   ├── core/                       # Pure Business Logic & Domain
+│   │   ├── assets/                 # Prompts (Markdown) & Typst templates
+│   │   ├── models/                 # Pure Pydantic domain models
+│   │   ├── services/               # Stateless services (ATS, Typst, Parser, Backlog)
+│   │   ├── use_cases/              # Granular domain use cases
+│   │   ├── workflow/               # Declarative workflow schema and evaluators
+│   │   ├── context.py              # User profile & template loader
+│   │   ├── paths.py                # Dynamic root and directory resolution
+│   │   └── workflow.yaml           # Declarative pipeline configuration
+│   ├── adapters/                   # Execution Adapters (Adapter Pattern)
+│   │   ├── langgraph/              # LangGraph adapter (builder, nodes, router, state)
+│   │   └── mcp/                    # Model Context Protocol server adapter
+│   └── cli/                        # Interactive Rich CLI application
+│       ├── locales/                # GNU gettext catalogs (.pot, .po, .mo)
+│       ├── i18n.py                 # Runtime localization manager
+│       ├── ui.py                   # Rich rendering and interactive menus
+│       └── main.py                 # Typer entrypoint (CLI & MCP commands)
+├── babel.cfg                       # Babel extraction configuration (src/cli/**.py)
+└── pyproject.toml                  # Project metadata and dependencies
 ```
-
 
 ---
 
 ## Working with Internationalization (i18n)
 
-CVECK uses standard GNU `gettext` via Babel.
+CVECK uses GNU `gettext` via Babel. All translation catalogs reside in `src/cli/locales/`:
 
 ```bash
-# 1. Extract translatable strings from source
-pybabel extract -F babel.cfg -o src/locales/cveck.pot .
+# 1. Extract translatable strings from CLI source
+pybabel extract -F babel.cfg -o src/cli/locales/cveck.pot .
 
 # 2. Update existing catalogs (pt_BR, zh, en)
-pybabel update -i src/locales/cveck.pot -d src/locales -D cveck
+pybabel update -i src/cli/locales/cveck.pot -d src/cli/locales -D cveck
 
 # 3. Compile catalogs to binary format (.mo)
-pybabel compile -d src/locales -D cveck
+pybabel compile -d src/cli/locales -D cveck
 ```
 
 ---
 
-## Adding a New Typst Template
+## Testing Typst Compilation Locally
 
-1. Place your base template in `templates/{lang}.typ` or `templates/{lang}.example.typ`.
-2. Ensure the template exports a `#show: CV.with(...)` rule and `#columns-2` helper.
-3. Test compilation locally:
 ```bash
-python -c "from src.tools.typst_runner import compile_typst_to_pdf; from pathlib import Path; compile_typst_to_pdf(Path('templates/en.example.typ'), Path('output/test.pdf'))"
+python -c "
+from src.core.paths import PROJECT_ROOT, TEMPLATES_DIR, OUTPUT_DIR
+from src.core.services.typst import compile_typst_and_extract
+res = compile_typst_and_extract(
+    (TEMPLATES_DIR / 'en.example.typ').read_text(),
+    OUTPUT_DIR / 'test.pdf',
+    OUTPUT_DIR / 'test.typ',
+    root_dir=PROJECT_ROOT
+)
+print('Success:', res.success, '| Extracted chars:', len(res.extracted_text))
+"
 ```

@@ -1,0 +1,413 @@
+# English translations for PROJECT.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-09-19 07:22-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: src/cli/main.py:41
+msgid "output/ folder cleaned!"
+msgstr "output/ folder cleaned!"
+
+#: src/cli/main.py:42 src/cli/main.py:65 src/cli/main.py:131 src/cli/ui.py:156
+#: src/cli/ui.py:181 src/cli/ui.py:198 src/cli/ui.py:212 src/cli/ui.py:225
+#: src/cli/ui.py:234 src/cli/ui.py:241 src/cli/ui.py:252
+msgid "Press ENTER to continue..."
+msgstr "Press ENTER to continue..."
+
+#: src/cli/main.py:50
+msgid "Job Description Loaded"
+msgstr "Job Description Loaded"
+
+#: src/cli/main.py:51
+msgid "Lines:"
+msgstr "Lines:"
+
+#: src/cli/main.py:51
+msgid "Characters:"
+msgstr "Characters:"
+
+#: src/cli/main.py:52
+msgid "Running AI-powered adaptation pipeline..."
+msgstr "Running AI-powered adaptation pipeline..."
+
+#: src/cli/main.py:61
+msgid "No provider configured."
+msgstr "No provider configured."
+
+#: src/cli/main.py:62
+msgid "Use /provider to add one."
+msgstr "Use /provider to add one."
+
+#: src/cli/main.py:68
+#, python-brace-format
+msgid "⚡ Running Pipeline with [{name} -> {model}]..."
+msgstr "⚡ Running Pipeline with [{name} -> {model}]..."
+
+#: src/cli/main.py:76
+#, python-brace-format
+msgid "Processing with {model}..."
+msgstr "Processing with {model}..."
+
+#: src/cli/main.py:86
+msgid "Authentication Error (401)"
+msgstr "Authentication Error (401)"
+
+#: src/cli/main.py:87
+#, python-brace-format
+msgid ""
+"The API Key for provider [bold]{name}[/bold] is invalid or not "
+"configured.\n"
+"Check the [bold yellow]{env}[/bold yellow] variable in your "
+"[bold].env[/bold] file."
+msgstr ""
+"The API Key for provider [bold]{name}[/bold] is invalid or not "
+"configured.\n"
+"Check the [bold yellow]{env}[/bold yellow] variable in your "
+"[bold].env[/bold] file."
+
+#: src/cli/main.py:91
+msgid "Error during execution:"
+msgstr "Error during execution:"
+
+#: src/cli/main.py:94
+msgid "Press ENTER to return to the main menu..."
+msgstr "Press ENTER to return to the main menu..."
+
+#: src/cli/main.py:107
+msgid "Options:"
+msgstr "Options:"
+
+#: src/cli/main.py:108
+#, python-brace-format
+msgid "Press {key} to load job description from clipboard"
+msgstr "Press {key} to load job description from clipboard"
+
+#: src/cli/main.py:109
+#, python-brace-format
+msgid "Type {cmd} to change model/provider"
+msgstr "Type {cmd} to change model/provider"
+
+#: src/cli/main.py:110
+#, python-brace-format
+msgid "Type {cmd} to change interface language"
+msgstr "Type {cmd} to change interface language"
+
+#: src/cli/main.py:111
+#, python-brace-format
+msgid "Type {cmd1} to clean outputs | {cmd2} to exit"
+msgstr "Type {cmd1} to clean outputs | {cmd2} to exit"
+
+#: src/cli/main.py:116
+msgid "Goodbye!"
+msgstr "Goodbye!"
+
+#: src/cli/main.py:122
+msgid "Available Languages:"
+msgstr "Available Languages:"
+
+#: src/cli/main.py:126
+msgid "Select language number or locale code"
+msgstr "Select language number or locale code"
+
+#: src/cli/main.py:130
+msgid "Language changed to:"
+msgstr "Language changed to:"
+
+#: src/cli/main.py:139
+msgid "Text Pasted in Terminal"
+msgstr "Text Pasted in Terminal"
+
+#: src/cli/main.py:143
+msgid "Clipboard"
+msgstr "Clipboard"
+
+#: src/cli/main.py:145
+msgid ""
+"Clipboard empty. Paste the job description below and type \"END\" on a "
+"new line:"
+msgstr ""
+"Clipboard empty. Paste the job description below and type \"END\" on a "
+"new line:"
+
+#: src/cli/main.py:155
+msgid "Manual Input"
+msgstr "Manual Input"
+
+#: src/cli/main.py:158
+msgid "Job description is too short or empty."
+msgstr "Job description is too short or empty."
+
+#: src/cli/main.py:159
+msgid "Press ENTER to try again..."
+msgstr "Press ENTER to try again..."
+
+#: src/cli/ui.py:81
+msgid "Active Provider:"
+msgstr "Active Provider:"
+
+#: src/cli/ui.py:82
+msgid "None"
+msgstr "None"
+
+#: src/cli/ui.py:85
+msgid "No provider configured — use /provider to add one"
+msgstr "No provider configured — use /provider to add one"
+
+#: src/cli/ui.py:90
+msgid "Commands:"
+msgstr "Commands:"
+
+#: src/cli/ui.py:90
+msgid "manage"
+msgstr "manage"
+
+#: src/cli/ui.py:90
+msgid "clean"
+msgstr "clean"
+
+#: src/cli/ui.py:103
+msgid "Provider & Model Manager"
+msgstr "Provider & Model Manager"
+
+#: src/cli/ui.py:105
+msgid "Key"
+msgstr "Key"
+
+#: src/cli/ui.py:106
+msgid "Name"
+msgstr "Name"
+
+#: src/cli/ui.py:107
+msgid "Active Model"
+msgstr "Active Model"
+
+#: src/cli/ui.py:108
+msgid "Total Models"
+msgstr "Total Models"
+
+#: src/cli/ui.py:109
+msgid "Status"
+msgstr "Status"
+
+#: src/cli/ui.py:114
+msgid "● ACTIVE"
+msgstr "● ACTIVE"
+
+#: src/cli/ui.py:118
+msgid "Available actions:"
+msgstr "Available actions:"
+
+#: src/cli/ui.py:119
+msgid "Switch Active Provider / Model"
+msgstr "Switch Active Provider / Model"
+
+#: src/cli/ui.py:120
+msgid "Add New Provider (from Presets or Custom)"
+msgstr "Add New Provider (from Presets or Custom)"
+
+#: src/cli/ui.py:121
+msgid "Add Model to a Provider"
+msgstr "Add Model to a Provider"
+
+#: src/cli/ui.py:122
+msgid "Remove Model from a Provider"
+msgstr "Remove Model from a Provider"
+
+#: src/cli/ui.py:123
+msgid "Remove a Provider"
+msgstr "Remove a Provider"
+
+#: src/cli/ui.py:124
+msgid "Return to Main Chat"
+msgstr "Return to Main Chat"
+
+#: src/cli/ui.py:126 src/cli/ui.py:167
+msgid "Choose an option"
+msgstr "Choose an option"
+
+#: src/cli/ui.py:146
+msgid "Select provider to activate"
+msgstr "Select provider to activate"
+
+#: src/cli/ui.py:152
+#, python-brace-format
+msgid "Choose model for '{name}'"
+msgstr "Choose model for '{name}'"
+
+#: src/cli/ui.py:152 src/cli/ui.py:208
+msgid "Model name"
+msgstr "Model name"
+
+#: src/cli/ui.py:155
+#, python-brace-format
+msgid "Active provider set: {name} -> {model}"
+msgstr "Active provider set: {name} -> {model}"
+
+#: src/cli/ui.py:165
+msgid "Custom Provider (Custom OpenAI/Anthropic)"
+msgstr "Custom Provider (Custom OpenAI/Anthropic)"
+
+#: src/cli/ui.py:177
+#, python-brace-format
+msgid "Provider \"{name}\" added successfully!"
+msgstr "Provider \"{name}\" added successfully!"
+
+#: src/cli/ui.py:179
+msgid "Unique key/slug (e.g. openrouter, groq, zai)"
+msgstr "Unique key/slug (e.g. openrouter, groq, zai)"
+
+#: src/cli/ui.py:183
+msgid "Display name"
+msgstr "Display name"
+
+#: src/cli/ui.py:184
+msgid "Type"
+msgstr "Type"
+
+#: src/cli/ui.py:185
+msgid "Base URL"
+msgstr "Base URL"
+
+#: src/cli/ui.py:186
+msgid "Environment variable (.env)"
+msgstr "Environment variable (.env)"
+
+#: src/cli/ui.py:187
+msgid "Default initial model"
+msgstr "Default initial model"
+
+#: src/cli/ui.py:197
+#, python-brace-format
+msgid "Custom provider \"{name}\" registered!"
+msgstr "Custom provider \"{name}\" registered!"
+
+#: src/cli/ui.py:205
+msgid "Add model to which provider?"
+msgstr "Add model to which provider?"
+
+#: src/cli/ui.py:211
+#, python-brace-format
+msgid "Model \"{model}\" added!"
+msgstr "Model \"{model}\" added!"
+
+#: src/cli/ui.py:219
+msgid "Remove model from which provider?"
+msgstr "Remove model from which provider?"
+
+#: src/cli/ui.py:224
+msgid "The provider must have at least 1 model."
+msgstr "The provider must have at least 1 model."
+
+#: src/cli/ui.py:229
+msgid "Model number to remove"
+msgstr "Model number to remove"
+
+#: src/cli/ui.py:233
+#, python-brace-format
+msgid "Model \"{model}\" removed!"
+msgstr "Model \"{model}\" removed!"
+
+#: src/cli/ui.py:240
+msgid "Cannot remove the only registered provider."
+msgstr "Cannot remove the only registered provider."
+
+#: src/cli/ui.py:245
+msgid "Which provider to remove?"
+msgstr "Which provider to remove?"
+
+#: src/cli/ui.py:249
+#, python-brace-format
+msgid "Remove '{name}'?"
+msgstr "Remove '{name}'?"
+
+#: src/cli/ui.py:251
+#, python-brace-format
+msgid "Provider \"{key}\" removed!"
+msgstr "Provider \"{key}\" removed!"
+
+#: src/cli/ui.py:273
+msgid "keywords"
+msgstr "keywords"
+
+#: src/cli/ui.py:274
+msgid "Job Detected:"
+msgstr "Job Detected:"
+
+#: src/cli/ui.py:280
+msgid "Identified Gaps:"
+msgstr "Identified Gaps:"
+
+#: src/cli/ui.py:282
+msgid "Gaps:"
+msgstr "Gaps:"
+
+#: src/cli/ui.py:282
+msgid "No critical gaps found in profile."
+msgstr "No critical gaps found in profile."
+
+#: src/cli/ui.py:285
+msgid "Typst Generated:"
+msgstr "Typst Generated:"
+
+#: src/cli/ui.py:285
+msgid "STAR structure with bold front-loading ready."
+msgstr "STAR structure with bold front-loading ready."
+
+#: src/cli/ui.py:288 src/cli/ui.py:303
+msgid "Local"
+msgstr "Local"
+
+#: src/cli/ui.py:290 src/cli/ui.py:292
+msgid "Typst Compilation:"
+msgstr "Typst Compilation:"
+
+#: src/cli/ui.py:290
+msgid "Syntax error (triggering auto-repair)."
+msgstr "Syntax error (triggering auto-repair)."
+
+#: src/cli/ui.py:292
+msgid "PDF generated and text extracted successfully."
+msgstr "PDF generated and text extracted successfully."
+
+#: src/cli/ui.py:295
+msgid "[Auto-Repair] Fixing Typst syntax..."
+msgstr "[Auto-Repair] Fixing Typst syntax..."
+
+#: src/cli/ui.py:301
+msgid "APPROVED"
+msgstr "APPROVED"
+
+#: src/cli/ui.py:301
+msgid "REJECTED"
+msgstr "REJECTED"
+
+#: src/cli/ui.py:304
+msgid "ATS Score:"
+msgstr "ATS Score:"
+
+#: src/cli/ui.py:307
+msgid "[Reflection] Adjusting CV to cover mandatory terms..."
+msgstr "[Reflection] Adjusting CV to cover mandatory terms..."
+
+#: src/cli/ui.py:312 src/cli/ui.py:314
+msgid "Final Agent Report"
+msgstr "Final Agent Report"
+
+#: src/cli/ui.py:314
+msgid "Artifacts committed to output/ successfully!"
+msgstr "Artifacts committed to output/ successfully!"
+

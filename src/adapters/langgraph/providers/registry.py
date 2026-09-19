@@ -41,7 +41,7 @@ def get_active_provider_info() -> Dict[str, Any]:
     provider = config.get("providers", {}).get(active_key) if active_key else None
 
     if not provider:
-        raise NoProviderConfiguredError("Nenhum provedor configurado. Use /provider para adicionar um.")
+        raise NoProviderConfiguredError("No provider configured. Use /provider to add one.")
 
     return {
         "key": active_key,
@@ -57,7 +57,7 @@ def get_active_provider_info() -> Dict[str, Any]:
 def set_active_provider_and_model(provider_key: str, model_name: Optional[str] = None) -> None:
     config = load_providers_config()
     if provider_key not in config["providers"]:
-        raise ValueError(f"Provedor '{provider_key}' não encontrado.")
+        raise ValueError(f"Provider '{provider_key}' not found.")
 
     config["active_provider"] = provider_key
     if model_name:
@@ -72,7 +72,7 @@ def remove_provider(provider_key: str) -> None:
     config = load_providers_config()
     if provider_key in config["providers"]:
         if len(config["providers"]) <= 1:
-            raise ValueError("Não é possível remover o único provedor cadastrado.")
+            raise ValueError("Cannot remove the only registered provider.")
         del config["providers"][provider_key]
         if config.get("active_provider") == provider_key:
             config["active_provider"] = next(iter(config["providers"]))
@@ -88,7 +88,7 @@ def remove_model_from_provider(provider_key: str, model_name: str) -> None:
     models = provider.get("models", [])
     if model_name in models:
         if len(models) <= 1:
-            raise ValueError("O provedor deve ter pelo menos um modelo cadastrado.")
+            raise ValueError("The provider must have at least one registered model.")
         models.remove(model_name)
         if provider.get("active_model") == model_name:
             provider["active_model"] = models[0]
@@ -123,7 +123,7 @@ def fetch_models_from_endpoint(base_url: str, api_key: Optional[str] = None) -> 
             models_data = data.get("data", [])
             return sorted([m["id"] for m in models_data if isinstance(m, dict) and "id" in m])
     except Exception as e:
-        raise RuntimeError(f"Não foi possível buscar modelos de {url}: {e}")
+        raise RuntimeError(f"Could not fetch models from {url}: {e}")
 
 
 def get_dynamic_llm(temperature: float = 0.1):
@@ -134,10 +134,10 @@ def get_dynamic_llm(temperature: float = 0.1):
     env_var = p.get("api_key_env")
     api_key = os.getenv(env_var) if env_var else None
 
-    # Validação defensiva imediata
+    # Defensive validation
     if env_var and not api_key:
         raise ValueError(
-            f"A variável de ambiente '{env_var}' não foi encontrada no .env ou está vazia."
+            f"Environment variable '{env_var}' was not found in .env or is empty."
         )
 
     if provider_type == "anthropic":

@@ -27,7 +27,10 @@ from src.adapters.langgraph.providers.registry import get_active_provider_info, 
 from src.adapters.langgraph.builder import app as langgraph_pipeline
 from src.core.models.state import DomainState
 
-app = typer.Typer(help="✦ CVECK 2.0: Autonomous Agentic Resume Tailoring & ATS Scoring Engine")
+app = typer.Typer(
+    help="✦ CVECK 2.0: Autonomous Agentic Resume Tailoring & ATS Scoring Engine",
+    add_completion=False
+)
 
 def _clean_output():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -65,7 +68,7 @@ def _run_pipeline(full_jd: str, source_label: str):
         Prompt.ask(f"\n{_('Press ENTER to continue...')}")
         return
 
-    console.print(f"\n[bold cyan]⚡ {_('Running Pipeline with')} [{active_info['name']} -> {active_info['model']}]...[/bold cyan]")
+    console.print(f"\n[bold cyan]{_('⚡ Running Pipeline with [{name} -> {model}]...').format(name=active_info['name'], model=active_info['model'])}[/bold cyan]")
 
     initial_state = DomainState(
         job_description=full_jd,
@@ -73,7 +76,7 @@ def _run_pipeline(full_jd: str, source_label: str):
     ).model_dump()
 
     try:
-        with console.status(f"[bold green]{_('Processing with')} {active_info['model']}...[/bold green]", spinner="dots"):
+        with console.status(f"[bold green]{_('Processing with {model}...').format(model=active_info['model'])}[/bold green]", spinner="dots"):
             for event in langgraph_pipeline.stream(initial_state):
                 for node_name, node_output in event.items():
                     render_stream_node(node_name, node_output)
@@ -84,7 +87,7 @@ def _run_pipeline(full_jd: str, source_label: str):
             p_info = get_active_provider_info()
             console.print(Panel(
                 f"[bold red]❌ {_('Authentication Error (401)')}[/bold red]\n\n"
-                f"{_('Check your .env variable:')} [bold yellow]{p_info['api_key_env']}[/bold yellow]",
+                f"{_('The API Key for provider [bold]{name}[/bold] is invalid or not configured.\nCheck the [bold yellow]{env}[/bold yellow] variable in your [bold].env[/bold] file.').format(name=p_info['name'], env=p_info.get('api_key_env', ''))}",
                 border_style="red"
             ))
         else:
@@ -94,21 +97,18 @@ def _run_pipeline(full_jd: str, source_label: str):
     Prompt.ask(f"\n{_('Press ENTER to return to the main menu...')}")
 
 
-@app.command()
-def run(
-    lang: Optional[str] = typer.Option(None, "--lang", "-l", help="Language code (en, pt_BR, zh)")
-):
-    """Inicia a CLI interativa do CVECK (Adapter LangGraph)."""
+def run(lang: Optional[str] = None):
+    """Start the interactive CVECK CLI (LangGraph Adapter)."""
     setup_i18n(lang)
 
     while True:
         flush_terminal_stdin()
         render_header()
         console.print(f"[bold]{_('Options:')}[/bold]")
-        console.print(f"  • {_('Press [bold cyan]ENTER[/bold cyan] to load job description from clipboard')}")
-        console.print(f"  • {_('Type [magenta]/provider[/magenta] to change model/provider')}")
-        console.print(f"  • {_('Type [magenta]/lang[/magenta] to change interface language')}")
-        console.print(f"  • {_('Type [magenta]/clean[/magenta] to clean outputs | [magenta]/exit[/magenta] to exit')}\n")
+        console.print(f"  • {_('Press {key} to load job description from clipboard').format(key='[bold cyan]ENTER[/bold cyan]')}")
+        console.print(f"  • {_('Type {cmd} to change model/provider').format(cmd='[magenta]/provider[/magenta]')}")
+        console.print(f"  • {_('Type {cmd} to change interface language').format(cmd='[magenta]/lang[/magenta]')}")
+        console.print(f"  • {_('Type {cmd1} to clean outputs | {cmd2} to exit').format(cmd1='[magenta]/clean[/magenta]', cmd2='[magenta]/exit[/magenta]')}\n")
 
         cmd = input("> ").strip()
 
@@ -134,7 +134,7 @@ def run(
             _clean_output()
             continue
 
-        # Coleta de texto (Clipboard ou Terminal)
+        # Capture text (Clipboard or Terminal)
         if len(cmd) > 50:
             full_jd, source = cmd, _("Text Pasted in Terminal")
         else:
@@ -142,12 +142,12 @@ def run(
             if clip and len(clip) > 50:
                 full_jd, source = clip, _("Clipboard")
             else:
-                console.print(f"[yellow]{_('Paste JD below and type \"END\" on a new line:')}[/yellow]")
+                console.print(f"[yellow]{_('Clipboard empty. Paste the job description below and type \"END\" on a new line:')}[/yellow]")
                 lines = []
                 while True:
                     try:
                         line = input()
-                        if line.strip() in ["FIM", "END", "EXIT", "EOF"]:
+                        if line.strip().upper() in ["END", "FIM", "EXIT", "EOF"]:
                             break
                         lines.append(line)
                     except EOFError:
@@ -164,16 +164,19 @@ def run(
 
 @app.command()
 def mcp():
-    """Inicia o servidor oficial do MCP (Model Context Protocol) via stdio."""
+    """Start the official MCP (Model Context Protocol) server via stdio."""
     from src.adapters.mcp.server import run_mcp_server
     run_mcp_server()
 
 
 @app.callback(invoke_without_command=True)
-def default_entrypoint(ctx: typer.Context):
-    """Padrão: se o usuário só digitar `cveck`, executa o `run` interativo."""
+def default_entrypoint(
+    ctx: typer.Context,
+    lang: Optional[str] = typer.Option(None, "--lang", "-l", help="Language code (en, pt_BR, zh). Default: system language.")
+):
+    """Default: if the user only types `cveck`, runs the interactive CLI."""
     if ctx.invoked_subcommand is None:
-        run(lang=None)
+        run(lang=lang)
 
 
 if __name__ == "__main__":

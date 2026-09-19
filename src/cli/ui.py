@@ -149,9 +149,10 @@ def _switch_active_provider(config):
         prov = config["providers"][p_key]
         models = prov.get("models", [])
         completer = WordCompleter(models, ignore_case=True)
-        chosen = pt_prompt(f"{_('Choose model for')} '{prov['name']}': ", completer=completer).strip() if models else Prompt.ask(_("Model name"))
-        set_active_provider_and_model(p_key, chosen)
-        console.print(f"[bold green]✔ {prov['name']} -> {chosen}[/bold green]")
+        chosen = pt_prompt(f"{_('Choose model for \'{name}\'').format(name=prov['name'])}: ", completer=completer).strip() if models else Prompt.ask(_("Model name"))
+        if chosen:
+            set_active_provider_and_model(p_key, chosen)
+            console.print(f"[bold green]✔ {_('Active provider set: {name} -> {model}').format(name=prov['name'], model=chosen)}[/bold green]")
     Prompt.ask(f"\n{_('Press ENTER to continue...')}")
 
 
@@ -161,7 +162,7 @@ def _add_provider(config):
     preset_keys = list(available.keys())
     for idx, k in enumerate(preset_keys, 1):
         console.print(f"  [cyan]{idx}[/cyan] - {available[k]['name']}")
-    console.print(f"  [cyan]{len(preset_keys)+1}[/cyan] - {_('Custom Provider')}")
+    console.print(f"  [cyan]{len(preset_keys)+1}[/cyan] - {_('Custom Provider (Custom OpenAI/Anthropic)')}")
 
     choice = Prompt.ask(_("Choose an option"), default="1")
     if choice.isdigit() and 1 <= int(choice) <= len(preset_keys):
@@ -173,7 +174,27 @@ def _add_provider(config):
             "active_model": p_data["default_models"][0], "models": p_data["default_models"]
         }
         save_providers_config(config)
-        console.print(f"[bold green]✔ {_('Provider added!')}[/bold green]")
+        console.print(f"[bold green]✔ {_('Provider \"{name}\" added successfully!').format(name=p_data['name'])}[/bold green]")
+    elif choice.isdigit() and int(choice) == len(preset_keys) + 1:
+        key = Prompt.ask(_("Unique key/slug (e.g. openrouter, groq, zai)")).strip().lower()
+        if not key:
+            Prompt.ask(f"\n{_('Press ENTER to continue...')}")
+            return
+        name = Prompt.ask(_("Display name")).strip() or key.capitalize()
+        ptype = Prompt.ask(_("Type"), choices=["openai", "anthropic"], default="openai")
+        base_url = Prompt.ask(_("Base URL")).strip()
+        api_key_env = Prompt.ask(_("Environment variable (.env)")).strip()
+        default_model = Prompt.ask(_("Default initial model")).strip()
+        config["providers"][key] = {
+            "name": name,
+            "provider_type": ptype,
+            "base_url": base_url or None,
+            "api_key_env": api_key_env or None,
+            "active_model": default_model or "default",
+            "models": [default_model] if default_model else ["default"]
+        }
+        save_providers_config(config)
+        console.print(f"[bold green]✔ {_('Custom provider \"{name}\" registered!').format(name=name)}[/bold green]")
     Prompt.ask(f"\n{_('Press ENTER to continue...')}")
 
 
@@ -184,9 +205,10 @@ def _add_model(config):
     choice = Prompt.ask(_("Add model to which provider?"), default="1")
     if choice.isdigit() and 1 <= int(choice) <= len(keys):
         p_key = keys[int(choice) - 1]
-        new_m = Prompt.ask(_("Model name"))
-        add_model_to_provider(p_key, new_m, set_as_active=True)
-        console.print(f"[bold green]✔ {_('Model added!')}[/bold green]")
+        new_m = Prompt.ask(_("Model name")).strip()
+        if new_m:
+            add_model_to_provider(p_key, new_m, set_as_active=True)
+            console.print(f"[bold green]✔ {_('Model \"{model}\" added!').format(model=new_m)}[/bold green]")
     Prompt.ask(f"\n{_('Press ENTER to continue...')}")
 
 
@@ -198,36 +220,46 @@ def _remove_model(config):
     if choice.isdigit() and 1 <= int(choice) <= len(keys):
         p_key = keys[int(choice) - 1]
         models = config["providers"][p_key].get("models", [])
+        if len(models) <= 1:
+            console.print(f"[red]{_('The provider must have at least 1 model.')}[/red]")
+            Prompt.ask(f"\n{_('Press ENTER to continue...')}")
+            return
         for idx, m in enumerate(models, 1):
             console.print(f"  [cyan]{idx}[/cyan] - {m}")
         m_choice = Prompt.ask(_("Model number to remove"))
         if m_choice.isdigit() and 1 <= int(m_choice) <= len(models):
-            remove_model_from_provider(p_key, models[int(m_choice) - 1])
-            console.print(f"[bold green]✔ {_('Model removed!')}[/bold green]")
+            removed_m = models[int(m_choice) - 1]
+            remove_model_from_provider(p_key, removed_m)
+            console.print(f"[bold green]✔ {_('Model \"{model}\" removed!').format(model=removed_m)}[/bold green]")
     Prompt.ask(f"\n{_('Press ENTER to continue...')}")
 
 
 def _remove_provider(config):
     keys = list(config["providers"].keys())
+    if len(keys) <= 1:
+        console.print(f"[red]{_('Cannot remove the only registered provider.')}[/red]")
+        Prompt.ask(f"\n{_('Press ENTER to continue...')}")
+        return
     for idx, k in enumerate(keys, 1):
         console.print(f"  [cyan]{idx}[/cyan] - {config['providers'][k]['name']}")
     choice = Prompt.ask(_("Which provider to remove?"))
     if choice.isdigit() and 1 <= int(choice) <= len(keys):
         p_key = keys[int(choice) - 1]
-        if Confirm.ask(f"{_('Remove')} '{config['providers'][p_key]['name']}'?", default=False):
+        p_name = config["providers"][p_key]["name"]
+        if Confirm.ask(_("Remove '{name}'?").format(name=p_name), default=False):
             remove_provider(p_key)
-            console.print(f"[bold green]✔ {_('Provider removed!')}[/bold green]")
+            console.print(f"[bold green]✔ {_('Provider \"{key}\" removed!').format(key=p_key)}[/bold green]")
     Prompt.ask(f"\n{_('Press ENTER to continue...')}")
 
 
 # --- STREAMING NODE RENDERERS ---
 
 def render_stream_node(node_name: str, node_output: dict | None):
-    # 1. Guarda contra eventos sem mutação de estado (None)
+    # 1. Guard against events without state mutation (None)
     if not node_output or not isinstance(node_output, dict):
         node_output = {}
 
-    # 2. Ignora nós internos silenciosos que não geram log visual no terminal
+    # 2. Ignore silent internal nodes that don't generate visual terminal logs
     if node_name == "gaps_updater":
         return
 
@@ -238,7 +270,8 @@ def render_stream_node(node_name: str, node_output: dict | None):
         title = node_output.get("job_title", "Dev")
         company = node_output.get("company_name", "Company")
         lang = node_output.get("job_lang", "en")
-        console.print(f"  [cyan]✔ [1/6] {_('Job Detected:')}[/cyan] [bold]{title}[/bold] @ [bold]{company}[/bold] [dim]({lang.upper()})[/dim] ({t_count} keywords) {toks}")
+        kw_label = _("keywords")
+        console.print(f"  [cyan]✔ [1/6] {_('Job Detected:')}[/cyan] [bold]{title}[/bold] @ [bold]{company}[/bold] [dim]({lang.upper()})[/dim] ({t_count} {kw_label}) {toks}")
 
     elif node_name == "gap_finder":
         gaps = node_output.get("detected_gaps", [])
@@ -246,16 +279,17 @@ def render_stream_node(node_name: str, node_output: dict | None):
             labels = [g.term if hasattr(g, "term") else g.get("term", "") for g in gaps]
             console.print(f"  [yellow]⚠ [2/6] {_('Identified Gaps:')}[/yellow] {labels} {toks}")
         else:
-            console.print(f"  [cyan]✔ [2/6] {_('Gaps:')}[/cyan] {_('No critical gaps found.')} {toks}")
+            console.print(f"  [cyan]✔ [2/6] {_('Gaps:')}[/cyan] {_('No critical gaps found in profile.')} {toks}")
 
     elif node_name == "cv_generator":
-        console.print(f"  [cyan]✔ [3/6] {_('Typst Generated:')}[/cyan] {_('STAR structure ready.')} {toks}")
+        console.print(f"  [cyan]✔ [3/6] {_('Typst Generated:')}[/cyan] {_('STAR structure with bold front-loading ready.')} {toks}")
 
     elif node_name == "typst_compiler":
+        local_label = _("Local")
         if node_output.get("typ_error"):
-            console.print(f"  [yellow]⚠ [4/6] {_('Typst Compilation:')}[/yellow] {_('Syntax error (triggering auto-repair).')} [dim](0 tokens - Local)[/dim]")
+            console.print(f"  [yellow]⚠ [4/6] {_('Typst Compilation:')}[/yellow] {_('Syntax error (triggering auto-repair).')} [dim](0 tokens - {local_label})[/dim]")
         else:
-            console.print(f"  [cyan]✔ [4/6] {_('Typst Compilation:')}[/cyan] {_('PDF generated successfully.')} [dim](0 tokens - Local)[/dim]")
+            console.print(f"  [cyan]✔ [4/6] {_('Typst Compilation:')}[/cyan] {_('PDF generated and text extracted successfully.')} [dim](0 tokens - {local_label})[/dim]")
 
     elif node_name == "typst_fixer":
         console.print(f"  [magenta]🔧 {_('[Auto-Repair] Fixing Typst syntax...')} {toks}[/magenta]")
@@ -266,7 +300,8 @@ def render_stream_node(node_name: str, node_output: dict | None):
         color = "green" if approved else "yellow"
         status_text = _("APPROVED") if approved else _("REJECTED")
         score = ats.score if ats else 0
-        console.print(f"  [{color}]✔ [5/6] {_('ATS Score:')}[/{color}] {score}/100 - [{color}]{status_text}[/{color}] [dim](0 tokens - Local)[/dim]")
+        local_label = _("Local")
+        console.print(f"  [{color}]✔ [5/6] {_('ATS Score:')}[/{color}] {score}/100 - [{color}]{status_text}[/{color}] [dim](0 tokens - {local_label})[/dim]")
 
     elif node_name == "cv_refiner":
         console.print(f"  [magenta]↻ {_('[Reflection] Adjusting CV to cover mandatory terms...')} {toks}[/magenta]")

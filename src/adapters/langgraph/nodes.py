@@ -203,12 +203,12 @@ def cv_refiner_node(state: LangGraphState) -> dict:
     feedback = []
     if ats:
         if ats.missing_required:
-            feedback.append(f"• Obrigatórios Ausentes: {', '.join(ats.missing_required)}")
+            feedback.append(f"• Missing Mandatory: {', '.join(ats.missing_required)}")
         if ats.missing_optional:
-            feedback.append(f"• Diferenciais Ausentes: {', '.join(ats.missing_optional)}")
+            feedback.append(f"• Missing Optional: {', '.join(ats.missing_optional)}")
         if ats.stuffing_flags:
-            feedback.append(f"• Alerta de Repetição Excessiva (Stuffing): {ats.stuffing_flags}")
-        feedback.append(f"• Nota Atual: {ats.score}/100")
+            feedback.append(f"• Excessive Repetition Alert (Stuffing): {ats.stuffing_flags}")
+        feedback.append(f"• Current Score: {ats.score}/100")
 
     user_content = (
         f"STYLE GUIDE:\n{style_guide}\n\n"
@@ -230,40 +230,40 @@ def cv_refiner_node(state: LangGraphState) -> dict:
 
 
 def _build_final_summary(state: LangGraphState, slug: str, lang: str) -> str:
-    """Relatório estruturado com dados de ATS, Gaps e telemetria da API."""
+    """Structured report with ATS data, Gaps, and API telemetry."""
     ats = state.ats_report
     job_title = state.job_title or "Software Developer"
     company = state.company_name or "Company"
-    status_label = "Aprovado" if state.is_approved else "Reprovado"
+    status_label = "Approved" if state.is_approved else "Rejected"
 
-    missing_req = ", ".join(ats.missing_required) if ats and ats.missing_required else "Nenhum"
-    missing_opt = ", ".join(ats.missing_optional) if ats and ats.missing_optional else "Nenhum"
+    missing_req = ", ".join(ats.missing_required) if ats and ats.missing_required else "None"
+    missing_opt = ", ".join(ats.missing_optional) if ats and ats.missing_optional else "None"
 
     sep = "=" * 50
     lines = [
         sep,
-        f" RELATÓRIO TÉCNICO ATS: {job_title} ({company})",
+        f" ATS TECHNICAL REPORT: {job_title} ({company})",
         sep,
         f"Status: {status_label}",
-        f"Pontuação Geral: {ats.score if ats else 0}/100",
-        f"Tentativas Realizadas: {max(state.iteration, 1)}",
-        f"Cobertura de Requisitos Obrigatórios: {ats.coverage_required_pct if ats else 0}%",
-        f"Cobertura Geral de Palavras-chave: {ats.coverage_pct if ats else 0}%",
+        f"Overall Score: {ats.score if ats else 0}/100",
+        f"Attempts Made: {max(state.iteration, 1)}",
+        f"Mandatory Requirements Coverage: {ats.coverage_required_pct if ats else 0}%",
+        f"Overall Keyword Coverage: {ats.coverage_pct if ats else 0}%",
         "",
-        f"Obrigatórios Ausentes: {missing_req}",
-        f"Diferenciais Ausentes: {missing_opt}",
+        f"Missing Mandatory: {missing_req}",
+        f"Missing Optional: {missing_opt}",
     ]
 
     if ats and ats.stuffing_flags:
-        lines.append(f"Alerta de Repetição Excessiva (Stuffing): {ats.stuffing_flags}")
+        lines.append(f"Keyword Stuffing Alert (>2%): {ats.stuffing_flags}")
 
     if state.detected_gaps:
         gap_names = [g.term for g in state.detected_gaps]
-        lines.append(f"Gaps Adicionados ao Backlog (doc/GAPS.md): {gap_names}")
+        lines.append(f"Gaps Added to Backlog (doc/GAPS.md): {gap_names}")
 
-    lines.append(f"PDF gerado em: {OUTPUT_DIR}/cv-{slug}-{lang}.pdf")
+    lines.append(f"PDF generated at: {OUTPUT_DIR}/cv-{slug}-{lang}.pdf")
 
-    # Métrica de telemetria que pertence exclusivamente ao LangGraph
+    # LangGraph-specific telemetry metrics
     tokens_info = state.token_usage or {}
     total_tok = tokens_info.get("total_tokens", 0)
     in_tok = tokens_info.get("input_tokens", 0)
@@ -271,7 +271,7 @@ def _build_final_summary(state: LangGraphState, slug: str, lang: str) -> str:
     if total_tok > 0:
         lines.append("")
         lines.append(
-            f"Consumo Total de Tokens: {total_tok:,} (Prompt: {in_tok:,} | Completion: {out_tok:,})"
+            f"Total Token Consumption: {total_tok:,} (Prompt: {in_tok:,} | Completion: {out_tok:,})"
         )
 
     return "\n".join(lines)

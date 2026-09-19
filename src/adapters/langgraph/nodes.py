@@ -14,19 +14,13 @@ from src.core.context import load_user_profile, resolve_template_skeleton
 from src.adapters.langgraph.providers.registry import get_dynamic_llm
 from src.adapters.langgraph.providers.token_tracker import extract_token_usage, accumulate_tokens
 from src.core.paths import (
-      PROJECT_ROOT,
-      DOC_DIR,
-      OUTPUT_DIR,
-      ASSETS_DIR,
-      PROMPTS_DIR,
-      TEMPLATES_DIR
-  )
-
-ASSETS_DIR = Path(__file__).resolve().parent.parent.parent / "core" / "assets"
-PROMPTS_DIR = ASSETS_DIR / "prompts"
-TEMPLATES_DIR = ASSETS_DIR / "templates"
-DOC_DIR = Path.cwd() / "doc"
-OUTPUT_DIR = Path.cwd() / "output"
+    PROJECT_ROOT,
+    DOC_DIR,
+    OUTPUT_DIR,
+    ASSETS_DIR,
+    PROMPTS_DIR,
+    TEMPLATES_DIR
+)
 
 
 def _read_prompt(filename: str) -> str:
@@ -40,7 +34,7 @@ def term_extractor_node(state: LangGraphState) -> dict:
 
     messages = [
         SystemMessage(content=prompt),
-        HumanMessage(content=f"Descrição da vaga:\n\n{state.job_description}")
+        HumanMessage(content=f"Job description:\n\n{state.job_description}")
     ]
     res = llm_tools.invoke(messages)
     tokens = extract_token_usage(res)
@@ -67,10 +61,10 @@ def gap_finder_node(state: LangGraphState) -> dict:
     profile = load_user_profile(DOC_DIR)
     prompt = _read_prompt("find_gaps.md")
 
-    terms_dump = "\n".join([f"- {t.term} (Obrigatório: {t.required})" for t in state.job_terms])
+    terms_dump = "\n".join([f"- {t.term} (Mandatory: {t.required})" for t in state.job_terms])
     messages = [
         SystemMessage(content=prompt),
-        HumanMessage(content=f"PERFIL:\n{profile}\n\nTERMOS DA VAGA:\n{terms_dump}\n\nData: {state.job_date}")
+        HumanMessage(content=f"CANDIDATE PROFILE:\n{profile}\n\nJOB TERMS:\n{terms_dump}\n\nApplication Date: {state.job_date}")
     ]
     res = llm_tools.invoke(messages)
     tokens = extract_token_usage(res)
@@ -81,9 +75,9 @@ def gap_finder_node(state: LangGraphState) -> dict:
         parsed = extract_and_parse_json(str(res.content), RecordGaps)
 
     for g in parsed.real_gaps:
-        g.vaga = state.job_title
-        g.empresa = state.company_name
-        g.data = state.job_date
+        g.job_title = state.job_title
+        g.company_name = state.company_name
+        g.date = state.job_date
 
     return {
         "detected_gaps": parsed.real_gaps,
@@ -93,7 +87,7 @@ def gap_finder_node(state: LangGraphState) -> dict:
 
 
 def gaps_updater_node(state: LangGraphState) -> dict:
-    """Nó determinístico do Core: salva em doc/GAPS.md e doc/gaps.json."""
+    """Deterministic Core node: persists gaps to doc/GAPS.md and doc/gaps.json."""
     update_gaps_backlog(
         state.detected_gaps,
         DOC_DIR / "gaps.json",
@@ -110,17 +104,17 @@ def cv_generator_node(state: LangGraphState) -> dict:
     prompt = _read_prompt("generate_cv.md")
     base_template, lang = resolve_template_skeleton(TEMPLATES_DIR, state.job_lang)
 
-    terms_str = ", ".join([f"{t.term} ({'obrigatório' if t.required else 'diferencial'})" for t in state.job_terms])
-    gaps_str = ", ".join([g.term for g in state.detected_gaps]) or "Nenhum"
+    terms_str = ", ".join([f"{t.term} ({'mandatory' if t.required else 'optional'})" for t in state.job_terms])
+    gaps_str = ", ".join([g.term for g in state.detected_gaps]) or "None"
 
     user_content = (
         f"STYLE GUIDE:\n{style_guide}\n\n"
-        f"TEMPLATE BASE:\n{base_template}\n\n"
-        f"PERFIL REAL:\n{profile}\n\n"
-        f"VAGA: {state.job_title} @ {state.company_name} ({lang})\n"
-        f"TERMOS: {terms_str}\n"
-        f"GAPS PROIBIDOS DE ALUCINAR: {gaps_str}\n\n"
-        "Gere o código Typst completo preenchendo o template e envie via SubmitTypstCV."
+        f"BASE TEMPLATE:\n{base_template}\n\n"
+        f"FACTUAL PROFILE:\n{profile}\n\n"
+        f"TARGET JOB: {state.job_title} @ {state.company_name} ({lang})\n"
+        f"JOB KEYWORDS: {terms_str}\n"
+        f"PROHIBITED GAPS (DO NOT HALLUCINATE OR MENTION): {gaps_str}\n\n"
+        "Generate the complete Typst code following the style guide and submit it via SubmitTypstCV."
     )
     res = llm_tools.invoke([SystemMessage(content=prompt), HumanMessage(content=user_content)])
     tokens = extract_token_usage(res)
@@ -144,7 +138,7 @@ def typst_compiler_node(state: LangGraphState) -> dict:
         typst_code=state.typ_content,
         output_pdf_path=pdf_path,
         output_typ_path=typ_path,
-        root_dir=PROJECT_ROOT,  # Ancorado na raiz real do CVECK
+        root_dir=PROJECT_ROOT,
         lang=lang
     )
 
@@ -168,9 +162,9 @@ def typst_fixer_node(state: LangGraphState) -> dict:
     prompt = _read_prompt("fix_typst.md")
 
     user_content = (
-        f"ERRO DO COMPILADOR TYPST:\n{state.typ_error}\n\n"
-        f"CÓDIGO COM ERRO:\n{state.typ_content}\n\n"
-        "Corrija a sintaxe mantendo todas as chaves e imports fechados e reenvie via SubmitTypstCV."
+        f"TYPST COMPILER ERROR:\n{state.typ_error}\n\n"
+        f"CODE WITH ERROR:\n{state.typ_content}\n\n"
+        "Fix the syntax error ensuring all delimiters and imports are closed, and resubmit via SubmitTypstCV."
     )
     res = llm_tools.invoke([SystemMessage(content=prompt), HumanMessage(content=user_content)])
     tokens = extract_token_usage(res)
@@ -212,10 +206,10 @@ def cv_refiner_node(state: LangGraphState) -> dict:
 
     user_content = (
         f"STYLE GUIDE:\n{style_guide}\n\n"
-        f"PERFIL:\n{profile}\n\n"
-        f"RELATÓRIO ATS:\n{chr(10).join(feedback)}\n\n"
-        f"CÓDIGO ANTERIOR:\n{state.typ_content}\n\n"
-        "Ajuste os bullets reescrevendo para incluir termos faltantes que existam no perfil e envie via SubmitTypstCV."
+        f"FACTUAL PROFILE:\n{profile}\n\n"
+        f"ATS REPORT:\n{chr(10).join(feedback)}\n\n"
+        f"PREVIOUS CODE:\n{state.typ_content}\n\n"
+        "Refine the bullets to cover missing terms backed by the profile and submit via SubmitTypstCV."
     )
     res = llm_tools.invoke([SystemMessage(content=prompt), HumanMessage(content=user_content)])
     tokens = extract_token_usage(res)
@@ -229,56 +223,8 @@ def cv_refiner_node(state: LangGraphState) -> dict:
     }
 
 
-def _build_final_summary(state: LangGraphState, slug: str, lang: str) -> str:
-    """Structured report with ATS data, Gaps, and API telemetry."""
-    ats = state.ats_report
-    job_title = state.job_title or "Software Developer"
-    company = state.company_name or "Company"
-    status_label = "Approved" if state.is_approved else "Rejected"
-
-    missing_req = ", ".join(ats.missing_required) if ats and ats.missing_required else "None"
-    missing_opt = ", ".join(ats.missing_optional) if ats and ats.missing_optional else "None"
-
-    sep = "=" * 50
-    lines = [
-        sep,
-        f" ATS TECHNICAL REPORT: {job_title} ({company})",
-        sep,
-        f"Status: {status_label}",
-        f"Overall Score: {ats.score if ats else 0}/100",
-        f"Attempts Made: {max(state.iteration, 1)}",
-        f"Mandatory Requirements Coverage: {ats.coverage_required_pct if ats else 0}%",
-        f"Overall Keyword Coverage: {ats.coverage_pct if ats else 0}%",
-        "",
-        f"Missing Mandatory: {missing_req}",
-        f"Missing Optional: {missing_opt}",
-    ]
-
-    if ats and ats.stuffing_flags:
-        lines.append(f"Keyword Stuffing Alert (>2%): {ats.stuffing_flags}")
-
-    if state.detected_gaps:
-        gap_names = [g.term for g in state.detected_gaps]
-        lines.append(f"Gaps Added to Backlog (doc/GAPS.md): {gap_names}")
-
-    lines.append(f"PDF generated at: {OUTPUT_DIR}/cv-{slug}-{lang}.pdf")
-
-    # LangGraph-specific telemetry metrics
-    tokens_info = state.token_usage or {}
-    total_tok = tokens_info.get("total_tokens", 0)
-    in_tok = tokens_info.get("input_tokens", 0)
-    out_tok = tokens_info.get("output_tokens", 0)
-    if total_tok > 0:
-        lines.append("")
-        lines.append(
-            f"Total Token Consumption: {total_tok:,} (Prompt: {in_tok:,} | Completion: {out_tok:,})"
-        )
-
-    return "\n".join(lines)
-
-
 def committer_node(state: LangGraphState) -> dict:
-    """Nó determinístico: grava artefatos finais em output/ e consolida o relatório."""
+    """Deterministic node: persists artifacts to output/ and returns raw domain state."""
     slug = state.job_slug or "cv-tailored"
     lang = state.job_lang or "en"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -289,5 +235,19 @@ def committer_node(state: LangGraphState) -> dict:
     )
     (OUTPUT_DIR / f"resume-{slug}.txt").write_text(state.txt_content, encoding="utf-8")
 
-    summary = _build_final_summary(state, slug, lang)
-    return {"final_summary": summary}
+    pdf_file = OUTPUT_DIR / f"cv-{slug}-{lang}.pdf"
+
+    return {
+        "job_title": state.job_title,
+        "company_name": state.company_name,
+        "job_slug": slug,
+        "job_lang": lang,
+        "pdf_path": str(pdf_file) if pdf_file.exists() and not state.typ_error else "",
+        "typ_error": state.typ_error,
+        "syntax_error_count": state.syntax_error_count,
+        "ats_report": state.ats_report,
+        "is_approved": state.is_approved,
+        "iteration": state.iteration,
+        "detected_gaps": state.detected_gaps,
+        "token_usage": state.token_usage,
+    }

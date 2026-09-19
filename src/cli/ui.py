@@ -33,7 +33,7 @@ except ImportError:
 
 
 def flush_terminal_stdin():
-    """Limpa buffer residual do teclado para evitar vazamento de comandos no bash/powershell."""
+    """Clears residual keyboard input buffer to prevent command leakage in bash/powershell."""
     try:
         if system == "linux":
             termios.tcflush(sys.stdin, termios.TCIFLUSH)
@@ -45,7 +45,7 @@ def flush_terminal_stdin():
 
 
 def get_clipboard_text() -> str:
-    """Lê do clipboard do sistema com suporte a Wayland (wl-paste) e X11 (xclip)."""
+    """Reads system clipboard with support for Wayland (wl-paste) and X11 (xclip)."""
     try:
         res = subprocess.run(["wl-paste"], capture_output=True, text=True, timeout=1)
         if res.returncode == 0 and res.stdout.strip():
@@ -64,7 +64,7 @@ def get_clipboard_text() -> str:
 
 
 def format_token_badge(tok_dict: dict) -> str:
-    """Formata consumo de tokens do passo apenas se houver consumo real de API."""
+    """Formats step token consumption badge only when real API usage occurred."""
     if not tok_dict or tok_dict.get("total_tokens", 0) == 0:
         return ""
     in_tok = tok_dict.get("input_tokens", 0)
@@ -93,7 +93,7 @@ def render_header():
 
 
 def manage_providers_menu():
-    """Menu dinâmico interativo para gerenciar provedores e modelos LLM."""
+    """Interactive dynamic menu for managing LLM providers and models."""
     while True:
         flush_terminal_stdin()
         console.clear()
@@ -254,12 +254,88 @@ def _remove_provider(config):
 
 # --- STREAMING NODE RENDERERS ---
 
+def _render_failure_panel(data: dict) -> Panel:
+    separator = "=" * 50
+    title = data.get("job_title") or _("Software Developer")
+    company = data.get("company_name") or _("Company")
+    attempts = max(data.get("iteration", 1), 1)
+    errors = data.get("syntax_error_count", 0)
+    typ_err = data.get("typ_error", "")
+
+    lines = [
+        separator,
+        f" ⚠ {_('PROCESS HALTED: TYPST SYNTAX FAILURE')}",
+        separator,
+        f"{_('Job:')} {title} ({company})",
+        f"{_('Compilation attempts:')} {attempts} ({errors} {_('syntax errors')})",
+        "",
+        f"{_('REASON:')}",
+        _("The current model repeatedly failed to produce valid Typst code."),
+        _("This indicates that this specific model may not have strong mastery of Typst syntax."),
+        "",
+        f"{_('LAST COMPILER ERROR:')}",
+        f"{typ_err[:350]}...",
+        "",
+        f"{_('SUGGESTION:')}",
+        _("Switch to a more robust coding model in the /provider menu"),
+        _("(e.g., meta/llama-3.3-70b-instruct, claude-3-5-sonnet, or deepseek-chat).")
+    ]
+    return Panel("\n".join(lines), title=f"[bold red]{_('Final Agent Report')}[/bold red]", expand=False)
+
+
+def _render_success_panel(data: dict) -> Panel:
+    separator = "=" * 50
+    ats = data.get("ats_report")
+    title = data.get("job_title") or _("Software Developer")
+    company = data.get("company_name") or _("Company")
+    status_label = _("Approved") if data.get("is_approved") else _("Rejected")
+
+    missing_req = ", ".join(ats.missing_required) if ats and ats.missing_required else _("None")
+    missing_opt = ", ".join(ats.missing_optional) if ats and ats.missing_optional else _("None")
+
+    lines = [
+        separator,
+        f" {_('ATS TECHNICAL REPORT:')} {title} ({company})",
+        separator,
+        f"{_('Status:')} {status_label}",
+        f"{_('Overall Score:')} {ats.score if ats else 0}/100",
+        f"{_('Attempts Made:')} {max(data.get('iteration', 1), 1)}",
+        f"{_('Mandatory Requirements Coverage:')} {ats.coverage_required_pct if ats else 0}%",
+        f"{_('Overall Keyword Coverage:')} {ats.coverage_pct if ats else 0}%",
+        "",
+        f"{_('Missing Mandatory:')} {missing_req}",
+        f"{_('Missing Optional:')} {missing_opt}",
+    ]
+
+    if ats and ats.stuffing_flags:
+        lines.append(f"{_('Keyword Stuffing Alert (>2%):')} {ats.stuffing_flags}")
+
+    gaps = data.get("detected_gaps", [])
+    if gaps:
+        gap_names = [g.term if hasattr(g, "term") else g.get("term", "") for g in gaps]
+        lines.append(f"{_('Gaps Added to Backlog (doc/GAPS.md):')} {gap_names}")
+
+    pdf_path = data.get("pdf_path")
+    if pdf_path:
+        lines.append(f"{_('PDF generated at:')} {pdf_path}")
+
+    tokens_info = data.get("token_usage") or {}
+    total_tok = tokens_info.get("total_tokens", 0)
+    in_tok = tokens_info.get("input_tokens", 0)
+    out_tok = tokens_info.get("output_tokens", 0)
+    if total_tok > 0:
+        lines.append("")
+        lines.append(
+            f"{_('Total Token Consumption:')} {total_tok:,} ({_('Prompt:')} {in_tok:,} | {_('Completion:')} {out_tok:,})"
+        )
+
+    return Panel("\n".join(lines), title=f"[bold green]{_('Final Agent Report')}[/bold green]", expand=False)
+
+
 def render_stream_node(node_name: str, node_output: dict | None):
-    # 1. Guard against events without state mutation (None)
     if not node_output or not isinstance(node_output, dict):
         node_output = {}
 
-    # 2. Ignore silent internal nodes that don't generate visual terminal logs
     if node_name == "gaps_updater":
         return
 
@@ -307,8 +383,7 @@ def render_stream_node(node_name: str, node_output: dict | None):
         console.print(f"  [magenta]↻ {_('[Reflection] Adjusting CV to cover mandatory terms...')} {toks}[/magenta]")
 
     elif node_name == "committer":
-        summary = node_output.get("final_summary", "")
-        if summary:
-            console.print(Panel(summary, title=f"[bold green]{_('Final Agent Report')}[/bold green]", expand=False))
+        if node_output.get("syntax_error_count", 0) >= 3 or (node_output.get("typ_error") and not node_output.get("pdf_path")):
+            console.print(_render_failure_panel(node_output))
         else:
-            console.print(Panel(f"✔ {_('Artifacts committed to output/ successfully!')}", title=f"[bold green]{_('Final Agent Report')}[/bold green]", expand=False))
+            console.print(_render_success_panel(node_output))

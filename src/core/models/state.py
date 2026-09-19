@@ -6,7 +6,7 @@ from src.core.models.ats import ATSReport
 
 
 class DomainState(BaseModel):
-    """Estado neutro e puro da máquina de estados do produto."""
+    """Neutral and pure state of the product state machine."""
     job_description: str = ""
     job_slug: str = ""
     job_title: str = ""

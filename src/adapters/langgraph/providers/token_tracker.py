@@ -2,7 +2,7 @@ from typing import Dict, Any
 
 
 def extract_token_usage(response) -> Dict[str, int]:
-    """Extrai input, output e total de tokens com suporte a LangChain unificado e fallbacks."""
+    """Extracts input, output, and total tokens with unified LangChain support and fallbacks."""
     if hasattr(response, "usage_metadata") and response.usage_metadata:
         in_tok = response.usage_metadata.get("input_tokens", 0)
         out_tok = response.usage_metadata.get("output_tokens", 0)
@@ -19,7 +19,7 @@ def extract_token_usage(response) -> Dict[str, int]:
 
 
 def accumulate_tokens(current_usage: Dict[str, Any], node_name: str, node_tokens: Dict[str, int]) -> Dict[str, Any]:
-    """Soma tokens consumidos globalmente e registra por nó (incluindo loops de retry)."""
+    """Accumulates consumed tokens globally and tracks by node (including retry loops)."""
     usage = current_usage.copy() if current_usage else {
         "input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "by_node": {}
     }

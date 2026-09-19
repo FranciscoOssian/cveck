@@ -3,7 +3,7 @@ from typing import Tuple
 
 
 def load_user_profile(doc_dir: Path) -> str:
-    """Carrega USER_PROFILE.md com fallback automático para USER_PROFILE.example.md."""
+    """Loads USER_PROFILE.md with automatic fallback to USER_PROFILE.example.md."""
     profile_path = doc_dir / "USER_PROFILE.md"
     if profile_path.exists():
         return profile_path.read_text(encoding="utf-8")
@@ -14,7 +14,7 @@ def load_user_profile(doc_dir: Path) -> str:
 
 
 def resolve_template_skeleton(templates_dir: Path, lang: str = "en") -> Tuple[str, str]:
-    """Localiza o template Typst correto com fallbacks seguros."""
+    """Locates the correct Typst template skeleton with safe fallbacks."""
     lang_clean = (lang or "en").strip().lower().replace("_", "-")
     lang_prefix = lang_clean.split("-")[0]
 
@@ -33,4 +33,4 @@ def resolve_template_skeleton(templates_dir: Path, lang: str = "en") -> Tuple[st
         if path.exists():
             return path.read_text(encoding="utf-8"), lang_prefix
 
-    raise FileNotFoundError(f"Nenhum template Typst encontrado para o idioma '{lang}' em {templates_dir}.")
+    raise FileNotFoundError(f"No Typst template found for language '{lang}' in {templates_dir}.")

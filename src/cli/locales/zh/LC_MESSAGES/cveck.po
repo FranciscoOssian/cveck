@@ -407,3 +407,118 @@ msgstr "智能体最终报告"
 msgid "Artifacts committed to output/ successfully!"
 msgstr "产物已成功提交至 output/！"
 
+#: src/cli/ui.py:320
+msgid "Software Developer"
+msgstr "软件工程师"
+
+#: src/cli/ui.py:321
+msgid "Company"
+msgstr "招聘公司"
+
+#: src/cli/ui.py:325
+msgid "PROCESS HALTED: TYPST SYNTAX FAILURE"
+msgstr "流程中断: TYPST 语法错误"
+
+#: src/cli/ui.py:327
+msgid "Job:"
+msgstr "目标职位:"
+
+#: src/cli/ui.py:328
+msgid "Compilation attempts:"
+msgstr "编译尝试次数:"
+
+#: src/cli/ui.py:328
+msgid "syntax errors"
+msgstr "处语法错误"
+
+#: src/cli/ui.py:330
+msgid "REASON:"
+msgstr "失败原因:"
+
+#: src/cli/ui.py:331
+msgid "The current model repeatedly failed to produce valid Typst code."
+msgstr "当前模型未能生成有效的 Typst 代码。"
+
+#: src/cli/ui.py:332
+msgid "This indicates that this specific model may not have strong mastery of Typst syntax."
+msgstr "这表明当前模型对 Typst 语法支持较弱。"
+
+#: src/cli/ui.py:334
+msgid "LAST COMPILER ERROR:"
+msgstr "最后一次编译器错误:"
+
+#: src/cli/ui.py:337
+msgid "SUGGESTION:"
+msgstr "优化建议:"
+
+#: src/cli/ui.py:338
+msgid "Switch to a more robust coding model in the /provider menu"
+msgstr "请在 /provider 菜单中切换到编程能力更强的模型"
+
+#: src/cli/ui.py:339
+msgid "(e.g., meta/llama-3.3-70b-instruct, claude-3-5-sonnet, or deepseek-chat)."
+msgstr "(例如: meta/llama-3.3-70b-instruct、claude-3-5-sonnet 或 deepseek-chat)。"
+
+#: src/cli/ui.py:350
+msgid "Approved"
+msgstr "已通过"
+
+#: src/cli/ui.py:350
+msgid "Rejected"
+msgstr "未通过"
+
+#: src/cli/ui.py:355
+msgid "ATS TECHNICAL REPORT:"
+msgstr "ATS 技术匹配报告:"
+
+#: src/cli/ui.py:357
+msgid "Status:"
+msgstr "审核状态:"
+
+#: src/cli/ui.py:358
+msgid "Overall Score:"
+msgstr "综合得分:"
+
+#: src/cli/ui.py:359
+msgid "Attempts Made:"
+msgstr "优化尝试次数:"
+
+#: src/cli/ui.py:360
+msgid "Mandatory Requirements Coverage:"
+msgstr "必填要求覆盖率:"
+
+#: src/cli/ui.py:361
+msgid "Overall Keyword Coverage:"
+msgstr "整体关键词覆盖率:"
+
+#: src/cli/ui.py:363
+msgid "Missing Mandatory:"
+msgstr "缺失的必填项:"
+
+#: src/cli/ui.py:364
+msgid "Missing Optional:"
+msgstr "缺失的加分项:"
+
+#: src/cli/ui.py:367
+msgid "Keyword Stuffing Alert (>2%):"
+msgstr "关键词堆砌预警 (>2%):"
+
+#: src/cli/ui.py:371
+msgid "Gaps Added to Backlog (doc/GAPS.md):"
+msgstr "已记录至技能清单 (doc/GAPS.md):"
+
+#: src/cli/ui.py:374
+msgid "PDF generated at:"
+msgstr "PDF 输出路径:"
+
+#: src/cli/ui.py:381
+msgid "Total Token Consumption:"
+msgstr "Token 总消耗:"
+
+#: src/cli/ui.py:381
+msgid "Prompt:"
+msgstr "输入 (Prompt):"
+
+#: src/cli/ui.py:381
+msgid "Completion:"
+msgstr "生成 (Completion):"

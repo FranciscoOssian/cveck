@@ -11,8 +11,8 @@ from src.core.paths import PROJECT_ROOT, ASSETS_DIR, OUTPUT_DIR
 
 def resolve_template_import_path(output_typ_path: Optional[Path] = None) -> str:
     """
-    Detecta onde o template.typ está localizado com fallback imune ao cwd
-    e calcula o caminho relativo correto em relação ao diretório do arquivo .typ.
+    Locates where template.typ resides with a cwd-immune fallback
+    and computes the correct relative path with respect to the target .typ directory.
     """
     candidates = [
         ASSETS_DIR / "templates" / "template.typ",
@@ -20,47 +20,47 @@ def resolve_template_import_path(output_typ_path: Optional[Path] = None) -> str:
     ]
     template_file = next((p for p in candidates if p.exists()), candidates[0])
 
-    # Diretório base onde o arquivo .typ será gerado
+    # Base directory where the .typ file will be generated
     base_dir = output_typ_path.parent if output_typ_path else OUTPUT_DIR
 
     try:
         rel_path = os.path.relpath(template_file, base_dir)
         return Path(rel_path).as_posix()
     except ValueError:
-        # Fallback para drives distintos no Windows
+        # Fallback for distinct drives on Windows
         return Path(template_file).as_posix()
 
 
 def sanitize_typst_syntax(content: str, lang: str = "pt", output_typ_path: Optional[Path] = None) -> str:
-    """Sanitiza código Typst antes da compilação (Custo: 0 tokens)."""
+    """Sanitizes Typst source code prior to compilation (Cost: 0 tokens)."""
     if not content:
         return ""
 
-    # 1. Limpa tags <think> e blocos markdown
+    # 1. Strip <think> tags and markdown fences
     content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
     content = re.sub(r"```(?:typst)?", "", content).replace("```", "").strip()
 
-    # 2. Remove alucinações como '#set lang: "pt-br"'
+    # 2. Remove hallucinations like '#set lang: "pt-br"'
     content = re.sub(r'#set\s+lang\s*[:\(][^\n\)]*[\)\n]?', '', content)
 
-    # 3. Detecta dinamicamente o path real do template.typ em relação ao destino
+    # 3. Dynamically detect actual relative path to template.typ
     template_path = resolve_template_import_path(output_typ_path=output_typ_path)
 
-    # 4. Normaliza qualquer importação de template.typ para o path relativo real
+    # 4. Normalize any template.typ import to the actual relative path
     content = re.sub(
         r'#import\s+[\'"][^\'"]*template\.typ[\'"](?:\s*:\s*([^;\n]+))?',
         rf'#import "{template_path}": columns-2, CV',
         content
     )
 
-    # 5. Converte aspas simples de comandos Typst para aspas duplas
+    # 5. Convert single quotes in Typst commands to double quotes
     content = re.sub(r'#link\(\s*\'([^\']+)\'\s*\)', r'#link("\1")', content)
     content = re.sub(r'lang:\s*\'([^\']+)\'', r'lang: "\1"', content)
 
-    # 6. Escapa '@' em pacotes npm para não colidir com rótulos de referência do Typst
+    # 6. Escape '@' in npm packages to prevent collision with Typst reference labels
     content = re.sub(r'(?<![\w\\])@([a-zA-Z0-9_\-\/]+)', r'\\@\1', content)
 
-    # 7. Garante import e show rule no topo
+    # 7. Ensure template import and show rule exist at the top
     if '#show: CV.with' not in content:
         if f'#import "{template_path}"' not in content:
             content = f'#import "{template_path}": columns-2, CV\n\n#show: CV.with(lang: "{lang}")\n\n' + content
@@ -81,7 +81,7 @@ def compile_typst_and_extract(
     root_dir: Optional[Path] = None,
     lang: str = "pt"
 ) -> CompilationResult:
-    """Grava o .typ, compila com Typst e extrai texto plano com PyMuPDF."""
+    """Writes the .typ file, compiles via Typst, and extracts plaintext with PyMuPDF."""
     target_root = root_dir or PROJECT_ROOT
     clean_code = sanitize_typst_syntax(typst_code, lang=lang, output_typ_path=output_typ_path)
     output_typ_path.parent.mkdir(parents=True, exist_ok=True)
@@ -104,5 +104,5 @@ def compile_typst_and_extract(
         return CompilationResult(
             success=False,
             pdf_path=str(output_pdf_path),
-            error_message=f"Falha ao extrair texto do PDF gerado: {e}"
+            error_message=f"Failed to extract text from generated PDF: {e}"
         )

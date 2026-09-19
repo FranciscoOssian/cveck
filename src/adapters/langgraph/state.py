@@ -4,7 +4,7 @@ from src.core.models.state import DomainState
 
 
 class LangGraphState(DomainState):
-    """Extensão do estado do domínio com telemetria exclusiva do adaptador LangGraph."""
+    """Extension of domain state with telemetry exclusive to the LangGraph adapter."""
     token_usage: Dict[str, Any] = Field(default_factory=lambda: {
         "input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "by_node": {}
     })

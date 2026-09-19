@@ -26,8 +26,7 @@ Write-Host "--> Installing dependencies into .venv..."
 & $venvPy -m pip install --upgrade pip --quiet
 & $venvPy -m pip install -e . --quiet
 
-# 4. Compile translations inside .venv (Aponta para src/cli/locales)
-Write-Host "--> Compiling i18n translation catalogs..."
+# 4. Compile translations inside .venv (Points to src/cli/locales)
 & $venvPy -m babel.messages.frontend compile -d src/cli/locales -D cveck --quiet 2>$null
 
 # 5. Ensure required folders and default .env exist

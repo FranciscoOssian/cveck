@@ -4,15 +4,15 @@ from typing import List, Dict, Any
 from src.core.models.gap import GapItem
 
 CATEGORY_LABELS = {
-    "backend-arquitetura": "Backend & Architecture",
+    "backend-architecture": "Backend & Architecture",
     "infra-devops": "Infra & DevOps",
-    "dados": "Data",
-    "seguranca": "Security",
+    "data": "Data",
+    "security": "Security",
     "frontend-mobile": "Front-End & Mobile",
-    "ia": "AI",
+    "ai": "AI",
     "cloud": "Cloud",
-    "pratica-engenharia": "Engineering Practices",
-    "outro": "Other",
+    "engineering-practices": "Engineering Practices",
+    "other": "Other",
 }
 
 
@@ -26,18 +26,24 @@ def _render_gaps_markdown(data: dict) -> str:
     ]
     for term in sorted(data):
         entry = data[term]
-        cat = CATEGORY_LABELS.get(entry.get("category", "outro"), "Other")
+        cat = CATEGORY_LABELS.get(entry.get("category", "other"), "Other")
         status = entry.get("status", "open")
         lines.append(f"## {term} _({cat})_")
         lines.append("")
         lines.append(f"- Status: `{status}`")
         for o in entry.get("occurrences", []):
             req = "mandatory" if o.get("required") else "differential"
-            lines.append(f"- **{o.get('empresa','')}** — {o.get('vaga','')} ({o.get('data','')}) [{req}]")
-            if o.get("motivo"):
-                lines.append(f"  - Reason: {o['motivo']}")
-            if o.get("sugestao"):
-                lines.append(f"  - Study Suggestion: {o['sugestao']}")
+            company = o.get("company_name") or o.get("empresa", "")
+            job = o.get("job_title") or o.get("vaga", "")
+            date = o.get("date") or o.get("data", "")
+            reason = o.get("reason") or o.get("motivo", "")
+            suggestion = o.get("suggestion") or o.get("sugestao", "")
+
+            lines.append(f"- **{company}** — {job} ({date}) [{req}]")
+            if reason:
+                lines.append(f"  - Reason: {reason}")
+            if suggestion:
+                lines.append(f"  - Study Suggestion: {suggestion}")
         lines.append("")
     return "\n".join(lines) + "\n"
 
@@ -47,7 +53,7 @@ def update_gaps_backlog(
     gaps_json_path: Path,
     gaps_md_path: Path
 ) -> None:
-    """Atualiza de forma atômica e deduplicada o backlog de lacunas."""
+    """Atomically updates and deduplicates the gaps backlog."""
     if not new_gaps:
         return
 
@@ -62,15 +68,16 @@ def update_gaps_backlog(
         term = gap.term.strip().lower()
         occ = {
             "required": gap.required,
-            "vaga": gap.vaga,
-            "empresa": gap.empresa,
-            "data": gap.data,
-            "motivo": gap.motivo,
-            "sugestao": gap.sugestao or "",
+            "job_title": gap.job_title,
+            "company_name": gap.company_name,
+            "date": gap.date,
+            "reason": gap.reason,
+            "suggestion": gap.suggestion or "",
         }
         if term in data:
             exists = any(
-                o.get("vaga") == occ["vaga"] and o.get("data") == occ["data"]
+                (o.get("job_title") == occ["job_title"] or o.get("vaga") == occ["job_title"]) and
+                (o.get("date") == occ["date"] or o.get("data") == occ["date"])
                 for o in data[term].get("occurrences", [])
             )
             if not exists:

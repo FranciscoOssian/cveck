@@ -411,3 +411,118 @@ msgstr "Final Agent Report"
 msgid "Artifacts committed to output/ successfully!"
 msgstr "Artifacts committed to output/ successfully!"
 
+#: src/cli/ui.py:320
+msgid "Software Developer"
+msgstr "Software Developer"
+
+#: src/cli/ui.py:321
+msgid "Company"
+msgstr "Company"
+
+#: src/cli/ui.py:326
+msgid "PROCESS HALTED: TYPST SYNTAX FAILURE"
+msgstr "PROCESS HALTED: TYPST SYNTAX FAILURE"
+
+#: src/cli/ui.py:328
+msgid "Job:"
+msgstr "Job:"
+
+#: src/cli/ui.py:329
+msgid "Compilation attempts:"
+msgstr "Compilation attempts:"
+
+#: src/cli/ui.py:329
+msgid "syntax errors"
+msgstr "syntax errors"
+
+#: src/cli/ui.py:331
+msgid "REASON:"
+msgstr "REASON:"
+
+#: src/cli/ui.py:332
+msgid "The current model repeatedly failed to produce valid Typst code."
+msgstr "The current model repeatedly failed to produce valid Typst code."
+
+#: src/cli/ui.py:333
+msgid "This indicates that this specific model may not have strong mastery of Typst syntax."
+msgstr "This indicates that this specific model may not have strong mastery of Typst syntax."
+
+#: src/cli/ui.py:335
+msgid "LAST COMPILER ERROR:"
+msgstr "LAST COMPILER ERROR:"
+
+#: src/cli/ui.py:338
+msgid "SUGGESTION:"
+msgstr "SUGGESTION:"
+
+#: src/cli/ui.py:339
+msgid "Switch to a more robust coding model in the /provider menu"
+msgstr "Switch to a more robust coding model in the /provider menu"
+
+#: src/cli/ui.py:340
+msgid "(e.g., meta/llama-3.3-70b-instruct, claude-3-5-sonnet, or deepseek-chat)."
+msgstr "(e.g., meta/llama-3.3-70b-instruct, claude-3-5-sonnet, or deepseek-chat)."
+
+#: src/cli/ui.py:349
+msgid "Approved"
+msgstr "Approved"
+
+#: src/cli/ui.py:349
+msgid "Rejected"
+msgstr "Rejected"
+
+#: src/cli/ui.py:356
+msgid "ATS TECHNICAL REPORT:"
+msgstr "ATS TECHNICAL REPORT:"
+
+#: src/cli/ui.py:358
+msgid "Status:"
+msgstr "Status:"
+
+#: src/cli/ui.py:359
+msgid "Overall Score:"
+msgstr "Overall Score:"
+
+#: src/cli/ui.py:360
+msgid "Attempts Made:"
+msgstr "Attempts Made:"
+
+#: src/cli/ui.py:361
+msgid "Mandatory Requirements Coverage:"
+msgstr "Mandatory Requirements Coverage:"
+
+#: src/cli/ui.py:362
+msgid "Overall Keyword Coverage:"
+msgstr "Overall Keyword Coverage:"
+
+#: src/cli/ui.py:364
+msgid "Missing Mandatory:"
+msgstr "Missing Mandatory:"
+
+#: src/cli/ui.py:365
+msgid "Missing Optional:"
+msgstr "Missing Optional:"
+
+#: src/cli/ui.py:369
+msgid "Keyword Stuffing Alert (>2%):"
+msgstr "Keyword Stuffing Alert (>2%):"
+
+#: src/cli/ui.py:374
+msgid "Gaps Added to Backlog (doc/GAPS.md):"
+msgstr "Gaps Added to Backlog (doc/GAPS.md):"
+
+#: src/cli/ui.py:378
+msgid "PDF generated at:"
+msgstr "PDF generated at:"
+
+#: src/cli/ui.py:387
+msgid "Total Token Consumption:"
+msgstr "Total Token Consumption:"
+
+#: src/cli/ui.py:387
+msgid "Prompt:"
+msgstr "Prompt:"
+
+#: src/cli/ui.py:387
+msgid "Completion:"
+msgstr "Completion:"

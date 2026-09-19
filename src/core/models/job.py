@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, model_validator
 
 
 def sanitize_slug(text: str) -> str:
-    """Converte qualquer string para kebab-case seguro para nomes de arquivos."""
+    """Converts any string to a safe kebab-case format for filenames."""
     if not text:
         return "cv-tailored"
     text = text.lower()
@@ -16,11 +16,11 @@ def sanitize_slug(text: str) -> str:
 
 
 class JobTerm(BaseModel):
-    term: str = Field(default="", description="Nome canônico da tecnologia ou skill")
-    required: bool = Field(default=False, description="Se é pré-requisito obrigatório na vaga")
-    alternatives: List[str] = Field(default_factory=list, description="Opções equivalentes aceitas (OU)")
-    aliases: List[str] = Field(default_factory=list, description="Sinônimos literais ou variações ortográficas")
-    category: str = Field(default="other", description="Categoria técnica da habilidade")
+    term: str = Field(default="", description="Canonical name of the technology or skill")
+    required: bool = Field(default=False, description="Whether this is a mandatory requirement for the job")
+    alternatives: List[str] = Field(default_factory=list, description="Equivalent accepted alternative terms (OR)")
+    aliases: List[str] = Field(default_factory=list, description="Literal synonyms or spelling variations")
+    category: str = Field(default="other", description="Technical skill category")
 
     @model_validator(mode="before")
     @classmethod
@@ -31,8 +31,8 @@ class JobTerm(BaseModel):
 
 
 class TermExtractorResponse(BaseModel):
-    job_title: str = Field(default="Software Developer", description="Título do cargo extraído da vaga")
-    company_name: str = Field(default="Company", description="Nome da empresa contratante")
-    job_slug: str = Field(default="job-company", description="Slug em kebab-case")
-    job_lang: str = Field(default="en", description="Código ISO minúsculo do idioma da vaga")
-    terms: List[JobTerm] = Field(default_factory=list, description="Lista estruturada de termos e requisitos")
+    job_title: str = Field(default="Software Developer", description="Extracted job title")
+    company_name: str = Field(default="Company", description="Hiring company name")
+    job_slug: str = Field(default="job-company", description="Kebab-case slug")
+    job_lang: str = Field(default="en", description="Lowercase ISO language code of the job posting")
+    terms: List[JobTerm] = Field(default_factory=list, description="Structured list of extracted terms and requirements")

@@ -33,21 +33,21 @@ NODE_MAPPING = {
 
 
 def build_langgraph():
-    """Lê workflow.yaml e compila o StateGraph dinamicamente."""
+    """Reads workflow.yaml and dynamically compiles the StateGraph."""
     raw = yaml.safe_load(WORKFLOW_YAML_PATH.read_text(encoding="utf-8"))
     config = WorkflowConfig.model_validate(raw)
 
     workflow = StateGraph(LangGraphState)
 
-    # 1. Registra nós descritos no YAML
+    # 1. Register nodes defined in YAML
     for step in config.steps:
         if step.id in NODE_MAPPING:
             workflow.add_node(step.id, NODE_MAPPING[step.id])
 
-    # 2. Conecta Entrypoint
+    # 2. Connect entrypoint
     workflow.add_edge(START, config.entrypoint)
 
-    # 3. Conecta Transições
+    # 3. Connect transitions
     for step in config.steps:
         for trans in step.transitions:
             if trans.type == "direct":

@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 class SubmitTypstCV(BaseModel):
     typst_code: str = Field(
-        description="Código-fonte Typst completo, iniciando com os imports do template."
+        description="Full Typst source code, starting with template imports."
     )
 
 

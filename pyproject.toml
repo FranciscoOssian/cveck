@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cv-pipeline"
 version = "0.1.0"
-description = "Pipeline automatizado de customização de CVs e validação ATS com LangGraph e Typst"
+description = "Autonomous agentic pipeline for ATS-optimized resume tailoring and gap tracking with LangGraph and Typst"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [

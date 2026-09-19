@@ -3,7 +3,7 @@ from src.core.paths import DOC_DIR, PROMPTS_DIR, TEMPLATES_DIR
 
 
 def get_workflow_instructions(job_description: str, lang: str = "pt") -> str:
-    """Gera as instruções completas da máquina de estados injetando o perfil, guia e o esqueleto Typst."""
+    """Generates the complete workflow instructions, injecting user profile, style guide, and Typst skeleton."""
     user_profile = load_user_profile(DOC_DIR)
     style_guide = (PROMPTS_DIR / "CV_STYLE_GUIDE.md").read_text(encoding="utf-8")
     template_skeleton, _ = resolve_template_skeleton(TEMPLATES_DIR, lang)

@@ -7,7 +7,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 def repair_truncated_json(json_str: str) -> str:
-    """Restaura balanceamento de aspas, chaves e colchetes cortados por limite de tokens."""
+    """Restores balancing of quotes, braces, and brackets truncated by token limits."""
     json_str = json_str.strip()
     if not json_str:
         return "{}"
@@ -53,7 +53,7 @@ def repair_truncated_json(json_str: str) -> str:
 
 
 def extract_and_parse_json(text: str, target_model: Type[T]) -> T:
-    """Extrai blocos JSON limpando tags de pensamento (<think>) com fallback resiliente."""
+    """Extracts JSON blocks by stripping <think> tags with resilient fallback parsing."""
     if not text or not text.strip():
         return target_model()
 

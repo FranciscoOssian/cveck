@@ -6,14 +6,14 @@ from src.core.models.ats import ATSReport
 
 
 def normalize(text: str) -> str:
-    """Normaliza texto removendo acentos e convertendo para minúsculas."""
+    """Normalizes text by removing accents and converting to lowercase."""
     text = text.lower()
     text = unicodedata.normalize("NFKD", text)
     return "".join(c for c in text if not unicodedata.combining(c))
 
 
 def term_pattern(term: str) -> re.Pattern:
-    """Regex word-boundary estrita para evitar falsos positivos (ex: Go dentro de Google)."""
+    """Strict word-boundary regex to prevent false positives (e.g. Go inside Google)."""
     escaped = re.escape(normalize(term))
     return re.compile(rf"(?<!\w){escaped}(?!\w)")
 
@@ -23,7 +23,7 @@ def calculate_ats_metrics(
     resume_text: str,
     stuffing_threshold: float = 0.02
 ) -> ATSReport:
-    """Calcula pontuação matemática, checa stuffing e requisitos obrigatórios."""
+    """Calculates mathematical ATS score, checks keyword stuffing and mandatory requirements."""
     normalized_resume = normalize(resume_text)
     total_words = len(normalized_resume.split()) or 1
     report = ATSReport()
@@ -65,7 +65,7 @@ def calculate_ats_metrics(
                     "density": round(density * 100, 2)
                 })
         else:
-            label = f"{item.term} OU {' OU '.join(item.alternatives)}" if item.alternatives else item.term
+            label = f"{item.term} OR {' OR '.join(item.alternatives)}" if item.alternatives else item.term
             if item.required:
                 report.missing_required.append(label)
             else:
@@ -78,7 +78,7 @@ def calculate_ats_metrics(
     )
     report.hard_fail = len(report.missing_required) > 0
 
-    # Fórmula: 70% obrigatórios + 30% diferenciais
+    # Formula: 70% mandatory + 30% optional/differential
     optional_count = total_terms - required_count
     optional_hits = hits - required_hits
     optional_pct = (optional_hits / optional_count * 100) if optional_count > 0 else 0.0

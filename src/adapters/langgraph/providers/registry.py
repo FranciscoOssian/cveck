@@ -68,7 +68,7 @@ def set_active_provider_and_model(provider_key: str, model_name: Optional[str] =
 
 
 def remove_provider(provider_key: str) -> None:
-    """Remove um provedor do providers.json."""
+    """Removes a provider from providers.json."""
     config = load_providers_config()
     if provider_key in config["providers"]:
         if len(config["providers"]) <= 1:
@@ -80,7 +80,7 @@ def remove_provider(provider_key: str) -> None:
 
 
 def remove_model_from_provider(provider_key: str, model_name: str) -> None:
-    """Remove um modelo de um provedor específico."""
+    """Removes a model from a specific provider."""
     config = load_providers_config()
     provider = config["providers"].get(provider_key)
     if not provider:
@@ -96,7 +96,7 @@ def remove_model_from_provider(provider_key: str, model_name: str) -> None:
 
 
 def add_model_to_provider(provider_key: str, model_name: str, set_as_active: bool = True) -> None:
-    """Adiciona um novo modelo ao catálogo do provedor."""
+    """Adds a new model to the provider catalog."""
     config = load_providers_config()
     provider = config["providers"].get(provider_key)
     if not provider:
@@ -110,7 +110,7 @@ def add_model_to_provider(provider_key: str, model_name: str, set_as_active: boo
 
 
 def fetch_models_from_endpoint(base_url: str, api_key: Optional[str] = None) -> List[str]:
-    """Consulta a rota /models do endpoint para listar modelos reais."""
+    """Queries the /models endpoint to list available models."""
     url = f"{base_url.rstrip('/')}/models"
     req = urllib.request.Request(url)
     if api_key:

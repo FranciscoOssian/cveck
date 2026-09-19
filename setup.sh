@@ -29,8 +29,7 @@ echo "--> Installing dependencies into .venv..."
 "$VENV_PY" -m pip install --upgrade pip --quiet
 "$VENV_PY" -m pip install -e . --quiet
 
-# 4. Compile translations inside .venv (Aponta para src/cli/locales)
-echo "--> Compiling i18n translation catalogs..."
+# 4. Compile translations inside .venv (Points to src/cli/locales)
 "$VENV_PY" -m babel.messages.frontend compile -d src/cli/locales -D cveck --quiet 2>/dev/null || true
 
 # 5. Ensure required folders and default .env exist

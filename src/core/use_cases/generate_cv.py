@@ -13,9 +13,10 @@ def execute_generate_cv(
     job_title: str,
     company_name: str,
     job_lang: str,
-    llm
+    llm,
+    pruned_profile: str = ""
 ) -> str:
-    profile = load_user_profile(DOC_DIR)
+    profile = pruned_profile.strip() if pruned_profile else load_user_profile(DOC_DIR)
     style_guide = (PROMPTS_DIR / "CV_STYLE_GUIDE.md").read_text(encoding="utf-8")
     prompt = (PROMPTS_DIR / "generate_cv.md").read_text(encoding="utf-8")
     base_template, resolved_lang = resolve_template_skeleton(TEMPLATES_DIR, job_lang)
@@ -26,11 +27,11 @@ def execute_generate_cv(
     user_content = (
         f"STYLE GUIDE:\n{style_guide}\n\n"
         f"BASE TEMPLATE (Language: {resolved_lang}):\n{base_template}\n\n"
-        f"FACTUAL PROFILE:\n{profile}\n\n"
+        f"FACTUAL PROFILE (PRUNED EVIDENCE ONLY):\n{profile}\n\n"
         f"TARGET JOB: {job_title} @ {company_name} ({resolved_lang})\n"
         f"JOB KEYWORDS: {terms_str}\n"
         f"PROHIBITED GAPS (DO NOT HALLUCINATE OR MENTION): {gaps_str}\n\n"
-        "Generate the complete Typst code following the style guide and submit it via SubmitTypstCV."
+        "Generate the complete Typst code adhering strictly to the pruned profile above and submit it via SubmitTypstCV."
     )
 
     llm_with_tools = llm.bind_tools([SubmitTypstCV])

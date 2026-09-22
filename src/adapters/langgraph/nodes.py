@@ -6,14 +6,16 @@ from src.adapters.langgraph.providers.token_tracker import extract_token_usage, 
 from src.core.use_cases.extract_terms import execute_extract_terms
 from src.core.use_cases.find_gaps import execute_find_gaps
 from src.core.use_cases.update_gaps import execute_update_gaps
+from src.core.use_cases.prune_profile import execute_prune_profile
 from src.core.use_cases.generate_cv import execute_generate_cv
 from src.core.use_cases.compile_cv import execute_compile_cv
 from src.core.use_cases.fix_typst import execute_fix_typst
 from src.core.use_cases.validate_ats import execute_validate_ats
 from src.core.use_cases.refine_cv import execute_refine_cv
 from src.core.use_cases.commit_artifacts import execute_commit_artifacts
+from src.core.context import load_user_profile
 from src.core.workflow.schema import WorkflowConfig
-from src.core.paths import CORE_DIR
+from src.core.paths import CORE_DIR, DOC_DIR
 
 
 _WORKFLOW_CFG = WorkflowConfig.model_validate(
@@ -30,8 +32,8 @@ def term_extractor_node(state: LangGraphState) -> dict:
         "job_terms": parsed.terms,
         "job_title": parsed.job_title,
         "company_name": parsed.company_name,
-        "job_slug": parsed.job_slug,  # Já sanitizado pelo Pydantic!
-        "job_lang": parsed.job_lang,  # Já limpo pelo Pydantic!
+        "job_slug": parsed.job_slug,
+        "job_lang": parsed.job_lang,
         "token_usage": accumulate_tokens(state.token_usage, "term_extractor", tokens),
         "last_step_tokens": tokens,
     }
@@ -59,6 +61,25 @@ def gaps_updater_node(state: LangGraphState) -> dict:
     return {}
 
 
+def profile_pruner_node(state: LangGraphState) -> dict:
+    llm = get_dynamic_llm(temperature=0.0)
+    raw_profile = load_user_profile(DOC_DIR)
+    pruned_text, tokens = execute_prune_profile(
+        job_terms=state.job_terms,
+        detected_gaps=state.detected_gaps,
+        job_title=state.job_title,
+        company_name=state.company_name,
+        raw_profile=raw_profile,
+        llm=llm
+    )
+
+    return {
+        "pruned_profile": pruned_text,
+        "token_usage": accumulate_tokens(state.token_usage, "profile_pruner", tokens),
+        "last_step_tokens": tokens,
+    }
+
+
 def cv_generator_node(state: LangGraphState) -> dict:
     llm = get_dynamic_llm(temperature=0.1)
     code = execute_generate_cv(
@@ -67,7 +88,8 @@ def cv_generator_node(state: LangGraphState) -> dict:
         job_title=state.job_title,
         company_name=state.company_name,
         job_lang=state.job_lang,
-        llm=llm
+        llm=llm,
+        pruned_profile=state.pruned_profile
     )
     tokens = extract_token_usage(getattr(llm, "last_response", None))
 
@@ -128,7 +150,12 @@ def ats_validator_node(state: LangGraphState) -> dict:
 
 def cv_refiner_node(state: LangGraphState) -> dict:
     llm = get_dynamic_llm(temperature=0.1)
-    refined_code = execute_refine_cv(state.typ_content, state.ats_report, llm)
+    refined_code = execute_refine_cv(
+        typ_content=state.typ_content,
+        ats_report=state.ats_report,
+        llm=llm,
+        pruned_profile=state.pruned_profile
+    )
     tokens = extract_token_usage(getattr(llm, "last_response", None))
 
     return {
@@ -146,7 +173,8 @@ def committer_node(state: LangGraphState) -> dict:
     execute_commit_artifacts(
         job_slug=slug,
         job_terms=state.job_terms,
-        txt_content=state.txt_content
+        txt_content=state.txt_content,
+        pruned_profile=state.pruned_profile
     )
 
     return {
@@ -161,5 +189,6 @@ def committer_node(state: LangGraphState) -> dict:
         "is_approved": state.is_approved,
         "iteration": state.iteration,
         "detected_gaps": state.detected_gaps,
+        "pruned_profile": state.pruned_profile,
         "token_usage": state.token_usage,
     }

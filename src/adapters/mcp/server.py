@@ -14,15 +14,15 @@ from src.core.use_cases.commit_artifacts import execute_commit_artifacts
 from src.core.workflow.evaluators import check_ats_condition
 from src.core.workflow.schema import WorkflowConfig
 from src.adapters.mcp.prompt import get_workflow_instructions
-from src.core.paths import OUTPUT_DIR, CORE_DIR
-
-from src.core.paths import PROMPTS_DIR
+from src.core.paths import OUTPUT_DIR, CORE_DIR, PROMPTS_DIR
 
 PROMPT_MAP = {
     "submit_job_terms": "extract_terms.md",
     "extract_terms": "extract_terms.md",
     "record_gaps": "find_gaps.md",
     "find_gaps": "find_gaps.md",
+    "submit_pruned_profile": "prune_profile.md",
+    "prune_profile": "prune_profile.md",
     "compile_typst": "generate_cv.md",
     "generate_cv": "generate_cv.md",
     "fix_typst": "fix_typst.md",
@@ -37,38 +37,31 @@ POLICIES = _WORKFLOW_CFG.policies
 mcp = MCPServer(
     name="cveck",
     instructions=(
-        "Cveck 2.0: Autonomous Resume Tailoring and ATS scoring engine.\n"
+        "Cveck: Autonomous Resume Tailoring and ATS scoring engine.\n"
         "WORKFLOW DIRECTIVE: Before executing any major step, ALWAYS call 'get_tool_instructions' "
-        "passing the tool name (e.g., 'submit_job_terms', 'record_gaps', 'compile_typst') to retrieve "
+        "passing the tool name (e.g., 'submit_job_terms', 'record_gaps', 'submit_pruned_profile', 'compile_typst') to retrieve "
         "the exact technical rules, constraints, and prompt directives.\n"
-        "Recommended sequence: 1. submit_job_terms -> 2. record_gaps -> 3. compile_typst -> "
-        "4. validate_ats -> (refine if needed) -> 5. commit_cv."
+        "Recommended sequence: 1. submit_job_terms -> 2. record_gaps -> 3. submit_pruned_profile -> "
+        "4. compile_typst -> 5. validate_ats -> (refine if needed) -> 6. commit_cv."
     )
 )
 
-# --- MCP PROMPT ---
 
 @mcp.prompt(name="tailor_resume")
 def tailor_resume(job_description: str) -> str:
     """Starts tailoring process by injecting candidate profile, style guide, and workflow map."""
     return get_workflow_instructions(job_description)
 
-# --- MCP TOOLS ---
 
 @mcp.tool()
 def start_resume_tailoring(job_description: str) -> str:
     """CALL THIS FIRST upon receiving a job posting to load the factual profile and state machine rules."""
     return get_workflow_instructions(job_description)
 
+
 @mcp.tool()
 def get_tool_instructions(tool_name: str) -> str:
-    """Returns the strict instructions, prompt guidelines, and constraints 
-    associated with a specific tool or workflow step.
-    
-    Args:
-        tool_name: The name of the tool or task (e.g., 'submit_job_terms', 'record_gaps', 
-                   'compile_typst', 'fix_typst', 'refine_cv').
-    """
+    """Returns the strict instructions, prompt guidelines, and constraints associated with a specific tool or workflow step."""
     normalized_name = tool_name.strip().lower()
     prompt_file = PROMPT_MAP.get(normalized_name)
 
@@ -85,13 +78,13 @@ def get_tool_instructions(tool_name: str) -> str:
 
     content = file_path.read_text(encoding="utf-8")
     
-    # Se for a etapa de gerar CV, anexamos também o aviso do Style Guide
     if prompt_file == "generate_cv.md":
         style_guide_path = PROMPTS_DIR / "CV_STYLE_GUIDE.md"
         if style_guide_path.exists():
             content += "\n\n---\n" + style_guide_path.read_text(encoding="utf-8")
 
     return content
+
 
 @mcp.tool()
 def submit_job_terms(
@@ -114,7 +107,7 @@ def submit_job_terms(
     return (
         f"✔ Job '{job_title}' @ '{company_name}' registered successfully.\n"
         f"Saved {len(parsed_terms)} terms ({req_count} mandatory, {opt_count} differential) to {artifacts['terms_file']}.\n"
-        "Next step: Call 'record_gaps' if there are real gaps, or proceed to Typst generation and call 'compile_typst'."
+        "Next step: Call 'record_gaps' to log unacquired requirements, or call 'submit_pruned_profile'."
     )
 
 
@@ -122,7 +115,7 @@ def submit_job_terms(
 def record_gaps(gaps: List[Dict[str, Any]], job_title: str = "", company_name: str = "") -> str:
     """Records confirmed skill gaps into the study backlog (doc/GAPS.md and doc/gaps.json)."""
     if not gaps:
-        return "No gaps provided. Proceed to Typst code generation and call 'compile_typst'."
+        return "No gaps provided. Proceed to profile pruning and call 'submit_pruned_profile'."
 
     parsed_gaps = [
         GapItem(
@@ -144,7 +137,24 @@ def record_gaps(gaps: List[Dict[str, Any]], job_title: str = "", company_name: s
     return (
         f"✔ {len(parsed_gaps)} gap(s) recorded in backlog doc/GAPS.md: {gap_names}.\n"
         "Compliance reminder: You MUST NOT include these skills in the generated resume.\n"
-        "Next step: Write Typst code following CV_STYLE_GUIDE.md and call 'compile_typst'."
+        "Next step: Call 'submit_pruned_profile' to apply the Relevance Razor to the profile before generating Typst."
+    )
+
+
+@mcp.tool()
+def submit_pruned_profile(pruned_profile: str, job_slug: str = "cv-tailored") -> str:
+    """Saves the pruned candidate profile to output/profile_pruned-{job_slug}.md after applying the Relevance Razor."""
+    if not pruned_profile or not pruned_profile.strip():
+        return "Error: Pruned profile content cannot be empty."
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    slug = job_slug or "cv-tailored"
+    out_file = OUTPUT_DIR / f"profile_pruned-{slug}.md"
+    out_file.write_text(pruned_profile.strip(), encoding="utf-8")
+
+    return (
+        f"✔ Pruned profile successfully saved to {out_file}.\n"
+        "Next step: Using ONLY the pruned profile above, write the Typst code and call 'compile_typst'."
     )
 
 
@@ -217,7 +227,7 @@ def validate_ats(job_slug: str = "cv-tailored") -> str:
         msg.append("Action: Call 'commit_cv' to finalize the report.")
     else:
         msg.append("\n↻ RESULT: REFINEMENT NEEDED.")
-        msg.append("Action: Rewrite existing bullet points in Typst to incorporate missing terms (if present in profile) and call 'compile_typst'.")
+        msg.append("Action: Rewrite existing bullet points in Typst to incorporate missing terms (backed strictly by the pruned profile) and call 'compile_typst'.")
 
     return "\n".join(msg)
 
@@ -228,17 +238,22 @@ def commit_cv(job_slug: str = "cv-tailored", lang: str = "en") -> str:
     pdf_path = OUTPUT_DIR / f"cv-{job_slug}-{lang}.pdf"
     txt_path = OUTPUT_DIR / f"resume-{job_slug}.txt"
     terms_path = OUTPUT_DIR / f"job_terms-{job_slug}.json"
+    pruned_path = OUTPUT_DIR / f"profile_pruned-{job_slug}.md"
 
     if not pdf_path.exists():
         return f"Error: Final PDF '{pdf_path.name}' not found. Make sure to compile the resume first."
 
-    return (
-        "✦ PROCESS COMPLETED SUCCESSFULLY!\n"
-        f"- Vector PDF: {pdf_path}\n"
-        f"- Plaintext: {txt_path}\n"
-        f"- JSON Terms: {terms_path}\n"
-        "All artifacts were saved locally. The tailored resume is ready!"
-    )
+    lines = [
+        "✦ PROCESS COMPLETED SUCCESSFULLY!",
+        f"- Vector PDF: {pdf_path}",
+        f"- Plaintext: {txt_path}",
+        f"- JSON Terms: {terms_path}",
+    ]
+    if pruned_path.exists():
+        lines.append(f"- Pruned Profile: {pruned_path}")
+
+    lines.append("All artifacts were saved locally. The tailored resume is ready!")
+    return "\n".join(lines)
 
 
 def run_mcp_server():

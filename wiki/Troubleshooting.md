@@ -23,9 +23,7 @@
 
 ---
 
-### 4. Missing Font / Broken Layout in Output PDF
-- **Symptom:** Characters render with missing glyph boxes.
-- **Solution:** Typst utilizes system fonts. Ensure fonts like *Liberation Sans*, *Arial*, or Noto CJK fonts (for Chinese `zh`) are installed on your host system:
-  ```bash
-  sudo apt install fonts-liberation fonts-noto-cjk
-  ```
+### 4. MCP Server Connection Issues
+- **Symptom:** MCP client cannot connect or fails on startup.
+- **Cause:** Python path in the MCP client configuration is pointing to system Python instead of `.venv`.
+- **Solution:** Specify the full path to `.venv/bin/python` (Linux/macOS) or `.venv\Scripts\python.exe` (Windows) in your MCP client configuration (`claude_desktop_config.json` or Cursor settings).

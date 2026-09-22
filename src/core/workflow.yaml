@@ -1,0 +1,109 @@
+name: "cveck-tailoring-pipeline"
+description: "Deterministic cyclic reflection pipeline for resume tailoring and ATS keyword alignment."
+
+policies:
+  target_ats_score: 85.0
+  max_ats_retries: 3
+  max_syntax_retries: 3
+  stuffing_density_threshold: 0.02
+  bullet_budget:
+    min_bullets: 8
+    max_bullets: 13
+    max_bullets_per_role: 4
+
+entrypoint: "term_extractor"
+
+steps:
+  - id: "term_extractor"
+    name: "Term and Metadata Extractor"
+    type: "cognitive"
+    description: "Parses target job description into canonical hard skills (mandatory vs optional), company, role, and language."
+    prompt: "extract_terms.md"
+    schema: "TermExtractorResponse"
+    transitions:
+      - type: "direct"
+        target: "gap_finder"
+
+  - id: "gap_finder"
+    name: "Skill Gap Finder"
+    type: "cognitive"
+    description: "Compares extracted job terms against USER_PROFILE.md and isolates skills unacquired by candidate."
+    prompt: "find_gaps.md"
+    schema: "RecordGaps"
+    transitions:
+      - type: "direct"
+        target: "gaps_updater"
+
+  - id: "gaps_updater"
+    name: "Study Backlog Updater"
+    type: "deterministic"
+    description: "Atomically persists detected skill gaps to doc/GAPS.md and doc/gaps.json."
+    process: "update_gaps"
+    transitions:
+      - type: "direct"
+        target: "cv_generator"
+
+  - id: "cv_generator"
+    name: "Typst Code Generator"
+    type: "cognitive"
+    description: "Generates initial Typst source following STAR structure with front-loaded bold keywords and factual profile bounds."
+    prompt: "generate_cv.md"
+    schema: "SubmitTypstCV"
+    transitions:
+      - type: "direct"
+        target: "typst_compiler"
+
+  - id: "typst_compiler"
+    name: "Local Typst Compiler"
+    type: "deterministic"
+    description: "Sanitizes syntax via regex, compiles Typst code to vector PDF, and extracts layout plaintext with PyMuPDF."
+    process: "compile_and_extract"
+    transitions:
+      - type: "conditional"
+        condition: "check_compilation"
+        target:
+          syntax_error: "typst_fixer"
+          max_step_error: "committer"
+          success: "ats_validator"
+
+  - id: "typst_fixer"
+    name: "Typst Syntax Fixer"
+    type: "cognitive"
+    description: "Parses compiler stderr traceback and repairs syntax errors without modifying factual data."
+    prompt: "fix_typst.md"
+    schema: "SubmitTypstCV"
+    transitions:
+      - type: "direct"
+        target: "typst_compiler"
+
+  - id: "ats_validator"
+    name: "Mathematical ATS Scorer"
+    type: "deterministic"
+    description: "Runs exact regex word-boundary metrics over PDF text, weights 70/30, and validates keyword density threshold."
+    process: "calculate_metrics"
+    transitions:
+      - type: "conditional"
+        condition: "check_ats_result"
+        target:
+          approved: "committer"
+          max_retries: "committer"
+          unfixable_gaps: "committer"
+          needs_refinement: "cv_refiner"
+
+  - id: "cv_refiner"
+    name: "CV Refiner"
+    type: "cognitive"
+    description: "Rewrites bullets to incorporate missing mandatory keywords backed by the profile while mitigating keyword stuffing."
+    prompt: "refine_cv.md"
+    schema: "SubmitTypstCV"
+    transitions:
+      - type: "direct"
+        target: "typst_compiler"
+
+  - id: "committer"
+    name: "Artifact Consolidator"
+    type: "deterministic"
+    description: "Persists PDF, layout TXT, and terms JSON to output/ folder, returning raw execution metrics."
+    process: "save_artifacts"
+    transitions:
+      - type: "end"

@@ -2,6 +2,7 @@
 
 #show: CV.with(
   name: "[求职者姓名]",
+  headline: "[headline]",
   lang: "zh",
   contacts: (
     ("mailto:email@example.com", "email@example.com"),
@@ -29,7 +30,7 @@
 == 工作经历
 
 #columns-2[
-  === [公司名称 1]\ [职位名称]
+  === [公司名称 1] ➤ [职位名称]
   - [开始年月] – [结束年月]
 ]
 
@@ -38,7 +39,7 @@
 - [placeholder]
 
 #columns-2[
-  === [公司名称 2]\ [职位名称]
+  === [公司名称 2] ➤ [职位名称]
   - [开始年月] – [结束年月]
 ]
 

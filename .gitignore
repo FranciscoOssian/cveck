@@ -50,3 +50,6 @@ templates/*.typ
 
 # PDF's
 *.pdf
+
+# AI assistants
+.kilo

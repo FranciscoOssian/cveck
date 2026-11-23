@@ -1,6 +1,6 @@
 # ATS Scoring Engine & Anti-Stuffing
 
-CVECK implements a **deterministic, non-probabilistic ATS evaluation engine** (`src/tools/ats_scorer.py`).
+CVECK implements a **deterministic, non-probabilistic ATS evaluation engine** (`src/core/services/ats.py`) executed through `src/core/use_cases/validate_ats.py`.
 
 ## Mathematical Scoring Formula
 
@@ -11,14 +11,14 @@ $$S = 0.70 \times C_{req} + 0.30 \times C_{opt}$$
 - **Mandatory Requirements Coverage ($C_{req}$):** Percentage of `required: true` terms present in the extracted PDF text.
 - **Differential Coverage ($C_{opt}$):** Percentage of `required: false` terms present in the extracted PDF text.
 - **Approval Criteria:**
-  - $S \ge 85.0\%$
+  - $S \ge 85.0\%$ (configurable via `policies.target_ats_score` in `workflow.yaml`)
   - $C_{req} = 100\%$ (Zero missing mandatory requirements, excluding verified gaps in `GAPS.md`).
 
 ---
 
 ## Word Boundary Matching
 
-To prevent substring false-positives (e.g., matching `Go` inside `Google` or `C` inside `CSS`), technical keywords are evaluated with regex lookaround boundaries:
+To prevent substring false-positives (e.g., matching `Go` inside `Google` or `C` inside `CSS`), technical keywords are evaluated with strict regex lookaround boundaries:
 
 ```python
 def term_pattern(term: str) -> re.Pattern:
@@ -34,4 +34,4 @@ Modern ATS parsers penalize resumes that repeat keywords artificially. CVECK cal
 
 $$D = \frac{\text{Occurrences of Term}}{\text{Total Resume Words}}$$
 
-If $D > 0.02$ (2.0% density), CVECK flags the term with a **`stuffing_flag`** and prompts `cv_refiner` to reduce redundant mentions during the next reflection loop.
+If $D > 0.02$ (2.0% density, configurable via `policies.stuffing_density_threshold`), CVECK flags the term with a **`stuffing_flag`** and prompts `cv_refiner` to reduce redundant mentions during the next reflection loop.

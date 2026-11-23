@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cv-pipeline"
 version = "0.1.0"
-description = "Pipeline automatizado de customização de CVs e validação ATS com LangGraph e Typst"
+description = "Autonomous agentic pipeline for ATS-optimized resume tailoring and gap tracking with LangGraph and Typst"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [
@@ -24,6 +24,7 @@ dependencies = [
     "babel>=2.14.0",
     "typst==0.15.0",
     "pymupdf>=1.28.2",
+    "mcp>=1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -33,7 +34,7 @@ dev = [
 ]
 
 [project.scripts]
-cveck = "src.cli:app"
+cveck = "src.cli.main:app"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -17,10 +17,14 @@ Welcome to the technical documentation for **CVECK**, an open-source, agentic sy
              │                               │
              └───────────────┬───────────────┘
                              ▼
-             ┌───────────────┴───────────────┐
-             ▼                               ▼
- [ Vector PDF + Plaintext ]       [ Market Gap Backlog ]
-    output/cv-{slug}.pdf              doc/GAPS.md
+ ┌───────────────────────────────────────────────────────────┐
+ │                     Output Artifacts                      │
+ ├───────────────────────────────────────────────────────────┤
+ │ • Vector PDF + TXT Layout (output/cv-{slug}.pdf)          │
+ │ • Audited Pruned Profile (output/profile_pruned-{slug}.md)│
+ │ • Market Gap Backlog (doc/GAPS.md & doc/gaps.json)        │
+ │ • Extracted ATS Keywords (output/job_terms-{slug}.json)   │
+ └───────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -45,10 +49,11 @@ Welcome to the technical documentation for **CVECK**, an open-source, agentic sy
 1. **Physical Factual Barrier:** Output generation is strictly bounded to `doc/USER_PROFILE.md`. The LLM cannot invent unacquired skills or fake metrics.
 2. **Core Domain Separation (Adapter Pattern):** Pure business logic, models, and use cases reside in `src/core/`, completely decoupled from orchestration frameworks (LangGraph, MCP).
 3. **Declarative Workflow (`workflow.yaml`):** Pipeline policies (scoring thresholds, retry limits, bullet budgets) and transition rules are defined declaratively in YAML and validated via Pydantic schemas.
-4. **Dual Interface:** Run interactively via the Rich CLI (`cveck`) or integrate directly with AI IDEs / agents via Model Context Protocol (`cveck mcp`).
-5. **Zero-Token Local Compiles:** Typesetting is executed locally using **Typst** (`typst` Python bindings) and layout text is extracted via `pymupdf` with 0 token overhead.
-6. **Deterministic Scoring:** Keyword evaluation is performed via exact regex word boundaries and strict density checks (<2%), avoiding probabilistic LLM scoring.
-7. **Autonomous Gap Persistence:** Missing candidate competencies are automatically written into structured tracking backlogs (`doc/GAPS.md` and `doc/gaps.json`).
+4. **Decoupled Profile Pruning:** A dedicated cognitive step (`profile_pruner`) filters technical noise and orphan complexity before typesetting; `cv_generator` and `cv_refiner` consume strictly the pruned profile.
+5. **Dual Interface:** Run interactively via the Rich CLI (`cveck`) or integrate directly with AI IDEs / agents via Model Context Protocol (`cveck mcp`).
+6. **Zero-Token Local Compiles:** Typesetting is executed locally using **Typst** (`typst` Python bindings) and layout text is extracted via `pymupdf` with 0 token overhead.
+7. **Deterministic Scoring:** Keyword evaluation is performed via exact regex word boundaries and strict density checks (<2%), avoiding probabilistic LLM scoring.
+8. **Autonomous Gap Persistence:** Missing candidate competencies are automatically written into structured tracking backlogs (`doc/GAPS.md` and `doc/gaps.json`).
 
 ---
 

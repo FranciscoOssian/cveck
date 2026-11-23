@@ -41,12 +41,22 @@ steps:
     process: "update_gaps"
     transitions:
       - type: "direct"
+        target: "profile_pruner"
+
+  - id: "profile_pruner"
+    name: "Profile Relevance Pruner"
+    type: "cognitive"
+    description: "Prunes candidate master profile to isolate role-relevant evidence and gap-filling projects, dropping orphan complexities."
+    prompt: "prune_profile.md"
+    schema: "SubmitPrunedProfile"
+    transitions:
+      - type: "direct"
         target: "cv_generator"
 
   - id: "cv_generator"
     name: "Typst Code Generator"
     type: "cognitive"
-    description: "Generates initial Typst source following STAR structure with front-loaded bold keywords and factual profile bounds."
+    description: "Generates initial Typst source following STAR structure with front-loaded bold keywords using only the pruned profile."
     prompt: "generate_cv.md"
     schema: "SubmitTypstCV"
     transitions:
@@ -93,7 +103,7 @@ steps:
   - id: "cv_refiner"
     name: "CV Refiner"
     type: "cognitive"
-    description: "Rewrites bullets to incorporate missing mandatory keywords backed by the profile while mitigating keyword stuffing."
+    description: "Rewrites bullets to incorporate missing mandatory keywords backed strictly by the pruned profile."
     prompt: "refine_cv.md"
     schema: "SubmitTypstCV"
     transitions:
@@ -103,7 +113,7 @@ steps:
   - id: "committer"
     name: "Artifact Consolidator"
     type: "deterministic"
-    description: "Persists PDF, layout TXT, and terms JSON to output/ folder, returning raw execution metrics."
+    description: "Persists PDF, layout TXT, terms JSON, and pruned profile Markdown to output/ folder, returning execution metrics."
     process: "save_artifacts"
     transitions:
       - type: "end"

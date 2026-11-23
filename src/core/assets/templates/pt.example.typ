@@ -2,6 +2,7 @@
 
 #show: CV.with(
   name: "[NOME DO CANDIDATO]",
+  headline: "[headline]",
   lang: "pt",
   contacts: (
     ("mailto:email@exemplo.com", "email@exemplo.com"),
@@ -29,7 +30,7 @@ Disciplinas Relevantes: [placeholder]
 == EXPERIÊNCIA PROFISSIONAL
 
 #columns-2[
-  === [Empresa 1]\ [Cargo / Posição]
+  === [Empresa 1] ➤ [Cargo / Posição]
   - [Mês Ano Início] – [Mês Ano Fim]
 ]
 
@@ -38,7 +39,7 @@ Disciplinas Relevantes: [placeholder]
 - [placeholder]
 
 #columns-2[
-  === [Empresa 2]\ [Cargo / Posição]
+  === [Empresa 2] ➤ [Cargo / Posição]
   - [Mês Ano Início] – [Mês Ano Fim]
 ]
 

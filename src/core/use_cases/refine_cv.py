@@ -1,3 +1,4 @@
+from typing import Optional
 from langchain_core.messages import SystemMessage, HumanMessage
 from src.core.models.ats import ATSReport
 from src.core.models.typst import SubmitTypstCV
@@ -8,9 +9,10 @@ from src.core.paths import DOC_DIR, PROMPTS_DIR
 def execute_refine_cv(
     typ_content: str,
     ats_report: Optional[ATSReport],
-    llm
+    llm,
+    pruned_profile: str = ""
 ) -> str:
-    profile = load_user_profile(DOC_DIR)
+    profile = pruned_profile.strip() if pruned_profile else load_user_profile(DOC_DIR)
     style_guide = (PROMPTS_DIR / "CV_STYLE_GUIDE.md").read_text(encoding="utf-8")
     prompt = (PROMPTS_DIR / "refine_cv.md").read_text(encoding="utf-8")
 
@@ -26,10 +28,10 @@ def execute_refine_cv(
 
     user_content = (
         f"STYLE GUIDE:\n{style_guide}\n\n"
-        f"FACTUAL PROFILE:\n{profile}\n\n"
+        f"FACTUAL PROFILE (PRUNED EVIDENCE ONLY):\n{profile}\n\n"
         f"ATS REPORT:\n{chr(10).join(feedback)}\n\n"
         f"PREVIOUS CODE:\n{typ_content}\n\n"
-        "Refine the bullets to cover missing terms backed by the profile and submit via SubmitTypstCV."
+        "Refine the bullets to cover missing terms backed strictly by the pruned profile and submit via SubmitTypstCV."
     )
 
     llm_with_tools = llm.bind_tools([SubmitTypstCV])

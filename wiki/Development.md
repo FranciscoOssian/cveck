@@ -5,24 +5,42 @@
 ```text
 cveck/
 ├── doc/                            # USER_PROFILE.md, GAPS.md, gaps.json
-├── output/                         # Generated .pdf, .typ, .txt, JSON artifacts
+├── output/                         # Generated .pdf, .typ, .txt, profile_pruned.md, terms.json
 ├── src/
 │   ├── core/                       # Pure Business Logic & Domain
 │   │   ├── assets/                 # Prompts (Markdown) & Typst templates
+│   │   │   ├── prompts/            # extract_terms, find_gaps, prune_profile, generate_cv, etc.
+│   │   │   └── templates/          # template.typ, en/pt/zh example skeletons
 │   │   ├── models/                 # Pure Pydantic domain models
-│   │   ├── services/               # Stateless services (ATS, Typst, Parser, Backlog)
+│   │   │   ├── job.py              # JobTerm, TermExtractorResponse
+│   │   │   ├── gap.py              # GapItem, RecordGaps
+│   │   │   ├── profile.py          # SubmitPrunedProfile
+│   │   │   ├── typst.py            # SubmitTypstCV, CompilationResult
+│   │   │   ├── ats.py              # ATSReport
+│   │   │   └── state.py            # DomainState (includes pruned_profile)
+│   │   ├── services/               # Stateless services (ATS, Typst, Parser, Backlog, Telemetry)
 │   │   ├── use_cases/              # Granular domain use cases
+│   │   │   ├── extract_terms.py
+│   │   │   ├── find_gaps.py
+│   │   │   ├── update_gaps.py
+│   │   │   ├── prune_profile.py    
+│   │   │   ├── generate_cv.py      
+│   │   │   ├── compile_cv.py
+│   │   │   ├── fix_typst.py
+│   │   │   ├── validate_ats.py
+│   │   │   ├── refine_cv.py        
+│   │   │   └── commit_artifacts.py 
 │   │   ├── workflow/               # Declarative workflow schema and evaluators
 │   │   ├── context.py              # User profile & template loader
 │   │   ├── paths.py                # Dynamic root and directory resolution
 │   │   └── workflow.yaml           # Declarative pipeline configuration
 │   ├── adapters/                   # Execution Adapters (Adapter Pattern)
 │   │   ├── langgraph/              # LangGraph adapter (builder, nodes, router, state)
-│   │   └── mcp/                    # Model Context Protocol server adapter
+│   │   └── mcp/                    # Model Context Protocol server adapter (server, prompt)
 │   └── cli/                        # Interactive Rich CLI application
 │       ├── locales/                # GNU gettext catalogs (.pot, .po, .mo)
 │       ├── i18n.py                 # Runtime localization manager
-│       ├── ui.py                   # Rich rendering and interactive menus
+│       ├── ui.py                   # Rich rendering and interactive menus (7-step stream)
 │       └── main.py                 # Typer entrypoint (CLI & MCP commands)
 ├── babel.cfg                       # Babel extraction configuration (src/cli/**.py)
 └── pyproject.toml                  # Project metadata and dependencies

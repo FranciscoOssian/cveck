@@ -7,7 +7,8 @@ from src.core.paths import OUTPUT_DIR
 def execute_commit_artifacts(
     job_slug: str,
     job_terms: List[JobTerm],
-    txt_content: str
+    txt_content: str,
+    pruned_profile: str = ""
 ) -> Dict[str, Any]:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     slug = job_slug or "cv-tailored"
@@ -19,10 +20,18 @@ def execute_commit_artifacts(
     )
 
     txt_path = OUTPUT_DIR / f"resume-{slug}.txt"
-    txt_path.write_text(txt_content, encoding="utf-8")
+    if txt_content:
+        txt_path.write_text(txt_content, encoding="utf-8")
 
-    return {
+    result = {
         "job_slug": slug,
         "terms_file": str(terms_path),
-        "txt_file": str(txt_path)
+        "txt_file": str(txt_path) if txt_content else ""
     }
+
+    if pruned_profile:
+        pruned_path = OUTPUT_DIR / f"profile_pruned-{slug}.md"
+        pruned_path.write_text(pruned_profile, encoding="utf-8")
+        result["pruned_profile_file"] = str(pruned_path)
+
+    return result

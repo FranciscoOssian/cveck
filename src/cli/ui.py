@@ -347,25 +347,28 @@ def render_stream_node(node_name: str, node_output: dict | None):
         company = node_output.get("company_name", "Company")
         lang = node_output.get("job_lang", "en")
         kw_label = _("keywords")
-        console.print(f"  [cyan]✔ [1/6] {_('Job Detected:')}[/cyan] [bold]{title}[/bold] @ [bold]{company}[/bold] [dim]({lang.upper()})[/dim] ({t_count} {kw_label}) {toks}")
+        console.print(f"  [cyan]✔ [1/7] {_('Job Detected:')}[/cyan] [bold]{title}[/bold] @ [bold]{company}[/bold] [dim]({lang.upper()})[/dim] ({t_count} {kw_label}) {toks}")
 
     elif node_name == "gap_finder":
         gaps = node_output.get("detected_gaps", [])
         if gaps:
             labels = [g.term if hasattr(g, "term") else g.get("term", "") for g in gaps]
-            console.print(f"  [yellow]⚠ [2/6] {_('Identified Gaps:')}[/yellow] {labels} {toks}")
+            console.print(f"  [yellow]⚠ [2/7] {_('Identified Gaps:')}[/yellow] {labels} {toks}")
         else:
-            console.print(f"  [cyan]✔ [2/6] {_('Gaps:')}[/cyan] {_('No critical gaps found in profile.')} {toks}")
+            console.print(f"  [cyan]✔ [2/7] {_('Gaps:')}[/cyan] {_('No critical gaps found in profile.')} {toks}")
+
+    elif node_name == "profile_pruner":
+        console.print(f"  [cyan]✔ [3/7] {_('Profile Pruned:')}[/cyan] {_('Orphan complexities removed & gap-filling projects isolated.')} {toks}")
 
     elif node_name == "cv_generator":
-        console.print(f"  [cyan]✔ [3/6] {_('Typst Generated:')}[/cyan] {_('STAR structure with bold front-loading ready.')} {toks}")
+        console.print(f"  [cyan]✔ [4/7] {_('Typst Generated:')}[/cyan] {_('STAR structure with bold front-loading ready.')} {toks}")
 
     elif node_name == "typst_compiler":
         local_label = _("Local")
         if node_output.get("typ_error"):
-            console.print(f"  [yellow]⚠ [4/6] {_('Typst Compilation:')}[/yellow] {_('Syntax error (triggering auto-repair).')} [dim](0 tokens - {local_label})[/dim]")
+            console.print(f"  [yellow]⚠ [5/7] {_('Typst Compilation:')}[/yellow] {_('Syntax error (triggering auto-repair).')} [dim](0 tokens - {local_label})[/dim]")
         else:
-            console.print(f"  [cyan]✔ [4/6] {_('Typst Compilation:')}[/cyan] {_('PDF generated and text extracted successfully.')} [dim](0 tokens - {local_label})[/dim]")
+            console.print(f"  [cyan]✔ [5/7] {_('Typst Compilation:')}[/cyan] {_('PDF generated and text extracted successfully.')} [dim](0 tokens - {local_label})[/dim]")
 
     elif node_name == "typst_fixer":
         console.print(f"  [magenta]🔧 {_('[Auto-Repair] Fixing Typst syntax...')} {toks}[/magenta]")
@@ -377,7 +380,7 @@ def render_stream_node(node_name: str, node_output: dict | None):
         status_text = _("APPROVED") if approved else _("REJECTED")
         score = ats.score if ats else 0
         local_label = _("Local")
-        console.print(f"  [{color}]✔ [5/6] {_('ATS Score:')}[/{color}] {score}/100 - [{color}]{status_text}[/{color}] [dim](0 tokens - {local_label})[/dim]")
+        console.print(f"  [{color}]✔ [6/7] {_('ATS Score:')}[/{color}] {score}/100 - [{color}]{status_text}[/{color}] [dim](0 tokens - {local_label})[/dim]")
 
     elif node_name == "cv_refiner":
         console.print(f"  [magenta]↻ {_('[Reflection] Adjusting CV to cover mandatory terms...')} {toks}[/magenta]")

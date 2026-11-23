@@ -17,6 +17,7 @@ class DomainState(BaseModel):
     job_date: str = ""
     job_terms: List[JobTerm] = Field(default_factory=list)
     detected_gaps: List[GapItem] = Field(default_factory=list)
+    pruned_profile: str = ""
     typ_content: str = ""
     pdf_path: str = ""
     txt_content: str = ""

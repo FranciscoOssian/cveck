@@ -4,29 +4,28 @@ CVECK treats resume adaptation as a **constrained optimization and compilation p
 
 ```mermaid
 graph TD
-    subgraph Core [src/core]
-        WY[workflow.yaml] --> WC[Workflow Schema & Policies]
-        UC[Use Cases: extract, find_gaps, generate, compile, validate, refine]
-        SV[Services: ATS Scorer, Typst Runner, Parser, Backlog]
-        MD[Models: DomainState, JobTerm, GapItem, ATSReport]
-    end
-
-    subgraph Adapters [src/adapters]
-        LGA[LangGraph Adapter: builder.py, nodes.py, router.py]
-        MCPA[MCP Adapter: server.py, prompt.py]
-    end
-
-    subgraph Interfaces
-        CLI[src/cli: Rich Interactive Terminal]
-        IDE[External MCP Clients: Cursor, Windsurf, Claude Desktop]
-    end
-
-    CLI --> LGA
-    LGA --> UC
-    IDE --> MCPA
-    MCPA --> UC
-    UC --> SV
-    UC --> MD
+    JD[Job Description] --> TE[term_extractor]
+    UP[doc/USER_PROFILE.md] --> GF[gap_finder]
+    TE --> GF
+    GF --> GU[gaps_updater]
+    GU --> GAPS[(doc/GAPS.md & gaps.json)]
+    GU --> PP[profile_pruner]
+    UP --> PP
+    PP --> CG[cv_generator]
+    CG --> TC[typst_compiler]
+    
+    TC -->|Syntax Error| TF[typst_fixer]
+    TF --> TC
+    
+    TC -->|PDF Compiled| AV[ats_validator]
+    AV -->|Score >= 85% & No Missing Required| CM[committer]
+    AV -->|Score < 85% & Iteration < 3| CR[cv_refiner]
+    CR --> TC
+    
+    CM --> OUT_PDF[output/cv-slug.pdf]
+    CM --> OUT_TXT[output/resume-slug.txt]
+    CM --> OUT_TERMS[output/job_terms-slug.json]
+    CM --> OUT_PRUNED[output/profile_pruned-slug.md]
 ```
 
 ---
@@ -35,9 +34,9 @@ graph TD
 
 ### 1. The Core Engine (`src/core/`)
 The Core is completely decoupled from any external runner or framework:
-- **Models (`src/core/models/`):** Pure Pydantic schemas (`DomainState`, `JobTerm`, `GapItem`, `ATSReport`, `CompilationResult`).
+- **Models (`src/core/models/`):** Pure Pydantic schemas (`DomainState`, `JobTerm`, `GapItem`, `ATSReport`, `CompilationResult`, `SubmitPrunedProfile`).
+- **Use Cases (`src/core/use_cases/`):** Granular operations executing each step (`extract_terms`, `find_gaps`, `update_gaps`, `prune_profile`, `generate_cv`, `compile_cv`, `fix_typst`, `validate_ats`, `refine_cv`, `commit_artifacts`).
 - **Services (`src/core/services/`):** Stateless utility functions for deterministic ATS calculation (`ats.py`), Typst syntax sanitization and compilation (`typst.py`), resilient JSON parsing/repair (`parser.py`), and atomic gap persistence (`backlog.py`).
-- **Use Cases (`src/core/use_cases/`):** Granular operations executing each step (`extract_terms`, `find_gaps`, `generate_cv`, `compile_cv`, `fix_typst`, `validate_ats`, `refine_cv`, `commit_artifacts`).
 - **Declarative Workflow (`src/core/workflow.yaml`):** The single source of truth for step definitions, policies (`target_ats_score`, retry caps, bullet budgets), and state transitions.
 
 ### 2. The Adapters (`src/adapters/`)

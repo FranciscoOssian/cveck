@@ -1,33 +1,31 @@
 # CV STYLE GUIDE
 
-> O objetivo é anti-fadiga cognitiva: o recrutador valida o fit em 5 segundos lendo as âncoras em negrito.
+> O objetivo é anti-fadiga cognitiva: o recrutador valida em 5 segundos.
 
 ## 1. RESUMO EXECUTIVO (Teto Rígido: 40 a 55 palavras / 3 a 4 linhas no PDF)
-- **Extensão Estrita:** Máximo absoluto de 55 palavras em parágrafo único. Não use frases longas ou orações subordinadas excessivas.
-- **Tom e Voz:** Primeira pessoa sóbria e direta ("Atuo como...", "Possuo X anos...", "Especializado em...").
+- **Extensão Estrita:**  35 a 50 palavras em parágrafo único. Sem prolixidade.
+- **Tom e Voz:** Primeira pessoa sóbria e direta.
 - **Proibição de Adjetivos Vazios:** NUNCA use termos como "apaixonado", "proativo", "resiliente", "perfil analítico" ou "focado em resultados".
 - **Fórmula Obrigatória (3 frases curtas):**
-  1. `[Cargo / Especialidade]` com `[X anos de experiência]` corporativa sólida em `[2 a 3 tecnologias centrais exigidas pela vaga]`.
-  2. `[Maior entrega prática ou contexto de escala extraído do USER_PROFILE]` com métrica factual.
-  3. `[Vivência em arquitetura, infra ou metodologia central à vaga]` (ex: microsserviços, mensageria, cloud).
-- **Proibição de Despejo de Keywords:** Não termine com listas de ferramentas isoladas (ex: "Tools: Docker, Git, Jest"). Deixe as ferramentas para a seção de Habilidades.
+  1. `[Cargo / Especialidade]` com `[X anos de experiência]` corporativa sólida em `[X tecnologias centrais exigidas pela vaga]`.
+  2. `[Escopo de atuação ou entrega prática relevante para a vaga]`, citando métrica/volume apenas se pertinente ao domínio da vaga alvo.
+  3. `[Vivência em algo que é central à vaga]`.
+- **Proibição de Despejo de Keywords:** Não termine com listas de ferramentas isoladas. Deixe as ferramentas para a seção de Habilidades.
 
 ## 2. ANATOMIA DO BULLET (STAR + Convicção Técnica em One-Shot)
-- **Fórmula Obrigatória:** `*Âncora em Negrito:* [Desafio/Gargalo] + [Decisão de Engenharia + Por que essa escolha] -> [Impacto/Resultado]`
+- **Fórmula Obrigatória:**  
+  `*Requisito da Vaga:* [Desafio/Gargalo] + [Decisão de Engenharia + Por que essa escolha] -> [Impacto/Resultado]`
 - **Regras Rígidas:**
-  1. Início com 2-4 palavras em negrito com dois pontos e inicial maiúscula logo após: `*Âncora:* [Texto...]`.
-  2. Proibido iniciar com verbo solto no passado ("Desenvolvi", "Migrei").
-  3. Toda decisão técnica deve expressar o *trade-off/motivação* (ex: mitigar latência, desacoplar domínios, isolar estados).
-  4. Tamanho: Exatamente 1 a 2 linhas por bullet.
-
-- **Contraste Rápido:**
-  - ❌ *Fraco:* `*Docker:* criei containers Docker para rodar os serviços da aplicação.`
-  - ✅ *Forte:* `*Isolamento com Docker:* conteinerização de microsserviços para garantir paridade entre ambientes, eliminando gargalos de onboarding.`
+  1. A âncora em negrito DEVE mapear nominalmente um requisito técnico ou domínio central da vaga.
+  2. **Regra da Unicidade (Checklist Não-Repetitivo):** Cada requisito só pode ser âncora UMA ÚNICA VEZ no currículo inteiro. É proibido repetir a mesma âncora entre empresas diferentes; cada bullet deve cobrir uma exigência distinta da vaga.
+  3. Proibido iniciar o corpo do bullet com verbo solto no passado.
+  4. Toda decisão técnica deve expressar o *trade-off/motivação*.
+  5. Tamanho: Exatamente 1 a 2 linhas por bullet point.
 
 ## 3. ORÇAMENTO DE BULLETS (Teto Máximo, Não Meta)
 - **Regra Anti-Inflação:** O teto é um LIMITE MÁXIMO. NUNCA invente, duplique ou divida fatos para "bater meta" se o perfil tiver poucas experiências.
 - **Por Experiência:** Máximo de 2 a 4 bullets por cargo (nunca ultrapassar 4 bullets em uma mesma empresa).
-- **Projetos Pessoais:** Máximo 1 ou 2 projetos relevantes (exatamente 2 bullets por projeto).
+- **Projetos Pessoais (Gap-Fillers):** Inclua 1 ou 2 projetos apenas se a experiência corporativa formal não cobrir alguma competência central da vaga. Se a experiência corporativa já cobrir tudo, omita a seção.
 - **Teto Global:** 8 a 13 bullets no total do currículo.
 
 ## 4. POLÍTICA DINÂMICA DE POSICIONAMENTO DA SEÇÃO 'EDUCAÇÃO'

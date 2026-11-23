@@ -2,6 +2,7 @@
 
 #show: CV.with(
   name: "[CANDIDATE NAME]",
+  headline: "[CANDIDATE] HEADLINE",
   lang: "en",
   contacts: (
     ("mailto:email@example.com", "email@example.com"),
@@ -29,7 +30,7 @@ Relevant Coursework: [placeholder]
 == PROFESSIONAL EXPERIENCE
 
 #columns-2[
-  === [Company 1]\ [Job Title]
+  === [Company 1] ➤ [Job Title]
   - [Start Date] – [End Date]
 ]
 
@@ -38,7 +39,7 @@ Relevant Coursework: [placeholder]
 - [placeholder]
 
 #columns-2[
-  === [Company 2]\ [Job Title]
+  === [Company 2] ➤ [Job Title]
   - [Start Date] – [End Date]
 ]
 

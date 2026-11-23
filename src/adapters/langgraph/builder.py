@@ -8,6 +8,7 @@ from src.adapters.langgraph.nodes import (
     term_extractor_node,
     gap_finder_node,
     gaps_updater_node,
+    profile_pruner_node,
     cv_generator_node,
     typst_compiler_node,
     typst_fixer_node,
@@ -23,6 +24,7 @@ NODE_MAPPING = {
     "term_extractor": term_extractor_node,
     "gap_finder": gap_finder_node,
     "gaps_updater": gaps_updater_node,
+    "profile_pruner": profile_pruner_node,
     "cv_generator": cv_generator_node,
     "typst_compiler": typst_compiler_node,
     "typst_fixer": typst_fixer_node,
@@ -58,13 +60,13 @@ def build_langgraph():
                     workflow.add_conditional_edges(
                         step.id,
                         lambda s, p=config.policies: route_after_typst_compiler(s, p),
-                        trans.target  # {"syntax_error": "typst_fixer", "max_step_error": "committer", "success": "ats_validator"}
+                        trans.target
                     )
                 elif trans.condition == "check_ats_result":
                     workflow.add_conditional_edges(
                         step.id,
                         lambda s, p=config.policies: route_after_ats(s, p),
-                        trans.target  # {"approved": "committer", "max_retries": "committer", ...}
+                        trans.target
                     )
 
             elif trans.type == "end":

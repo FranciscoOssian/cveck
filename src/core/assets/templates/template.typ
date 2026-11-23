@@ -9,11 +9,16 @@
 
 #let CV(
   name: "YOUR FULL NAME",
+  headline: "",
   contacts: (),
   lang: "pt",
   body
 ) = {
-  set text(lang: lang)
+  set text(
+    size: 10pt,
+    lang: lang
+  )
+  
   set page(margin: 1.5cm)
   
   show link: underline
@@ -26,6 +31,7 @@
   [= #upper(name)]
 
   align(center)[
+    [#(headline)]
     #line(length: 78%)
   ]
 
@@ -36,7 +42,7 @@
   body
 }
 
-#let columns-2 = (body, gutter: 40%) => {
+#let columns-2 = (body, gutter: 0%) => {
   let clened = body.fields().children.filter(value => value != [ ])
   set list(marker: [])
   columns(2, gutter: gutter)[
